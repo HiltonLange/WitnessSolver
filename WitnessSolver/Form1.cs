@@ -21,15 +21,26 @@ namespace WitnessSolver
         {
             var puzzle = this.ComplexBeginning();
 
-            puzzle.lblSolutions = lblSolutions;
-            puzzle.lblRoutes = lblRoutes;
-            puzzle.lblSteps = lblSteps;
-
-            puzzle.Drawer.FormGraphics = this.CreateGraphics();
+            puzzle.Drawer.FormGraphics = this.outputPanel.CreateGraphics();
             puzzle.Drawer.DrawState(false);
-            puzzle.FindAllRoutes();
+            puzzle.Update += this.puzzle_OnUpdate;
 
-            MessageBox.Show(String.Format("{0} solutions in {1} total routes", puzzle.GoodRouteCount, puzzle.AllRouteCount));
+            Task.Run(() => puzzle.FindAllRoutes());
+
+            //MessageBox.Show(String.Format("{0} solutions in {1} total routes", puzzle.GoodRouteCount, puzzle.AllRouteCount));
+        }
+
+        private void puzzle_OnUpdate(object sender, Puzzle.PuzzleSolveEventArgs e)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new MethodInvoker(delegate { puzzle_OnUpdate(sender, e); }));
+                return;
+            }
+
+            this.lblRoutes.Text = e.RoutesFound.ToString();
+            this.lblSteps.Text = e.EdgesAdded.ToString();
+            this.lblSolutions.Text = e.SolutionsFound.ToString();
         }
 
         private Puzzle Test55()

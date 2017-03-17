@@ -51,28 +51,28 @@ namespace WitnessSolver
                 new Rectangle(0, 0, (Puzzle.XSize + 1) * ScaleSize, (Puzzle.YSize + 1) * ScaleSize));
             this.BufferGraphics = this.Buffer.Graphics;
 
-            BufferGraphics.Clear(Color.LightGray);
+            this.BufferGraphics.Clear(Color.LightGray);
 
             foreach (var edge in Puzzle.Edges)
             {
-                DrawEdge(edge, Pens.Gray, Pens.LightGray);
+                this.DrawEdge(edge, Pens.Gray, Pens.LightGray);
             }
 
-            foreach (var edge in Puzzle.Route)
+            foreach (var edge in this.Puzzle.Route)
             {
-                DrawEdge(edge, new Pen(lineColor, PathThickness), new Pen(Color.LightGray, PathThickness));
+                this.DrawEdge(edge, new Pen(lineColor, PathThickness), new Pen(Color.LightGray, PathThickness));
             }
 
-            DrawStart();
+            this.DrawStart();
 
-            foreach (var cell in Puzzle.Cells)
+            foreach (var cell in this.Puzzle.Cells)
             {
-                DrawCell(cell);
+                this.DrawCell(cell);
             }
 
-            foreach (var point in Puzzle.Points)
+            foreach (var point in this.Puzzle.Points)
             {
-                DrawPoint(point);
+                this.DrawPoint(point);
             }
 
             Buffer.Render();
@@ -85,6 +85,5 @@ namespace WitnessSolver
         public abstract void DrawStart();
 
         public abstract void DrawEdge(Edge edge, Pen edgePen, Pen backgroundPen);
-
     }
 }

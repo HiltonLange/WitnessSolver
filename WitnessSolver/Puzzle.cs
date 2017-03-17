@@ -31,13 +31,11 @@ namespace WitnessSolver
 
         public List<List<Edge>> Solutions;
 
-        public Label lblSteps;
-        public Label lblRoutes;
-        public Label lblSolutions;
+        public event EventHandler<PuzzleSolveEventArgs> Update;
 
         public PuzzleDrawer Drawer;
 
-        public void CalculateOptimizations()
+        private void CalculateOptimizations()
         {
             foreach (var edge in this.Edges)
             {
@@ -76,7 +74,7 @@ namespace WitnessSolver
             this.TryAllSteps();
         }
 
-        public void TryAllSteps()
+        private void TryAllSteps()
         {
             if (this.CheckSolved())
             {
@@ -152,11 +150,6 @@ namespace WitnessSolver
                         this.Sections.Remove(oldSection);
                         this.Sections.AddRange(newSections);
                     }
-                    else
-                    {
-                        // This makes no sense
-                        System.Diagnostics.Debug.WriteLine("{0},{1} to {2},{3}", edge.Start.X, edge.Start.Y, edge.End.X, edge.End.Y);
-                    }
                 }
             }
 
@@ -195,7 +188,7 @@ namespace WitnessSolver
             }
         }
 
-        public bool CheckSolved()
+        private bool CheckSolved()
         {
             this.PeriodicDraw();
 
@@ -318,15 +311,21 @@ namespace WitnessSolver
             if (this.StepCountLoop == this.StepShowPeriod)
             {
                 this.Drawer.DrawState(false);
-                this.lblRoutes.Text = this.AllRouteCount.ToString();
-                this.lblSolutions.Text = this.GoodRouteCount.ToString();
-                this.lblSteps.Text = this.StepCount.ToString();
+                PuzzleSolveEventArgs puzzleSolveEventArgs = new PuzzleSolveEventArgs()
+                {
+                    EdgesAdded = this.StepCount,
+                    RoutesFound = this.AllRouteCount,
+                    SolutionsFound = this.GoodRouteCount,
+                };
+
+                this.Update?.Invoke(this, puzzleSolveEventArgs);
+
                 Application.DoEvents();
                 this.StepCountLoop = 0;
             }
         }
 
-        public List<Section> FindSubSections(HashSet<Cell> sectionScope)
+        private List<Section> FindSubSections(HashSet<Cell> sectionScope)
         {
             List<Section> sections = new List<Section>();
 
@@ -366,6 +365,13 @@ namespace WitnessSolver
             }
 
             return sections;
+        }
+
+        public class PuzzleSolveEventArgs : EventArgs
+        {
+            public long EdgesAdded;
+            public long RoutesFound;
+            public long SolutionsFound;
         }
     }
 }
