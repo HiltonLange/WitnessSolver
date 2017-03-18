@@ -14,7 +14,7 @@ namespace WitnessSolver
     {
         public Form1()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         private void btnSolve_Click(object sender, EventArgs e)
