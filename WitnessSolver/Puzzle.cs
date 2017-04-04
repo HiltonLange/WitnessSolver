@@ -10,6 +10,8 @@ namespace WitnessSolver
 {
     internal abstract class Puzzle
     {
+        public string Name;
+
         public Point Start;
         public Point Location;
 
@@ -365,6 +367,11 @@ namespace WitnessSolver
             }
 
             return sections;
+        }
+
+        public override string ToString()
+        {
+            return this.Name;
         }
 
         public class PuzzleSolveEventArgs : EventArgs

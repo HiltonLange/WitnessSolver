@@ -33,6 +33,7 @@
             this.lblRoutes = new System.Windows.Forms.Label();
             this.lblSolutions = new System.Windows.Forms.Label();
             this.outputPanel = new System.Windows.Forms.Panel();
+            this.cmbPuzzle = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // btnSolve
@@ -79,11 +80,20 @@
             this.outputPanel.Size = new System.Drawing.Size(692, 598);
             this.outputPanel.TabIndex = 4;
             // 
+            // cmbPuzzle
+            // 
+            this.cmbPuzzle.FormattingEnabled = true;
+            this.cmbPuzzle.Location = new System.Drawing.Point(714, 113);
+            this.cmbPuzzle.Name = "cmbPuzzle";
+            this.cmbPuzzle.Size = new System.Drawing.Size(121, 21);
+            this.cmbPuzzle.TabIndex = 5;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(805, 639);
+            this.ClientSize = new System.Drawing.Size(849, 639);
+            this.Controls.Add(this.cmbPuzzle);
             this.Controls.Add(this.outputPanel);
             this.Controls.Add(this.lblSolutions);
             this.Controls.Add(this.lblRoutes);
@@ -91,6 +101,7 @@
             this.Controls.Add(this.btnSolve);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -103,6 +114,7 @@
         private System.Windows.Forms.Label lblRoutes;
         private System.Windows.Forms.Label lblSolutions;
         private System.Windows.Forms.Panel outputPanel;
+        private System.Windows.Forms.ComboBox cmbPuzzle;
     }
 }
 

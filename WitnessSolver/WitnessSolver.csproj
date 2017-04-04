@@ -59,6 +59,16 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Puzzle.cs" />
     <Compile Include="PuzzleDrawer.cs" />
+    <Compile Include="Puzzles\AnotherPuzzle.cs" />
+    <Compile Include="Puzzles\ComplexBeginning.cs" />
+    <Compile Include="Puzzles\Flashing.cs" />
+    <Compile Include="Puzzles\MiddleChurch.cs" />
+    <Compile Include="Puzzles\NewPuzzle.cs" />
+    <Compile Include="Puzzles\Overlays.cs" />
+    <Compile Include="Puzzles\Puzzles.cs" />
+    <Compile Include="Puzzles\SamplePuzzle.cs" />
+    <Compile Include="Puzzles\StartShed.cs" />
+    <Compile Include="Puzzles\Test55.cs" />
     <Compile Include="RectanglePuzzle.cs" />
     <Compile Include="RectanglePuzzleDrawer.cs" />
     <Compile Include="Section.cs" />

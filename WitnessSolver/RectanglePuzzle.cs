@@ -12,8 +12,9 @@ namespace WitnessSolver
     {
         public Cell[,] Cell;
 
-        public RectanglePuzzle(int xSize, int ySize, Point start, Point end)
+        public RectanglePuzzle(string name, int xSize, int ySize, Point start, Point end)
         {
+            this.Name = name;
             this.XSize = xSize;
             this.YSize = ySize;
 
