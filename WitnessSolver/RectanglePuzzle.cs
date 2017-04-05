@@ -79,6 +79,7 @@ namespace WitnessSolver
                     foreach (var edge in edgeLoopClockwise)
                     {
                         edge.RightCell = cell;
+                        edge.ReversedEdge.LeftCell = cell;
                     }
 
                     cell.SquareColorLetter = ' ';
