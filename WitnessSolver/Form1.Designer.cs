@@ -38,7 +38,7 @@
             // 
             // btnSolve
             // 
-            this.btnSolve.Location = new System.Drawing.Point(711, 12);
+            this.btnSolve.Location = new System.Drawing.Point(140, 13);
             this.btnSolve.Name = "btnSolve";
             this.btnSolve.Size = new System.Drawing.Size(75, 23);
             this.btnSolve.TabIndex = 0;
@@ -49,7 +49,7 @@
             // lblSteps
             // 
             this.lblSteps.AutoSize = true;
-            this.lblSteps.Location = new System.Drawing.Point(711, 42);
+            this.lblSteps.Location = new System.Drawing.Point(221, 18);
             this.lblSteps.Name = "lblSteps";
             this.lblSteps.Size = new System.Drawing.Size(44, 13);
             this.lblSteps.TabIndex = 1;
@@ -58,7 +58,7 @@
             // lblRoutes
             // 
             this.lblRoutes.AutoSize = true;
-            this.lblRoutes.Location = new System.Drawing.Point(711, 72);
+            this.lblRoutes.Location = new System.Drawing.Point(294, 18);
             this.lblRoutes.Name = "lblRoutes";
             this.lblRoutes.Size = new System.Drawing.Size(51, 13);
             this.lblRoutes.TabIndex = 2;
@@ -67,7 +67,7 @@
             // lblSolutions
             // 
             this.lblSolutions.AutoSize = true;
-            this.lblSolutions.Location = new System.Drawing.Point(711, 97);
+            this.lblSolutions.Location = new System.Drawing.Point(387, 18);
             this.lblSolutions.Name = "lblSolutions";
             this.lblSolutions.Size = new System.Drawing.Size(60, 13);
             this.lblSolutions.TabIndex = 3;
@@ -75,15 +75,18 @@
             // 
             // outputPanel
             // 
-            this.outputPanel.Location = new System.Drawing.Point(13, 29);
+            this.outputPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.outputPanel.Location = new System.Drawing.Point(13, 42);
             this.outputPanel.Name = "outputPanel";
-            this.outputPanel.Size = new System.Drawing.Size(692, 598);
+            this.outputPanel.Size = new System.Drawing.Size(844, 558);
             this.outputPanel.TabIndex = 4;
             // 
             // cmbPuzzle
             // 
             this.cmbPuzzle.FormattingEnabled = true;
-            this.cmbPuzzle.Location = new System.Drawing.Point(714, 113);
+            this.cmbPuzzle.Location = new System.Drawing.Point(13, 12);
             this.cmbPuzzle.Name = "cmbPuzzle";
             this.cmbPuzzle.Size = new System.Drawing.Size(121, 21);
             this.cmbPuzzle.TabIndex = 5;
@@ -92,7 +95,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(849, 639);
+            this.ClientSize = new System.Drawing.Size(869, 612);
             this.Controls.Add(this.cmbPuzzle);
             this.Controls.Add(this.outputPanel);
             this.Controls.Add(this.lblSolutions);

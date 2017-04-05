@@ -74,6 +74,8 @@ namespace WitnessSolver
             this.CalculateOptimizations();
             this.Start.Visited = true;
             this.TryAllSteps();
+
+            SendUpdate(true);
         }
 
         private void TryAllSteps()
@@ -313,18 +315,24 @@ namespace WitnessSolver
             if (this.StepCountLoop == this.StepShowPeriod)
             {
                 this.Drawer.DrawState(false);
-                PuzzleSolveEventArgs puzzleSolveEventArgs = new PuzzleSolveEventArgs()
-                {
-                    EdgesAdded = this.StepCount,
-                    RoutesFound = this.AllRouteCount,
-                    SolutionsFound = this.GoodRouteCount,
-                };
-
-                this.Update?.Invoke(this, puzzleSolveEventArgs);
-
-                Application.DoEvents();
+                SendUpdate(false);
                 this.StepCountLoop = 0;
             }
+        }
+
+        private void SendUpdate(bool isDone)
+        {
+            PuzzleSolveEventArgs puzzleSolveEventArgs = new PuzzleSolveEventArgs()
+            {
+                EdgesAdded = this.StepCount,
+                RoutesFound = this.AllRouteCount,
+                SolutionsFound = this.GoodRouteCount,
+                IsDone = isDone,
+            };
+
+            this.Update?.Invoke(this, puzzleSolveEventArgs);
+
+            //Application.DoEvents();
         }
 
         private List<Section> FindSubSections(HashSet<Cell> sectionScope)
@@ -379,6 +387,7 @@ namespace WitnessSolver
             public long EdgesAdded;
             public long RoutesFound;
             public long SolutionsFound;
+            public bool IsDone;
         }
     }
 }

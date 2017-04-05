@@ -19,6 +19,7 @@ namespace WitnessSolver
 
         private void btnSolve_Click(object sender, EventArgs e)
         {
+            btnSolve.Enabled = false;
             var puzzle = (Puzzle)this.cmbPuzzle.SelectedItem;
 
             puzzle.Drawer.FormGraphics = this.outputPanel.CreateGraphics();
@@ -26,8 +27,6 @@ namespace WitnessSolver
             puzzle.Update += this.puzzle_OnUpdate;
 
             Task.Run(() => puzzle.FindAllRoutes());
-
-            //MessageBox.Show(String.Format("{0} solutions in {1} total routes", puzzle.GoodRouteCount, puzzle.AllRouteCount));
         }
 
         private void puzzle_OnUpdate(object sender, Puzzle.PuzzleSolveEventArgs e)
@@ -41,6 +40,11 @@ namespace WitnessSolver
             this.lblRoutes.Text = e.RoutesFound.ToString();
             this.lblSteps.Text = e.EdgesAdded.ToString();
             this.lblSolutions.Text = e.SolutionsFound.ToString();
+
+            if (e.IsDone)
+            {
+                btnSolve.Enabled = true;
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
