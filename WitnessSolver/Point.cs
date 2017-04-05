@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace WitnessSolver
 {
@@ -10,8 +6,8 @@ namespace WitnessSolver
     {
         public readonly int X;
         public readonly int Y;
-        public Dictionary<Point, Edge> OutEdges;
-        public Dictionary<Point, Edge> InEdges;
+        public readonly Dictionary<Point, Edge> OutEdges;
+        public readonly Dictionary<Point, Edge> InEdges;
         public bool Visited;
         public bool MustTraverse;
         public bool End;
@@ -25,16 +21,9 @@ namespace WitnessSolver
             this.Visited = false;
         }
 
-        public Point(Point point)
-        {
-            this.X = point.X;
-            this.Y = point.Y;
-            this.MustTraverse = false;
-        }
-
         public override bool Equals(object obj)
         {
-            Point other = obj as Point;
+            var other = obj as Point;
             if (other == null)
             {
                 return false;

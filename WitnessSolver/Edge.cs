@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace WitnessSolver
+﻿namespace WitnessSolver
 {
     class Edge
     {
@@ -35,17 +28,7 @@ namespace WitnessSolver
 
         private Edge reversedEdge;
 
-        public Edge ReversedEdge
-        {
-            get {
-                if (this.reversedEdge == null)
-                {
-                    this.reversedEdge = this.End.OutEdges[this.Start];
-                }
-
-                return this.reversedEdge;
-            }
-        }
+        public Edge ReversedEdge => this.reversedEdge ?? (this.reversedEdge = this.End.OutEdges[this.Start]);
 
         public Edge(Point start, Point end)
         {
@@ -58,7 +41,7 @@ namespace WitnessSolver
 
         public override bool Equals(object obj)
         {
-            Edge other = obj as Edge;
+            var other = obj as Edge;
             if (other == null)
             {
                 return false;

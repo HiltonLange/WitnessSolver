@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WitnessSolver
+﻿namespace WitnessSolver
 {
     static partial class Puzzles
     {
-        public static Puzzle SamplePuzzle()
+        private static Puzzle SamplePuzzle()
         {
-            RectanglePuzzle puzzle = new RectanglePuzzle("Sample puzzle", 4, 4, new Point(0, 4), new Point(4, 0));
+            var puzzle = new RectanglePuzzle("Sample puzzle", 4, 4, new Point(0, 4), new Point(4, 0));
 
             puzzle.Cell[0, 1].SquareColorLetter = 'R';
             puzzle.Cell[0, 2].SquareColorLetter = 'R';

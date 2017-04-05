@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WitnessSolver
+﻿namespace WitnessSolver
 {
     static partial class Puzzles
     {
-        public static Puzzle ComplexBeginning()
+        private static Puzzle ComplexBeginning()
         {
             Point[] starts =
             {
@@ -25,7 +19,7 @@ namespace WitnessSolver
                 new Point(7, 7),
             };
 
-            RectanglePuzzle puzzle = new RectanglePuzzle("Complex beginning", 7, 7, starts[3], ends[0]);
+            var puzzle = new RectanglePuzzle("Complex beginning", 7, 7, starts[3], ends[0]);
 
             puzzle.Cell[0, 0].SquareColorLetter = 'L';
             puzzle.Cell[0, 1].SquareColorLetter = 'W';

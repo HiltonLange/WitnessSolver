@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -19,7 +13,7 @@ namespace WitnessSolver
 
         private void btnSolve_Click(object sender, EventArgs e)
         {
-            btnSolve.Enabled = false;
+            this.btnSolve.Enabled = false;
             var puzzle = (Puzzle)this.cmbPuzzle.SelectedItem;
 
             puzzle.Drawer.FormGraphics = this.outputPanel.CreateGraphics();
@@ -43,7 +37,7 @@ namespace WitnessSolver
 
             if (e.IsDone)
             {
-                btnSolve.Enabled = true;
+                this.btnSolve.Enabled = true;
             }
         }
 

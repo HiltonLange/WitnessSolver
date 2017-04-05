@@ -1,25 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace WitnessSolver
 {
     internal abstract class Puzzle
     {
-        public string Name;
+        protected string Name;
 
         public Point Start;
-        public Point Location;
+        protected Point Location;
 
-        public int AllRouteCount;
-        public int GoodRouteCount;
-        public long StepCount = 0;
-        public long StepCountLoop = 0;
-        public long StepShowPeriod = 100000;
+        protected int AllRouteCount;
+        protected int GoodRouteCount;
+        private long StepCount;
+        private long StepCountLoop;
+        private long StepShowPeriod = 100000;
 
         public int XSize;
         public int YSize;
@@ -29,7 +25,7 @@ namespace WitnessSolver
         public HashSet<Edge> Edges;
         public HashSet<Cell> Cells;
 
-        public List<Section> Sections;
+        private List<Section> Sections;
 
         public List<List<Edge>> Solutions;
 
@@ -75,7 +71,7 @@ namespace WitnessSolver
             this.Start.Visited = true;
             this.TryAllSteps();
 
-            SendUpdate(true);
+            this.SendUpdate(true);
         }
 
         private void TryAllSteps()
@@ -93,7 +89,6 @@ namespace WitnessSolver
             {
                 return;
             }
-            ;
 
             // One mandatory path must be followed
             if (needEdges.Count == 1)
@@ -105,7 +100,7 @@ namespace WitnessSolver
             {
                 if (!outEdge.End.Visited)
                 {
-                    bool goodMove = this.AddEdge(outEdge);
+                    var goodMove = this.AddEdge(outEdge);
                     if (goodMove)
                     {
                         this.TryAllSteps();
@@ -118,7 +113,7 @@ namespace WitnessSolver
 
         private bool AddEdge(Edge edge)
         {
-            bool good = true;
+            var good = true;
 
             this.Location = edge.End;
             this.Location.Visited = true;
@@ -131,25 +126,15 @@ namespace WitnessSolver
                 if (this.Location.OutEdges.Values.Any(outEdge => outEdge.LeftCell == null || outEdge.RightCell == null))
                 {
                     // Should be a section split here
-                    Section oldSection = this.Sections.First(section => section.Cells.Contains(edge.LeftCell));
-                    var newSections = this.FindSubSections(oldSection.Cells);
+                    var oldSection = this.Sections.First(section => section.Cells.Contains(edge.LeftCell));
+                    var newSections = FindSubSections(oldSection.Cells);
 
                     if (newSections != null)
                     {
                         // Section split has occurred
-                        int invalidCount = 0;
-                        foreach (var newSection in newSections)
-                        {
-                            if (!this.CheckSection(newSection))
-                            {
-                                invalidCount++;
-                            }
-                        }
 
-                        if (invalidCount > 1)
-                        {
-                            good = false;
-                        }
+                        // If any of the new sections are bad, modify the puzzle state
+                        good &= newSections.Any(newSection => !this.CheckSection(newSection));
 
                         this.Sections.Remove(oldSection);
                         this.Sections.AddRange(newSections);
@@ -160,7 +145,7 @@ namespace WitnessSolver
             // Check if any previous unchecked sections can now be checked
             foreach (var section in this.Sections)
             {
-                bool sectionGood = this.CheckSection(section);
+                var sectionGood = this.CheckSection(section);
                 if (!sectionGood && !section.Cells.Contains(edge.LeftCell) && !section.Cells.Contains(edge.RightCell))
                 {
                     good = false;
@@ -180,11 +165,11 @@ namespace WitnessSolver
             // Check for section merge
             if (edge.LeftCell != null && edge.RightCell != null)
             {
-                Section leftSection = this.Sections.First(section => section.Cells.Contains(edge.LeftCell));
-                Section rightSection = this.Sections.First(section => section.Cells.Contains(edge.RightCell));
+                var leftSection = this.Sections.First(section => section.Cells.Contains(edge.LeftCell));
+                var rightSection = this.Sections.First(section => section.Cells.Contains(edge.RightCell));
                 if (leftSection != rightSection)
                 {
-                    Section mergedSection = new Section(leftSection.Cells.Union(rightSection.Cells));
+                    var mergedSection = new Section(leftSection.Cells.Union(rightSection.Cells));
                     this.Sections.Remove(leftSection);
                     this.Sections.Remove(rightSection);
                     this.Sections.Add(mergedSection);
@@ -199,13 +184,9 @@ namespace WitnessSolver
             if (this.Location.End)
             {
                 this.AllRouteCount++;
-                bool good = true;
 
-                // Process sections
-                foreach (var section in this.Sections)
-                {
-                    good = good && this.CheckSection(section);
-                }
+                // Check all sections
+                var good = this.Sections.All(this.CheckSection);
 
                 // Check edge traversals
                 foreach (var edge in this.Edges)
@@ -255,11 +236,11 @@ namespace WitnessSolver
                 return section.Correct;
             }
 
-            bool good = true;
+            var good = true;
 
-            HashSet<char> squareLetters = new HashSet<char>();
-            HashSet<char> starLetters = new HashSet<char>();
-            Dictionary<char, int> colorLetterCount = new Dictionary<char, int>();
+            var squareLetters = new HashSet<char>();
+            var starLetters = new HashSet<char>();
+            var colorLetterCount = new Dictionary<char, int>();
             foreach (var cell in section.Cells)
             {
                 // Check for square
@@ -315,14 +296,14 @@ namespace WitnessSolver
             if (this.StepCountLoop == this.StepShowPeriod)
             {
                 this.Drawer.DrawState(false);
-                SendUpdate(false);
+                this.SendUpdate(false);
                 this.StepCountLoop = 0;
             }
         }
 
         private void SendUpdate(bool isDone)
         {
-            PuzzleSolveEventArgs puzzleSolveEventArgs = new PuzzleSolveEventArgs()
+            var puzzleSolveEventArgs = new PuzzleSolveEventArgs()
             {
                 EdgesAdded = this.StepCount,
                 RoutesFound = this.AllRouteCount,
@@ -331,28 +312,26 @@ namespace WitnessSolver
             };
 
             this.Update?.Invoke(this, puzzleSolveEventArgs);
-
-            //Application.DoEvents();
         }
 
-        private List<Section> FindSubSections(HashSet<Cell> sectionScope)
+        private static List<Section> FindSubSections(HashSet<Cell> sectionScope)
         {
-            List<Section> sections = new List<Section>();
+            var sections = new List<Section>();
 
-            HashSet<Cell> visited = new HashSet<Cell>();
+            var visited = new HashSet<Cell>();
 
             foreach (var cell in sectionScope)
             {
                 if (!visited.Contains(cell))
                 {
-                    HashSet<Cell> cells = new HashSet<Cell> { cell };
-                    Queue<Cell> cellQueue = new Queue<Cell>();
+                    var cells = new HashSet<Cell> { cell };
+                    var cellQueue = new Queue<Cell>();
                     cellQueue.Enqueue(cell);
                     visited.Add(cell);
 
                     while (cellQueue.Count > 0)
                     {
-                        Cell currentCell = cellQueue.Dequeue();
+                        var currentCell = cellQueue.Dequeue();
                         foreach (var edge in currentCell.EdgeLoopClockwise)
                         {
                             if (!edge.Traversed && !edge.ReversedEdge.Traversed && edge.LeftCell != null && !visited.Contains(edge.LeftCell))

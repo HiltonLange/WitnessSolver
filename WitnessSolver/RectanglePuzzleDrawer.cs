@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace WitnessSolver
 {
@@ -15,7 +10,7 @@ namespace WitnessSolver
             this.Puzzle = puzzle;
         }
 
-        public override void DrawStart()
+        protected override void DrawStart()
         {
             this.BufferGraphics.FillEllipse(
                 Brushes.Black,
@@ -25,12 +20,12 @@ namespace WitnessSolver
                 StartSize);
         }
 
-        public override void DrawEdge(Edge edge, Pen edgePen, Pen backgroundPen)
+        protected override void DrawEdge(Edge edge, Pen edgePen, Pen backgroundPen)
         {
-            int edgeX1 = edge.Start.X * ScaleSize + GridOffset;
-            int edgeX2 = edge.End.X * ScaleSize + GridOffset;
-            int edgeY1 = edge.Start.Y * ScaleSize + GridOffset;
-            int edgeY2 = edge.End.Y * ScaleSize + GridOffset;
+            var edgeX1 = edge.Start.X * ScaleSize + GridOffset;
+            var edgeX2 = edge.End.X * ScaleSize + GridOffset;
+            var edgeY1 = edge.Start.Y * ScaleSize + GridOffset;
+            var edgeY2 = edge.End.Y * ScaleSize + GridOffset;
 
             this.DrawPartialLine(edgePen, edgeX1, edgeY1, edgeX2, edgeY2, EdgeLengthFraction);
             //buffer.Graphics.DrawLine(pen, edgeX1 * 0.8F + edgeX2 * 0.2F, edgeY1, edgeX2, edgeY2);
@@ -62,10 +57,10 @@ namespace WitnessSolver
                 y2 * lengthFraction + y1 * (1 - lengthFraction));
         }
 
-        public override void DrawCell(Cell cell)
+        protected override void DrawCell(Cell cell)
         {
-            int cellXCenter = cell.X * ScaleSize + ScaleSize / 2 + GridOffset;
-            int cellYCenter = cell.Y * ScaleSize + ScaleSize / 2 + GridOffset;
+            var cellXCenter = cell.X * ScaleSize + ScaleSize / 2 + GridOffset;
+            var cellYCenter = cell.Y * ScaleSize + ScaleSize / 2 + GridOffset;
 
             if (cell.SquareColorLetter != ' ')
             {
@@ -98,15 +93,15 @@ namespace WitnessSolver
             }
         }
 
-        public override void DrawPoint(Point point)
+        protected override void DrawPoint(Point point)
         {
             if (!point.MustTraverse && !point.End)
             {
                 return;
             }
 
-            int pointX = point.X * ScaleSize + GridOffset;
-            int pointY = point.Y * ScaleSize + GridOffset;
+            var pointX = point.X * ScaleSize + GridOffset;
+            var pointY = point.Y * ScaleSize + GridOffset;
 
             if (point.MustTraverse)
             {

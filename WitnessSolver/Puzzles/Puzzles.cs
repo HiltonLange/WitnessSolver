@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace WitnessSolver
 {
@@ -13,15 +8,15 @@ namespace WitnessSolver
         {
             return new List<Puzzle>
             {
-                Puzzles.AnotherPuzzle(),
-                Puzzles.ComplexBeginning(),
-                Puzzles.Flashing(),
-                Puzzles.MiddleChurch(),
-                Puzzles.NewPuzzle(),
-                Puzzles.Overlays(),
-                Puzzles.SamplePuzzle(),
-                Puzzles.StartShed(),
-                Puzzles.Test55(),
+                AnotherPuzzle(),
+                ComplexBeginning(),
+                Flashing(),
+                MiddleChurch(),
+                NewPuzzle(),
+                Overlays(),
+                SamplePuzzle(),
+                StartShed(),
+                Test55(),
             };
         }
     }

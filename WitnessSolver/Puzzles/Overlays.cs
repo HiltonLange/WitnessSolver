@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WitnessSolver
+﻿namespace WitnessSolver
 {
     static partial class Puzzles
     {
-        public static Puzzle Overlays()
+        private static Puzzle Overlays()
         {
-            RectanglePuzzle puzzle = new RectanglePuzzle("Overlays", 5, 5, new Point(0, 5), new Point(5, 0));
+            var puzzle = new RectanglePuzzle("Overlays", 5, 5, new Point(0, 5), new Point(5, 0));
 
             puzzle.Cell[0, 0].StarColorLetter = 'P';
             puzzle.Cell[1, 0].StarColorLetter = 'G';
@@ -23,7 +17,7 @@ namespace WitnessSolver
             puzzle.Points[0, 1].OutEdges[puzzle.Points[1, 1]].MustTraverse = true;
 
             // ..
-            int y = -1;
+            var y = -1;
             puzzle.Points[0, 2 + y].OutEdges[puzzle.Points[1, 2 + y]].MustTraverse = true;
             puzzle.Points[0, 4 + y].OutEdges[puzzle.Points[1, 4 + y]].MustTraverse = true;
             puzzle.Points[1, 2 + y].OutEdges[puzzle.Points[1, 3 + y]].MustTraverse = true;

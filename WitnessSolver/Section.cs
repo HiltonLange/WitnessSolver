@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace WitnessSolver
 {
     class Section
     {
-        public HashSet<Cell> Cells;
+        public readonly HashSet<Cell> Cells;
         public bool Checked;
         public bool Correct;
 

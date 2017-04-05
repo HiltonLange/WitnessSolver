@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WitnessSolver
+﻿namespace WitnessSolver
 {
     static partial class Puzzles
     {
-        public static Puzzle StartShed()
+        private static Puzzle StartShed()
         {
-            RectanglePuzzle puzzle = new RectanglePuzzle("Start shed", 3, 3, new Point(3, 0), new Point(0, 1));
+            var puzzle = new RectanglePuzzle("Start shed", 3, 3, new Point(3, 0), new Point(0, 1));
             puzzle.Points[0, 2].MustTraverse = true;
             puzzle.Points[1, 2].MustTraverse = true;
             puzzle.Points[1, 0].MustTraverse = true;

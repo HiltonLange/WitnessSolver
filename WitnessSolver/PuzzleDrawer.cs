@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WitnessSolver
 {
@@ -22,9 +18,8 @@ namespace WitnessSolver
         internal const int CellStarSize2 = 10;
 
         public Graphics FormGraphics;
-        public BufferedGraphics Buffer;
-        public Graphics BufferGraphics;
-        public Puzzle Puzzle;
+        protected Graphics BufferGraphics;
+        protected Puzzle Puzzle;
 
         internal readonly Dictionary<char, Color> LetterColor = new Dictionary<char, Color>
         {
@@ -37,23 +32,22 @@ namespace WitnessSolver
             {'P', Color.Purple },
         };
 
-        public PuzzleDrawer(Puzzle puzzle)
+        protected PuzzleDrawer(Puzzle puzzle)
         {
             this.Puzzle = puzzle;
         }
 
         public void DrawState(bool isSolved)
         {
-            Color lineColor = isSolved ? Color.Green : Color.DarkRed;
+            var lineColor = isSolved ? Color.Green : Color.DarkRed;
 
-            BufferedGraphicsContext currentContext = BufferedGraphicsManager.Current;
-            this.Buffer = currentContext.Allocate(this.FormGraphics,
-                new Rectangle(0, 0, (Puzzle.XSize + 1) * ScaleSize, (Puzzle.YSize + 1) * ScaleSize));
-            this.BufferGraphics = this.Buffer.Graphics;
-
+            var currentContext = BufferedGraphicsManager.Current;
+            var buffer = currentContext.Allocate(this.FormGraphics,
+                new Rectangle(0, 0, (this.Puzzle.XSize + 1) * ScaleSize, (this.Puzzle.YSize + 1) * ScaleSize));
+            this.BufferGraphics = buffer.Graphics;
             this.BufferGraphics.Clear(Color.LightGray);
 
-            foreach (var edge in Puzzle.Edges)
+            foreach (var edge in this.Puzzle.Edges)
             {
                 this.DrawEdge(edge, Pens.Gray, Pens.LightGray);
             }
@@ -75,15 +69,15 @@ namespace WitnessSolver
                 this.DrawPoint(point);
             }
 
-            Buffer.Render();
+            buffer.Render();
         }
 
-        public abstract void DrawPoint(Point point);
+        protected abstract void DrawPoint(Point point);
 
-        public abstract void DrawCell(Cell cell);
+        protected abstract void DrawCell(Cell cell);
 
-        public abstract void DrawStart();
+        protected abstract void DrawStart();
 
-        public abstract void DrawEdge(Edge edge, Pen edgePen, Pen backgroundPen);
+        protected abstract void DrawEdge(Edge edge, Pen edgePen, Pen backgroundPen);
     }
 }
