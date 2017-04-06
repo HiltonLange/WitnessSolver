@@ -80,7 +80,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.outputPanel.Location = new System.Drawing.Point(13, 42);
             this.outputPanel.Name = "outputPanel";
-            this.outputPanel.Size = new System.Drawing.Size(844, 558);
+            this.outputPanel.Size = new System.Drawing.Size(761, 632);
             this.outputPanel.TabIndex = 4;
             // 
             // cmbPuzzle
@@ -95,7 +95,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(869, 612);
+            this.ClientSize = new System.Drawing.Size(786, 686);
             this.Controls.Add(this.cmbPuzzle);
             this.Controls.Add(this.outputPanel);
             this.Controls.Add(this.lblSolutions);

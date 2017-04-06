@@ -69,33 +69,9 @@ namespace WitnessSolver
             
             this.CalculateOptimizations();
             this.Start.Visited = true;
-            //this.TryAllSteps();
             var solver = new PuzzleSolver() { Puzzle = this };
-            solver.SolvePuzzle();
-
+            solver.TryAllStepsIterative();
             this.SendUpdate(true);
-        }
-
-        private void TryAllSteps()
-        {
-            if (this.CheckSolved())
-            {
-                return;
-            }
-
-            foreach (var outEdge in this.PossibleOutEdges())
-            {
-                if (!outEdge.End.Visited)
-                {
-                    var goodMove = this.AddEdge(outEdge);
-                    if (goodMove)
-                    {
-                        this.TryAllSteps();
-                    }
-
-                    this.RemoveEdge(outEdge);
-                }
-            }
         }
 
         public bool AddEdge(Edge edge)
@@ -180,6 +156,9 @@ namespace WitnessSolver
             {
                 choiceEdges = needEdges;
             }
+
+            // Only return edges where the destination node is available
+            choiceEdges = choiceEdges.Where(outEdge => !outEdge.End.Visited).ToList();
 
             return choiceEdges;
         }
