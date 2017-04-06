@@ -33,7 +33,7 @@ namespace WitnessSolver
 
         public PuzzleDrawer Drawer;
 
-        private void CalculateOptimizations()
+        public void CalculateOptimizations()
         {
             foreach (var edge in this.Edges)
             {
@@ -69,7 +69,9 @@ namespace WitnessSolver
             
             this.CalculateOptimizations();
             this.Start.Visited = true;
-            this.TryAllSteps();
+            //this.TryAllSteps();
+            var solver = new PuzzleSolver() { Puzzle = this };
+            solver.SolvePuzzle();
 
             this.SendUpdate(true);
         }
@@ -81,22 +83,7 @@ namespace WitnessSolver
                 return;
             }
 
-            var choiceEdges = this.Location.OutEdges.Values.Where(edge => !edge.Used && edge.Valid).ToList();
-            var needEdges = choiceEdges.Where(edge => edge.Need).ToList();
-
-            // Multiple mandatory paths are impossible to follow
-            if (needEdges.Count > 1)
-            {
-                return;
-            }
-
-            // One mandatory path must be followed
-            if (needEdges.Count == 1)
-            {
-                choiceEdges = needEdges;
-            }
-
-            foreach (var outEdge in choiceEdges)
+            foreach (var outEdge in this.PossibleOutEdges())
             {
                 if (!outEdge.End.Visited)
                 {
@@ -111,7 +98,7 @@ namespace WitnessSolver
             }
         }
 
-        private bool AddEdge(Edge edge)
+        public bool AddEdge(Edge edge)
         {
             var good = true;
 
@@ -155,7 +142,7 @@ namespace WitnessSolver
             return good;
         }
 
-        private void RemoveEdge(Edge edge)
+        public void RemoveEdge(Edge edge)
         {
             this.Location.Visited = false;
             this.Location = edge.Start;
@@ -177,7 +164,27 @@ namespace WitnessSolver
             }
         }
 
-        private bool CheckSolved()
+        public List<Edge> PossibleOutEdges()
+        {
+            var choiceEdges = this.Location.OutEdges.Values.Where(edge => !edge.Used && edge.Valid).ToList();
+            var needEdges = choiceEdges.Where(edge => edge.Need).ToList();
+
+            // Multiple mandatory paths are impossible to follow
+            if (needEdges.Count > 1)
+            {
+                choiceEdges = new List<Edge>();
+            }
+
+            // One mandatory path must be followed
+            if (needEdges.Count == 1)
+            {
+                choiceEdges = needEdges;
+            }
+
+            return choiceEdges;
+        }
+
+        public bool CheckSolved()
         {
             this.PeriodicDraw();
 

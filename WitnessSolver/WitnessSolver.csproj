@@ -59,6 +59,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Puzzle.cs" />
     <Compile Include="PuzzleDrawer.cs" />
+    <Compile Include="PuzzleSolver.cs" />
+    <Compile Include="PuzzleSolverState.cs" />
     <Compile Include="Puzzles\AnotherPuzzle.cs" />
     <Compile Include="Puzzles\ComplexBeginning.cs" />
     <Compile Include="Puzzles\Flashing.cs" />
