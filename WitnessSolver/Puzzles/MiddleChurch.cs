@@ -2,9 +2,11 @@
 {
     static partial class Puzzles
     {
-        private static Puzzle MiddleChurch()
+        public static Puzzle MiddleChurch()
         {
             var puzzle = new RectanglePuzzle("Middle church", 4, 4, new Point(0, 4), new Point(4, 0));
+            puzzle.ExpectedSolutions = 5;
+
             puzzle.Cell[0, 0].StarColorLetter = 'W';
             puzzle.Cell[1, 0].StarColorLetter = 'W';
             puzzle.Cell[2, 0].StarColorLetter = 'W';

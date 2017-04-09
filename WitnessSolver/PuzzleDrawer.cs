@@ -39,6 +39,11 @@ namespace WitnessSolver
 
         public void DrawState(bool isSolved)
         {
+            if (this.FormGraphics == null)
+            {
+                return;
+            }
+
             var lineColor = isSolved ? Color.Green : Color.DarkRed;
 
             var currentContext = BufferedGraphicsManager.Current;

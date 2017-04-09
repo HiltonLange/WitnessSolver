@@ -2,7 +2,7 @@
 {
     static partial class Puzzles
     {
-        private static Puzzle ComplexBeginning()
+        public static Puzzle ComplexBeginning()
         {
             Point[] starts =
             {
@@ -20,6 +20,7 @@
             };
 
             var puzzle = new RectanglePuzzle("Complex beginning", 7, 7, starts[3], ends[0]);
+            puzzle.ExpectedSolutions = 321102;
 
             puzzle.Cell[0, 0].SquareColorLetter = 'L';
             puzzle.Cell[0, 1].SquareColorLetter = 'W';

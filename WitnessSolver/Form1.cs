@@ -19,8 +19,12 @@ namespace WitnessSolver
             puzzle.Drawer.FormGraphics = this.outputPanel.CreateGraphics();
             puzzle.Drawer.DrawState(false);
             puzzle.Update += this.puzzle_OnUpdate;
+            var solver = new PuzzleSolver { Puzzle = puzzle };
 
-            Task.Run(() => puzzle.FindAllRoutes());
+            Task.Run(() => solver.Solve()).ContinueWith((res) =>
+            {
+                MessageBox.Show(String.Format("Found {0} solutions.", res.Result.ToString()));
+            });
         }
 
         private void puzzle_OnUpdate(object sender, Puzzle.PuzzleSolveEventArgs e)

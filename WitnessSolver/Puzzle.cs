@@ -32,6 +32,7 @@ namespace WitnessSolver
         public event EventHandler<PuzzleSolveEventArgs> Update;
 
         public PuzzleDrawer Drawer;
+        public long ExpectedSolutions;
 
         public void CalculateOptimizations()
         {
@@ -59,18 +60,16 @@ namespace WitnessSolver
             }
         }
 
-        public void FindAllRoutes()
+        public void PrepareToSolve()
         {
             this.Solutions = new List<List<Edge>>();
             this.Sections = new List<Section>
             {
                 new Section(new List<Cell>(this.Cells)),
             };
-            
+
             this.CalculateOptimizations();
             this.Start.Visited = true;
-            var solver = new PuzzleSolver() { Puzzle = this };
-            solver.TryAllStepsIterative();
             this.SendUpdate(true);
         }
 

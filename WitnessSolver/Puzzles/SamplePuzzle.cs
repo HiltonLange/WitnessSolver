@@ -2,9 +2,10 @@
 {
     static partial class Puzzles
     {
-        private static Puzzle SamplePuzzle()
+        public static Puzzle SamplePuzzle()
         {
             var puzzle = new RectanglePuzzle("Sample puzzle", 4, 4, new Point(0, 4), new Point(4, 0));
+            puzzle.ExpectedSolutions = 196;
 
             puzzle.Cell[0, 1].SquareColorLetter = 'R';
             puzzle.Cell[0, 2].SquareColorLetter = 'R';

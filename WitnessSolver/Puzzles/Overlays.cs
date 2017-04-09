@@ -2,9 +2,10 @@
 {
     static partial class Puzzles
     {
-        private static Puzzle Overlays()
+        public static Puzzle Overlays()
         {
             var puzzle = new RectanglePuzzle("Overlays", 5, 5, new Point(0, 5), new Point(5, 0));
+            puzzle.ExpectedSolutions = 1;
 
             puzzle.Cell[0, 0].StarColorLetter = 'P';
             puzzle.Cell[1, 0].StarColorLetter = 'G';

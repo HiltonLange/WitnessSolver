@@ -10,6 +10,13 @@ namespace WitnessSolver
     {
         public Puzzle Puzzle;
 
+        public int Solve()
+        {
+            this.Puzzle.PrepareToSolve();
+            this.TryAllStepsRecursive();
+            return this.Puzzle.Solutions.Count;
+        }
+
         public void TryAllStepsRecursive()
         {
             // If this is a valid route, immediately return

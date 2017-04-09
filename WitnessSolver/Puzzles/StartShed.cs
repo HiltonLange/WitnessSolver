@@ -2,9 +2,11 @@
 {
     static partial class Puzzles
     {
-        private static Puzzle StartShed()
+        public static Puzzle StartShed()
         {
             var puzzle = new RectanglePuzzle("Start shed", 3, 3, new Point(3, 0), new Point(0, 1));
+            puzzle.ExpectedSolutions = 1;
+
             puzzle.Points[0, 2].MustTraverse = true;
             puzzle.Points[1, 2].MustTraverse = true;
             puzzle.Points[1, 0].MustTraverse = true;
