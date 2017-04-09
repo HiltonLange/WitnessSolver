@@ -9,6 +9,7 @@ namespace WitnessSolver
         public char StarColorLetter;
         public readonly int X;
         public readonly int Y;
+        public int CellIndex;
 
         public Cell(List<Edge> edgeLoopClockwise, int x, int y)
         {

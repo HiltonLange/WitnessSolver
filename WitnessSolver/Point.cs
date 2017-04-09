@@ -11,6 +11,7 @@ namespace WitnessSolver
         public bool Visited;
         public bool MustTraverse;
         public bool End;
+        public int NeedCount;
 
         public Point(int x, int y)
         {

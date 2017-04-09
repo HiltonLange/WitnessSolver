@@ -29,7 +29,12 @@ namespace WitnessSolver
 
         private void puzzle_OnUpdate(object sender, Puzzle.PuzzleSolveEventArgs e)
         {
-            if (this.InvokeRequired)
+            if (this.Disposing || this.IsDisposed)
+            {
+                return;
+            }
+
+            if (this.InvokeRequired && !this.Disposing && !this.IsDisposed)
             {
                 this.Invoke(new MethodInvoker(delegate { puzzle_OnUpdate(sender, e); }));
                 return;

@@ -36,6 +36,7 @@ namespace WitnessSolver
 
         public void CalculateOptimizations()
         {
+            // Calculate which edges must be traversed because they seperate colors
             foreach (var edge in this.Edges)
             {
                 if (edge.LeftCell != null &&
@@ -48,6 +49,9 @@ namespace WitnessSolver
                 }
             }
 
+            // Calculate point into
+            // Only 2 edges into a mandatory point makes them both mandatory edges
+            // Sum up mandatory edge count from a point
             foreach (var point in this.Points)
             {
                 if (point.MustTraverse && point.OutEdges.Count == 2)
@@ -57,18 +61,26 @@ namespace WitnessSolver
                         outEdge.CalculatedMustTraverse = true;
                     }
                 }
+
+                point.NeedCount = point.OutEdges.Values.Count(edge => edge.Need);
+            }
+
+            // Number all the cells for easy enumeration
+            int cellIdx = 0;
+            foreach (var cell in this.Cells)
+            {
+                cell.CellIndex = cellIdx++;
             }
         }
 
         public void PrepareToSolve()
         {
             this.Solutions = new List<List<Edge>>();
+            this.CalculateOptimizations();
             this.Sections = new List<Section>
             {
-                new Section(new List<Cell>(this.Cells)),
+                new Section(new List<Cell>(this.Cells), this.Cells.Count),
             };
-
-            this.CalculateOptimizations();
             this.Start.Visited = true;
             this.SendUpdate(true);
         }
@@ -81,14 +93,19 @@ namespace WitnessSolver
             this.Location.Visited = true;
             edge.Traversed = true;
             this.Route.Add(edge);
+            if (edge.Need)
+            {
+                edge.Start.NeedCount--;
+                edge.End.NeedCount--;
+            }
 
             // Check for section split
             if (edge.LeftCell != null && edge.RightCell != null)
             {
                 if (this.Location.OutEdges.Values.Any(outEdge => outEdge.LeftCell == null || outEdge.RightCell == null))
                 {
-                    // Should be a section split here
-                    var oldSection = this.Sections.First(section => section.Cells.Contains(edge.LeftCell));
+                    // We have reached an outer edge, likely a section split here
+                    var oldSection = this.Sections.First(section => section.ContainsCell(edge.LeftCell));
                     var newSections = FindSubSections(oldSection.Cells);
 
                     if (newSections != null)
@@ -100,13 +117,17 @@ namespace WitnessSolver
                 }
             }
 
-            // Check if any previous unchecked sections can now be checked
-            foreach (var section in this.Sections)
+            if (good)
             {
-                var sectionGood = this.CheckSection(section);
-                if (!sectionGood && !section.Cells.Contains(edge.LeftCell) && !section.Cells.Contains(edge.RightCell))
+                // Check if any previous unchecked sections can now be checked
+                foreach (var section in this.Sections)
                 {
-                    good = false;
+                    var sectionGood = this.CheckSection(section);
+                    if (!sectionGood && !section.ContainsCell(edge.LeftCell) && !section.ContainsCell(edge.RightCell))
+                    {
+                        good = false;
+                        break;
+                    }
                 }
             }
 
@@ -119,43 +140,46 @@ namespace WitnessSolver
             this.Location = edge.Start;
             edge.Traversed = false;
             this.Route.RemoveAt(this.Route.Count - 1);
+            if (edge.Need)
+            {
+                edge.Start.NeedCount++;
+                edge.End.NeedCount++;
+            }
 
             // Check for section merge
             if (edge.LeftCell != null && edge.RightCell != null)
             {
-                var leftSection = this.Sections.First(section => section.Cells.Contains(edge.LeftCell));
-                var rightSection = this.Sections.First(section => section.Cells.Contains(edge.RightCell));
+                var leftSection = this.Sections.First(section => section.ContainsCell(edge.LeftCell));
+                var rightSection = this.Sections.First(section => section.ContainsCell(edge.RightCell));
                 if (leftSection != rightSection)
                 {
-                    var mergedSection = new Section(leftSection.Cells.Union(rightSection.Cells));
-                    this.Sections.Remove(leftSection);
+                    leftSection.UnionWith(rightSection.Cells);
                     this.Sections.Remove(rightSection);
-                    this.Sections.Add(mergedSection);
                 }
             }
         }
 
         public List<Edge> PossibleOutEdges()
         {
-            var choiceEdges = this.Location.OutEdges.Values.Where(edge => !edge.Used && edge.Valid).ToList();
-            var needEdges = choiceEdges.Where(edge => edge.Need).ToList();
-
-            // Multiple mandatory paths are impossible to follow
-            if (needEdges.Count > 1)
+            if (this.Location.NeedCount > 1)
             {
-                choiceEdges = new List<Edge>();
+                return new List<Edge>();
             }
 
-            // One mandatory path must be followed
-            if (needEdges.Count == 1)
+            var choiceEdges = this.Location.OutEdges.Values.Where(edge => !edge.Used && edge.Valid && !edge.End.Visited);
+
+            if (this.Location.NeedCount == 1)
             {
-                choiceEdges = needEdges;
+                var outEdgeList = new List<Edge>();
+                var outEdgeNeed = choiceEdges.FirstOrDefault(outEdge => outEdge.Need);
+                if (outEdgeNeed != null)
+                {
+                    outEdgeList.Add(outEdgeNeed);
+                }
+                return outEdgeList;
             }
 
-            // Only return edges where the destination node is available
-            choiceEdges = choiceEdges.Where(outEdge => !outEdge.End.Visited).ToList();
-
-            return choiceEdges;
+            return choiceEdges.ToList();
         }
 
         public bool CheckSolved()
@@ -295,29 +319,29 @@ namespace WitnessSolver
             this.Update?.Invoke(this, puzzleSolveEventArgs);
         }
 
-        private static List<Section> FindSubSections(HashSet<Cell> sectionScope)
+        private List<Section> FindSubSections(HashSet<Cell> sectionScope)
         {
             var sections = new List<Section>();
 
-            var visited = new HashSet<Cell>();
+            var visited = new bool[this.Cells.Count];
 
             foreach (var cell in sectionScope)
             {
-                if (!visited.Contains(cell))
+                if (!visited[cell.CellIndex])
                 {
                     var cells = new HashSet<Cell> { cell };
                     var cellQueue = new Queue<Cell>();
                     cellQueue.Enqueue(cell);
-                    visited.Add(cell);
+                    visited[cell.CellIndex] = true;
 
                     while (cellQueue.Count > 0)
                     {
                         var currentCell = cellQueue.Dequeue();
                         foreach (var edge in currentCell.EdgeLoopClockwise)
                         {
-                            if (!edge.Traversed && !edge.ReversedEdge.Traversed && edge.LeftCell != null && !visited.Contains(edge.LeftCell))
+                            if (!edge.Traversed && !edge.ReversedEdge.Traversed && edge.LeftCell != null && !visited[edge.LeftCell.CellIndex])
                             {
-                                visited.Add(edge.LeftCell);
+                                visited[edge.LeftCell.CellIndex] = true;
                                 cellQueue.Enqueue(edge.LeftCell);
                                 cells.Add(edge.LeftCell);
                             }
@@ -330,7 +354,7 @@ namespace WitnessSolver
                         return null;
                     }
 
-                    sections.Add(new Section(cells));
+                    sections.Add(new Section(cells, this.Cells.Count));
                 }
             }
 
