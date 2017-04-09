@@ -95,10 +95,6 @@ namespace WitnessSolver
                     if (newSections != null)
                     {
                         // Section split has occurred
-
-                        // If any of the new sections are bad, modify the puzzle state
-                        good &= newSections.Any(newSection => !this.CheckSection(newSection));
-
                         this.Sections.Remove(oldSection);
                         this.Sections.AddRange(newSections);
                     }
