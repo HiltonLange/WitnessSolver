@@ -25,10 +25,6 @@ namespace WitnessSolver
         public override bool Equals(object obj)
         {
             var other = obj as Point;
-            if (other == null)
-            {
-                return false;
-            }
 
             return other.X == this.X && other.Y == this.Y;
         }

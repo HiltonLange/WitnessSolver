@@ -20,19 +20,6 @@
         }
 
         [TestMethod]
-        public void TestComplexBeginning()
-        {
-            var puzzle = Puzzles.ComplexBeginning();
-            PuzzleSolver solver = new PuzzleSolver()
-            {
-                Puzzle = puzzle,
-            };
-
-            int solutions = solver.Solve();
-            Assert.AreEqual(puzzle.ExpectedSolutions, solutions);
-        }
-
-        [TestMethod]
         public void TestFlashing()
         {
             var puzzle = Puzzles.Flashing();
@@ -114,6 +101,20 @@
         public void TestTest55()
         {
             var puzzle = Puzzles.Test55();
+            PuzzleSolver solver = new PuzzleSolver()
+            {
+                Puzzle = puzzle,
+            };
+
+            int solutions = solver.Solve();
+            Assert.AreEqual(puzzle.ExpectedSolutions, solutions);
+        }
+
+        [TestMethod]
+        [TestCategory("Long")]
+        public void TestComplexBeginning()
+        {
+            var puzzle = Puzzles.ComplexBeginning();
             PuzzleSolver solver = new PuzzleSolver()
             {
                 Puzzle = puzzle,

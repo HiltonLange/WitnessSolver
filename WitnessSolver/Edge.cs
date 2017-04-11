@@ -42,10 +42,6 @@
         public override bool Equals(object obj)
         {
             var other = obj as Edge;
-            if (other == null)
-            {
-                return false;
-            }
 
             return other.Start.Equals(this.Start) && other.End.Equals(this.End);
         }

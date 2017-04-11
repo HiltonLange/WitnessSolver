@@ -87,8 +87,6 @@ namespace WitnessSolver
 
         public bool AddEdge(Edge edge)
         {
-            var good = true;
-
             this.Location = edge.End;
             this.Location.Visited = true;
             edge.Traversed = true;
@@ -117,17 +115,15 @@ namespace WitnessSolver
                 }
             }
 
-            if (good)
+            var good = true;
+
+            // Check if any previous unchecked sections can now be checked
+            foreach (var section in this.Sections)
             {
-                // Check if any previous unchecked sections can now be checked
-                foreach (var section in this.Sections)
+                if (!section.ContainsCell(edge.LeftCell) && !section.ContainsCell(edge.RightCell) && !this.CheckSection(section))
                 {
-                    var sectionGood = this.CheckSection(section);
-                    if (!sectionGood && !section.ContainsCell(edge.LeftCell) && !section.ContainsCell(edge.RightCell))
-                    {
-                        good = false;
-                        break;
-                    }
+                    good = false;
+                    break;
                 }
             }
 
@@ -170,13 +166,7 @@ namespace WitnessSolver
 
             if (this.Location.NeedCount == 1)
             {
-                var outEdgeList = new List<Edge>();
-                var outEdgeNeed = choiceEdges.FirstOrDefault(outEdge => outEdge.Need);
-                if (outEdgeNeed != null)
-                {
-                    outEdgeList.Add(outEdgeNeed);
-                }
-                return outEdgeList;
+                return choiceEdges.Where(edge => edge.Need).Take(1).ToList();
             }
 
             return choiceEdges.ToList();

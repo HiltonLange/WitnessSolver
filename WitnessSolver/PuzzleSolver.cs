@@ -13,11 +13,11 @@ namespace WitnessSolver
         public int Solve()
         {
             this.Puzzle.PrepareToSolve();
-            this.TryAllStepsRecursive();
+            this.TryAllStepsIterative();
             return this.Puzzle.Solutions.Count;
         }
 
-        public void TryAllStepsRecursive()
+        private void TryAllStepsRecursive()
         {
             // If this is a valid route, immediately return
             if (this.Puzzle.CheckSolved())
@@ -43,7 +43,7 @@ namespace WitnessSolver
             }
         }
 
-        public void TryAllStepsIterative()
+        private void TryAllStepsIterative()
         {
             var stack = new Stack<PuzzleSolverState>();
             stack.Push(new PuzzleSolverState());
