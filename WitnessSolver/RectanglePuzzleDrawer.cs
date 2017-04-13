@@ -91,6 +91,22 @@ namespace WitnessSolver
                         new PointF(cellXCenter - CellStarSize2, cellYCenter),
                     });
             }
+
+            if (cell.TriangleCount.HasValue)
+            {
+                int trianglesXStart = cellXCenter - ((cell.TriangleCount.Value - 1) * CellTriangleSpacing) / 2;
+                for (int i = 0; i < cell.TriangleCount.Value; i++)
+                {
+                    int triangleXCenter = trianglesXStart + i * CellTriangleSpacing;
+                    this.BufferGraphics.FillPolygon(new SolidBrush(CellTriangleColor),
+                    new[]
+                    {
+                    new PointF(triangleXCenter, cellYCenter - CellTriangleSize),
+                    new PointF(triangleXCenter - CellTriangleSize, cellYCenter + CellTriangleSize),
+                    new PointF(triangleXCenter + CellTriangleSize, cellYCenter + CellTriangleSize),
+                    });
+                }
+            }
         }
 
         protected override void DrawPoint(Point point)

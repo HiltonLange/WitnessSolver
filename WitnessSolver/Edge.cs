@@ -1,4 +1,6 @@
-﻿namespace WitnessSolver
+﻿using System.Collections.Generic;
+
+namespace WitnessSolver
 {
     class Edge
     {
@@ -49,6 +51,19 @@
         public override int GetHashCode()
         {
             return this.Start.GetHashCode() * 100007 + this.End.GetHashCode();
+        }
+
+        public IEnumerable<Cell> AdjacentCells()
+        {
+            if (this.LeftCell != null)
+            {
+                yield return this.LeftCell;
+            }
+
+            if (this.RightCell != null)
+            {
+                yield return this.RightCell;
+            }
         }
     }
 }

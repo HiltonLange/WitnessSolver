@@ -117,6 +117,16 @@ namespace WitnessSolver
 
             var good = true;
 
+            // Check that we're not going past cells too many times
+            foreach (var cell in edge.AdjacentCells())
+            {
+                if (cell.TriangleCount.HasValue)
+                {
+                    good &= cell.TriangleCount > cell.UsedEdgeCount;
+                    cell.UsedEdgeCount++;
+                }
+            }
+
             // Check if any previous unchecked sections can now be checked
             foreach (var section in this.Sections)
             {
@@ -140,6 +150,15 @@ namespace WitnessSolver
             {
                 edge.Start.NeedCount++;
                 edge.End.NeedCount++;
+            }
+
+            // Restore the triangle count
+            foreach (var cell in edge.AdjacentCells())
+            {
+                if (cell.TriangleCount.HasValue)
+                {
+                    cell.UsedEdgeCount--;
+                }
             }
 
             // Check for section merge
@@ -180,20 +199,25 @@ namespace WitnessSolver
             {
                 this.AllRouteCount++;
 
-                // Check all sections
-                var good = this.Sections.All(this.CheckSection);
+                foreach (var cell in this.Cells)
+                {
+                    if (cell.TriangleCount.HasValue && cell.TriangleCount.Value != cell.UsedEdgeCount)
+                    {
+                        return false;
+                    }
+                }
 
                 // Check edge traversals
                 foreach (var edge in this.Edges)
                 {
                     if (edge.MustTraverse && !edge.Traversed && !edge.ReversedEdge.Traversed)
                     {
-                        good = false;
+                        return false;
                     }
 
                     if (!edge.MayTraverse && (edge.Traversed || edge.ReversedEdge.Traversed))
                     {
-                        good = false;
+                        return false;
                     }
                 }
 
@@ -204,21 +228,23 @@ namespace WitnessSolver
                     {
                         if (!point.InEdges.Values.Any(edge => edge.Traversed))
                         {
-                            good = false;
+                            return false;
                         }
                     }
                 }
 
-                // Puzzle is solved!
-                if (good)
+                // Check all sections
+                if (!this.Sections.All(this.CheckSection))
                 {
-                    //this.Drawer.DrawState(true);
-                    //System.Threading.Thread.Sleep(50);
-                    //Application.DoEvents();
-                    this.GoodRouteCount++;
-                    this.Solutions.Add(new List<Edge>(this.Route));
-                    return true;
+                    return false;
                 }
+
+                // Puzzle is solved!
+                this.Drawer.DrawState(true);
+
+                this.GoodRouteCount++;
+                this.Solutions.Add(new List<Edge>(this.Route));
+                return true;
             }
 
             return false;

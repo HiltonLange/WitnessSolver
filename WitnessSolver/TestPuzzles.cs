@@ -9,112 +9,78 @@
         [TestMethod]
         private void TestAnotherPuzzle()
         {
-            var puzzle = Puzzles.AnotherPuzzle();
-            PuzzleSolver solver = new PuzzleSolver()
-            {
-                Puzzle = puzzle,
-            };
-
-            int solutions = solver.Solve();
-            Assert.AreEqual(puzzle.ExpectedSolutions, solutions);
+            TestPuzzle(Puzzles.AnotherPuzzle());
         }
 
         [TestMethod]
         public void TestFlashing()
         {
-            var puzzle = Puzzles.Flashing();
-            PuzzleSolver solver = new PuzzleSolver()
-            {
-                Puzzle = puzzle,
-            };
-
-            int solutions = solver.Solve();
-            Assert.AreEqual(puzzle.ExpectedSolutions, solutions);
+            TestPuzzle(Puzzles.Flashing());
         }
 
         [TestMethod]
         public void TestMiddleChurch()
         {
-            var puzzle = Puzzles.MiddleChurch();
-            PuzzleSolver solver = new PuzzleSolver()
-            {
-                Puzzle = puzzle,
-            };
-
-            int solutions = solver.Solve();
-            Assert.AreEqual(puzzle.ExpectedSolutions, solutions);
+            TestPuzzle(Puzzles.MiddleChurch());
         }
 
         [TestMethod]
         public void TestNewPuzzle()
         {
-            var puzzle = Puzzles.NewPuzzle();
-            PuzzleSolver solver = new PuzzleSolver()
-            {
-                Puzzle = puzzle,
-            };
-
-            int solutions = solver.Solve();
-            Assert.AreEqual(puzzle.ExpectedSolutions, solutions);
+            TestPuzzle(Puzzles.NewPuzzle());
         }
 
         [TestMethod]
         public void TestOverlays()
         {
-            var puzzle = Puzzles.Overlays();
-            PuzzleSolver solver = new PuzzleSolver()
-            {
-                Puzzle = puzzle,
-            };
-
-            int solutions = solver.Solve();
-            Assert.AreEqual(puzzle.ExpectedSolutions, solutions);
+            TestPuzzle(Puzzles.Overlays());
         }
 
         [TestMethod]
         public void TestSamplePuzzle()
         {
-            var puzzle = Puzzles.SamplePuzzle();
-            PuzzleSolver solver = new PuzzleSolver()
-            {
-                Puzzle = puzzle,
-            };
-
-            int solutions = solver.Solve();
-            Assert.AreEqual(puzzle.ExpectedSolutions, solutions);
+            TestPuzzle(Puzzles.SamplePuzzle());
         }
 
         [TestMethod]
         public void TestStartShed()
         {
-            var puzzle = Puzzles.StartShed();
-            PuzzleSolver solver = new PuzzleSolver()
-            {
-                Puzzle = puzzle,
-            };
-
-            int solutions = solver.Solve();
-            Assert.AreEqual(puzzle.ExpectedSolutions, solutions);
+            TestPuzzle(Puzzles.StartShed());
         }
 
         [TestMethod]
         public void TestTest55()
         {
-            var puzzle = Puzzles.Test55();
-            PuzzleSolver solver = new PuzzleSolver()
-            {
-                Puzzle = puzzle,
-            };
+            TestPuzzle(Puzzles.Test55());
+        }
 
-            int solutions = solver.Solve();
-            Assert.AreEqual(puzzle.ExpectedSolutions, solutions);
+        [TestMethod]
+        public void TestDistortedColors()
+        {
+            TestPuzzle(Puzzles.DistortedColors());
+        }
+
+        [TestMethod]
+        public void TestTriangle1()
+        {
+            TestPuzzle(Puzzles.Triangle1());
+        }
+
+        [TestMethod]
+        public void TestTriangle2()
+        {
+            TestPuzzle(Puzzles.Triangle2());
         }
 
         [TestMethod]
         [TestCategory("Long")]
         public void TestComplexBeginning()
         {
-            var puzzle = Puzzles.ComplexBeginning();
+            TestPuzzle(Puzzles.ComplexBeginning());
+        }
+
+        private void TestPuzzle(Puzzle puzzle)
+        {
             PuzzleSolver solver = new PuzzleSolver()
             {
                 Puzzle = puzzle,

@@ -10,6 +10,8 @@ namespace WitnessSolver
         public readonly int X;
         public readonly int Y;
         public int CellIndex;
+        public int? TriangleCount;
+        public int UsedEdgeCount;
 
         public Cell(List<Edge> edgeLoopClockwise, int x, int y)
         {
@@ -18,6 +20,7 @@ namespace WitnessSolver
             this.Y = y;
             this.SquareColorLetter = ' ';
             this.StarColorLetter = ' ';
+            this.UsedEdgeCount = 0;
         }
     }
 }
