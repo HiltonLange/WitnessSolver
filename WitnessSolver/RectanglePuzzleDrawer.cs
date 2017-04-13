@@ -27,6 +27,17 @@ namespace WitnessSolver
             var edgeY1 = edge.Start.Y * ScaleSize + GridOffset;
             var edgeY2 = edge.End.Y * ScaleSize + GridOffset;
 
+            // Account for wraparound cases
+            if (edge.Start.X == 0 && edge.End.X > 1)
+            {
+                edgeX1 = (edge.End.X + 1) * ScaleSize + GridOffset;
+            }
+
+            if (edge.End.X == 0 && edge.Start.X > 1)
+            {
+                edgeX2 = (edge.Start.X + 1) * ScaleSize + GridOffset;
+            }
+
             this.DrawPartialLine(edgePen, edgeX1, edgeY1, edgeX2, edgeY2, EdgeLengthFraction);
             //buffer.Graphics.DrawLine(pen, edgeX1 * 0.8F + edgeX2 * 0.2F, edgeY1, edgeX2, edgeY2);
 

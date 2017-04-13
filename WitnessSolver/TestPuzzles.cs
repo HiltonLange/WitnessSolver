@@ -73,6 +73,19 @@
         }
 
         [TestMethod]
+        public void TestWrapBasic()
+        {
+            TestPuzzle(Puzzles.WrapBasic());
+        }
+
+        [TestMethod]
+        [TestCategory("Long")]
+        public void TestWrapLarge()
+        {
+            TestPuzzle(Puzzles.WrapLarge());
+        }
+
+        [TestMethod]
         [TestCategory("Long")]
         public void TestComplexBeginning()
         {

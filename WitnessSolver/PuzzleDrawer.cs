@@ -53,7 +53,7 @@ namespace WitnessSolver
 
             var currentContext = BufferedGraphicsManager.Current;
             var buffer = currentContext.Allocate(this.FormGraphics,
-                new Rectangle(0, 0, (this.Puzzle.XSize + 1) * ScaleSize, (this.Puzzle.YSize + 1) * ScaleSize));
+                new Rectangle(0, 0, (this.Puzzle.XSize + 2) * ScaleSize, (this.Puzzle.YSize + 2) * ScaleSize));
             this.BufferGraphics = buffer.Graphics;
             this.BufferGraphics.Clear(Color.LightGray);
 
@@ -83,7 +83,7 @@ namespace WitnessSolver
 
             if (isSolved)
             {
-                System.Threading.Thread.Sleep(500);
+                System.Threading.Thread.Sleep(50);
             }
         }
 

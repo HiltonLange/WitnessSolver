@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace WitnessSolver
 {
     class RectanglePuzzle : Puzzle
     {
-        public readonly Cell[,] Cell;
+        public Cell[,] Cell;
 
         public RectanglePuzzle(string name, int xSize, int ySize, Point start, Point end)
         {
@@ -60,29 +61,13 @@ namespace WitnessSolver
             {
                 for (var y = 0; y < ySize; y++)
                 {
-                    var edgeLoopClockwise = new List<Edge>();
                     var corners = new Point[4];
                     corners[0] = this.Points[x, y];
                     corners[1] = this.Points[x + 1, y];
                     corners[2] = this.Points[x + 1, y + 1];
                     corners[3] = this.Points[x, y + 1];
 
-                    edgeLoopClockwise.Add(corners[0].OutEdges[corners[1]]);
-                    edgeLoopClockwise.Add(corners[1].OutEdges[corners[2]]);
-                    edgeLoopClockwise.Add(corners[2].OutEdges[corners[3]]);
-                    edgeLoopClockwise.Add(corners[3].OutEdges[corners[0]]);
-
-                    var cell = new Cell(edgeLoopClockwise, x, y);
-                    this.Cells.Add(cell);
-                    this.Cell[x, y] = cell;
-
-                    foreach (var edge in edgeLoopClockwise)
-                    {
-                        edge.RightCell = cell;
-                        edge.ReversedEdge.LeftCell = cell;
-                    }
-
-                    cell.SquareColorLetter = ' ';
+                    this.CreateCellFromPoints(corners, x, y);
                 }
             }
 
@@ -91,6 +76,74 @@ namespace WitnessSolver
             this.Location = this.Start;
 
             this.Drawer = new RectanglePuzzleDrawer(this);
+        }
+
+        public void AddWrap()
+        {
+            if (this.XSize < 2)
+            {
+                throw new ArgumentException("Cannot apply wrap to puzzles of XWidth less than 2");
+            }
+
+            // Add edges between right hand points and left hand points
+            for (int y = 0; y <= this.YSize; y++)
+            {
+                var rightPoint = this.Points[this.XSize, y];
+                var leftPoint = this.Points[0, y];
+                var e = new Edge(rightPoint, leftPoint);
+                rightPoint.OutEdges.Add(leftPoint, e);
+                leftPoint.InEdges.Add(rightPoint, e);
+                this.Edges.Add(e);
+
+                e = new Edge(leftPoint, rightPoint);
+                leftPoint.OutEdges.Add(rightPoint, e);
+                rightPoint.InEdges.Add(leftPoint, e);
+                this.Edges.Add(e);
+            }
+
+            // Make space for an extra column of cells
+            Cell[,] newCell = new Cell[this.XSize + 1, this.YSize];
+            for (int x = 0; x < this.XSize; x++)
+            {
+                for (int y = 0; y < this.YSize; y++)
+                {
+                    newCell[x, y] = this.Cell[x, y];
+                }
+            }
+            this.Cell = newCell;
+
+            // Add cells on the wraparound
+            for (int y = 0; y < this.YSize; y++)
+            {
+                var corners = new Point[4];
+                corners[0] = this.Points[this.XSize, y];
+                corners[1] = this.Points[0, y];
+                corners[2] = this.Points[0, y + 1];
+                corners[3] = this.Points[this.XSize, y + 1];
+
+                this.CreateCellFromPoints(corners, this.XSize, y);
+            }
+        }
+
+        private void CreateCellFromPoints(Point[] corners, int x, int y)
+        {
+            var edgeLoopClockwise = new List<Edge>();
+            edgeLoopClockwise.Add(corners[0].OutEdges[corners[1]]);
+            edgeLoopClockwise.Add(corners[1].OutEdges[corners[2]]);
+            edgeLoopClockwise.Add(corners[2].OutEdges[corners[3]]);
+            edgeLoopClockwise.Add(corners[3].OutEdges[corners[0]]);
+
+            var cell = new Cell(edgeLoopClockwise, x, y);
+            this.Cells.Add(cell);
+            this.Cell[x, y] = cell;
+
+            foreach (var edge in edgeLoopClockwise)
+            {
+                edge.RightCell = cell;
+                edge.ReversedEdge.LeftCell = cell;
+            }
+
+            cell.SquareColorLetter = ' ';
         }
     }
 }
