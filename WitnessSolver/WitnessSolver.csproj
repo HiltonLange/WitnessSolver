@@ -64,6 +64,7 @@
     <Compile Include="PuzzleSolverState.cs" />
     <Compile Include="Puzzles\AnotherPuzzle.cs" />
     <Compile Include="Puzzles\ComplexBeginning.cs" />
+    <Compile Include="Puzzles\DistortedColors.cs" />
     <Compile Include="Puzzles\Flashing.cs" />
     <Compile Include="Puzzles\MiddleChurch.cs" />
     <Compile Include="Puzzles\NewPuzzle.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="Puzzles\SamplePuzzle.cs" />
     <Compile Include="Puzzles\StartShed.cs" />
     <Compile Include="Puzzles\Test55.cs" />
+    <Compile Include="Puzzles\Triangles.cs" />
     <Compile Include="RectanglePuzzle.cs" />
     <Compile Include="RectanglePuzzleDrawer.cs" />
     <Compile Include="Section.cs" />

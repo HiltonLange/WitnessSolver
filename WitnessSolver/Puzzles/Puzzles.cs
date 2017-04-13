@@ -10,6 +10,7 @@ namespace WitnessSolver
             {
                 AnotherPuzzle(),
                 ComplexBeginning(),
+                DistortedColors(),
                 Flashing(),
                 MiddleChurch(),
                 NewPuzzle(),
@@ -17,6 +18,8 @@ namespace WitnessSolver
                 SamplePuzzle(),
                 StartShed(),
                 Test55(),
+                Triangle1(),
+                Triangle2(),
             };
         }
     }

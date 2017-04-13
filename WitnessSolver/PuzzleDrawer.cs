@@ -16,6 +16,9 @@ namespace WitnessSolver
         internal const int CellSquareSize = 14;
         internal const int CellStarSize1 = 7;
         internal const int CellStarSize2 = 10;
+        internal const int CellTriangleSize = 7;
+        internal const int CellTriangleSpacing = 15;
+        internal Color CellTriangleColor = Color.Orange;
 
         public Graphics FormGraphics;
         protected Graphics BufferGraphics;
@@ -37,9 +40,11 @@ namespace WitnessSolver
             this.Puzzle = puzzle;
         }
 
+        public bool IsInitialized => this.FormGraphics != null;
+
         public void DrawState(bool isSolved)
         {
-            if (this.FormGraphics == null)
+            if (!this.IsInitialized)
             {
                 return;
             }
@@ -75,6 +80,11 @@ namespace WitnessSolver
             }
 
             buffer.Render();
+
+            if (isSolved)
+            {
+                System.Threading.Thread.Sleep(500);
+            }
         }
 
         protected abstract void DrawPoint(Point point);
