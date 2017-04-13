@@ -14,6 +14,7 @@ namespace WitnessSolver
         {
             this.Puzzle.PrepareToSolve();
             this.TryAllStepsIterative();
+            this.Puzzle.SendUpdate(true);
             return this.Puzzle.Solutions.Count;
         }
 

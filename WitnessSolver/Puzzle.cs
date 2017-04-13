@@ -83,7 +83,8 @@ namespace WitnessSolver
                 new Section(new List<Cell>(this.Cells), this.Cells.Count),
             };
             this.Start.Visited = true;
-            this.SendUpdate(true);
+            this.SendUpdate(false);
+            this.Drawer.DrawState(false);
         }
 
         public bool AddEdge(Edge edge)
@@ -105,7 +106,7 @@ namespace WitnessSolver
                 {
                     // We have reached an outer edge, likely a section split here
                     var oldSection = this.Sections.First(section => section.ContainsCell(edge.LeftCell));
-                    var newSections = this.FindSubSections(oldSection.Cells);
+                    var newSections = oldSection.FindSubSections();
 
                     if (newSections != null)
                     {
@@ -132,7 +133,7 @@ namespace WitnessSolver
             // Check if any previous unchecked sections can now be checked
             foreach (var section in this.Sections)
             {
-                if (!section.ContainsCell(edge.LeftCell) && !section.ContainsCell(edge.RightCell) && !this.CheckSection(section))
+                if (!section.ContainsCell(edge.LeftCell) && !section.ContainsCell(edge.RightCell) && !section.CheckSection())
                 {
                     good = false;
                     break;
@@ -171,7 +172,7 @@ namespace WitnessSolver
                 if (!leftSection.ContainsCell(edge.RightCell))
                 {
                     var rightSection = this.Sections.First(section => section.ContainsCell(edge.RightCell));
-                    leftSection.UnionWith(rightSection.Cells);
+                    leftSection.UnionWith(rightSection);
                     this.Sections.Remove(rightSection);
                 }
             }
@@ -229,13 +230,14 @@ namespace WitnessSolver
                 }
 
                 // Check all sections
-                if (!this.Sections.All(this.CheckSection))
+                if (!this.Sections.All(section => section.CheckSection()))
                 {
                     return false;
                 }
 
                 // Puzzle is solved!
                 this.Drawer.DrawState(true);
+                this.SendUpdate(false);
 
                 this.GoodRouteCount++;
                 this.Solutions.Add(new List<Edge>(this.Route));
@@ -251,72 +253,6 @@ namespace WitnessSolver
             return false;
         }
 
-        private bool CheckSection(Section section)
-        {
-            if (section.Checked)
-            {
-                return section.Correct;
-            }
-
-            var good = true;
-
-            var squareLetters = new HashSet<char>();
-            var starLetters = new HashSet<char>();
-            var colorLetterCount = new Dictionary<char, int>();
-            foreach (var cell in section.Cells)
-            {
-                // Check for square
-                if (cell.SquareColorLetter != ' ')
-                {
-                    squareLetters.Add(cell.SquareColorLetter);
-                    if (!colorLetterCount.ContainsKey(cell.SquareColorLetter))
-                    {
-                        colorLetterCount[cell.SquareColorLetter] = 0;
-                    }
-
-                    colorLetterCount[cell.SquareColorLetter]++;
-                }
-
-                // Check for star
-                if (cell.StarColorLetter != ' ')
-                {
-                    starLetters.Add(cell.StarColorLetter);
-                    if (!colorLetterCount.ContainsKey(cell.StarColorLetter))
-                    {
-                        colorLetterCount[cell.StarColorLetter] = 0;
-                    }
-
-                    colorLetterCount[cell.StarColorLetter]++;
-                }
-
-                // Check for triangle
-                if (cell.TriangleCount.HasValue && cell.TriangleCount.Value != cell.UsedEdgeCount)
-                {
-                    good = false;
-                    break;
-                }
-            }
-
-            // Only 1 square of a color allowed
-            if (squareLetters.Count > 1)
-            {
-                good = false;
-            }
-
-            // A star indicates exactly 2 of that color
-            foreach (var starLetter in starLetters)
-            {
-                if (colorLetterCount[starLetter] != 2)
-                {
-                    good = false;
-                }
-            }
-
-            section.Checked = true;
-            section.Correct = good;
-            return good;
-        }
-
         private void PeriodicDraw()
         {
             this.StepCount++;
@@ -330,7 +266,7 @@ namespace WitnessSolver
             }
         }
 
-        private void SendUpdate(bool isDone)
+        public void SendUpdate(bool isDone)
         {
             var puzzleSolveEventArgs = new PuzzleSolveEventArgs()
             {
@@ -341,43 +277,6 @@ namespace WitnessSolver
             };
 
             this.Update?.Invoke(this, puzzleSolveEventArgs);
-        }
-
-        private List<Section> FindSubSections(HashSet<Cell> sectionScope)
-        {
-            var sections = new List<Section>();
-
-            var visited = new bool[this.Cells.Count];
-            var startCell = sectionScope.First();
-
-            var cells = new HashSet<Cell> { startCell };
-            var cellQueue = new Queue<Cell>(cells);
-            visited[startCell.CellIndex] = true;
-
-            while (cellQueue.Count > 0)
-            {
-                var currentCell = cellQueue.Dequeue();
-                foreach (var edge in currentCell.EdgeLoopClockwise)
-                {
-                    if (!edge.Traversed && !edge.ReversedEdge.Traversed && edge.LeftCell != null && !visited[edge.LeftCell.CellIndex])
-                    {
-                        visited[edge.LeftCell.CellIndex] = true;
-                        cellQueue.Enqueue(edge.LeftCell);
-                        cells.Add(edge.LeftCell);
-                    }
-                }
-            }
-
-            if (cells.Count == sectionScope.Count)
-            {
-                // Section is intact
-                return null;
-            }
-
-            sections.Add(new Section(cells, this.Cells.Count));
-            sections.Add(new Section(sectionScope.Where(cell => !visited[cell.CellIndex]), this.Cells.Count));
-
-            return sections;
         }
 
         public override string ToString()
