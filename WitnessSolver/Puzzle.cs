@@ -34,7 +34,7 @@ namespace WitnessSolver
         public PuzzleDrawer Drawer;
         public long ExpectedSolutions;
 
-        public void CalculateOptimizations()
+        private void CalculateOptimizations()
         {
             // Calculate which edges must be traversed because they seperate colors
             foreach (var edge in this.Edges)
@@ -104,7 +104,7 @@ namespace WitnessSolver
                 {
                     // We have reached an outer edge, likely a section split here
                     var oldSection = this.Sections.First(section => section.ContainsCell(edge.LeftCell));
-                    var newSections = FindSubSections(oldSection.Cells);
+                    var newSections = this.FindSubSections(oldSection.Cells);
 
                     if (newSections != null)
                     {
@@ -146,9 +146,9 @@ namespace WitnessSolver
             if (edge.LeftCell != null && edge.RightCell != null)
             {
                 var leftSection = this.Sections.First(section => section.ContainsCell(edge.LeftCell));
-                var rightSection = this.Sections.First(section => section.ContainsCell(edge.RightCell));
-                if (leftSection != rightSection)
+                if (!leftSection.ContainsCell(edge.RightCell))
                 {
+                    var rightSection = this.Sections.First(section => section.ContainsCell(edge.RightCell));
                     leftSection.UnionWith(rightSection.Cells);
                     this.Sections.Remove(rightSection);
                 }
@@ -186,14 +186,15 @@ namespace WitnessSolver
                 // Check edge traversals
                 foreach (var edge in this.Edges)
                 {
-                    if (edge.MustTraverse && !edge.Traversed && !edge.ReversedEdge.Traversed)
+                    if (edge.Used)
                     {
-                        good = false;
+                        // If edge is used, check if you may traverse it
+                        good &= edge.MayTraverse;
                     }
-
-                    if (!edge.MayTraverse && (edge.Traversed || edge.ReversedEdge.Traversed))
+                    else
                     {
-                        good = false;
+                        // If edge is unused, check if you must traverse it
+                        good &= !edge.MustTraverse;
                     }
                 }
 
@@ -314,39 +315,34 @@ namespace WitnessSolver
             var sections = new List<Section>();
 
             var visited = new bool[this.Cells.Count];
+            var startCell = sectionScope.First();
 
-            foreach (var cell in sectionScope)
+            var cells = new HashSet<Cell> { startCell };
+            var cellQueue = new Queue<Cell>(cells);
+            visited[startCell.CellIndex] = true;
+
+            while (cellQueue.Count > 0)
             {
-                if (!visited[cell.CellIndex])
+                var currentCell = cellQueue.Dequeue();
+                foreach (var edge in currentCell.EdgeLoopClockwise)
                 {
-                    var cells = new HashSet<Cell> { cell };
-                    var cellQueue = new Queue<Cell>();
-                    cellQueue.Enqueue(cell);
-                    visited[cell.CellIndex] = true;
-
-                    while (cellQueue.Count > 0)
+                    if (!edge.Traversed && !edge.ReversedEdge.Traversed && edge.LeftCell != null && !visited[edge.LeftCell.CellIndex])
                     {
-                        var currentCell = cellQueue.Dequeue();
-                        foreach (var edge in currentCell.EdgeLoopClockwise)
-                        {
-                            if (!edge.Traversed && !edge.ReversedEdge.Traversed && edge.LeftCell != null && !visited[edge.LeftCell.CellIndex])
-                            {
-                                visited[edge.LeftCell.CellIndex] = true;
-                                cellQueue.Enqueue(edge.LeftCell);
-                                cells.Add(edge.LeftCell);
-                            }
-                        }
+                        visited[edge.LeftCell.CellIndex] = true;
+                        cellQueue.Enqueue(edge.LeftCell);
+                        cells.Add(edge.LeftCell);
                     }
-
-                    if (cells.Count == sectionScope.Count)
-                    {
-                        // Section is intact
-                        return null;
-                    }
-
-                    sections.Add(new Section(cells, this.Cells.Count));
                 }
             }
+
+            if (cells.Count == sectionScope.Count)
+            {
+                // Section is intact
+                return null;
+            }
+
+            sections.Add(new Section(cells, this.Cells.Count));
+            sections.Add(new Section(sectionScope.Where(cell => !visited[cell.CellIndex]), this.Cells.Count));
 
             return sections;
         }
