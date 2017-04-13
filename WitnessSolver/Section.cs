@@ -8,25 +8,32 @@ namespace WitnessSolver
         public readonly HashSet<Cell> Cells;
         public bool Checked;
         public bool Correct;
-        private readonly bool[] containsCell;
         internal readonly int cellMax;
 
         public Section(IEnumerable<Cell> cells, int cellMax)
+            : this(cellMax)
         {
             this.Cells = new HashSet<Cell>(cells);
-            this.Checked = false;
-            this.containsCell = new bool[cellMax];
-            this.cellMax = cellMax;
-            this.CalculateContainedCells();
+            foreach (var cell in cells)
+            {
+                cell.Section = this;
+            }
         }
 
         public Section(HashSet<Cell> cells, int cellMax)
+            : this(cellMax)
         {
             this.Cells = cells;
-            this.Checked = false;
-            this.containsCell = new bool[cellMax];
+            foreach (var cell in cells)
+            {
+                cell.Section = this;
+            }
+        }
+
+        private Section(int cellMax)
+        {
             this.cellMax = cellMax;
-            this.CalculateContainedCells();
+            this.Checked = false;
         }
 
         public void UnionWith(Section section)
@@ -34,27 +41,9 @@ namespace WitnessSolver
             this.Cells.UnionWith(section.Cells);
             foreach (var cell in section.Cells)
             {
-                this.containsCell[cell.CellIndex] = true;
+                cell.Section = this;
             }
             this.Checked = false;
-        }
-
-        public bool ContainsCell(Cell cell)
-        {
-            if (cell == null)
-            {
-                return false;
-            }
-
-            return this.containsCell[cell.CellIndex];
-        }
-
-        public void CalculateContainedCells()
-        {
-            foreach (var cell in this.Cells)
-            {
-                this.containsCell[cell.CellIndex] = true;
-            }
         }
 
         public bool CheckSection()

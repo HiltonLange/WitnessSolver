@@ -105,7 +105,7 @@ namespace WitnessSolver
                 if (this.Location.OutEdges.Values.Any(outEdge => outEdge.LeftCell == null || outEdge.RightCell == null))
                 {
                     // We have reached an outer edge, likely a section split here
-                    var oldSection = this.Sections.First(section => section.ContainsCell(edge.LeftCell));
+                    var oldSection = edge.LeftCell.Section;
                     var newSections = oldSection.FindSubSections();
 
                     if (newSections != null)
@@ -122,7 +122,7 @@ namespace WitnessSolver
             // Check that we're not going past cells too many times
             foreach (var cell in edge.AdjacentCells())
             {
-                this.Sections.First(section => section.ContainsCell(cell)).Checked = false;
+               cell.Section.Checked = false;
                 if (cell.TriangleCount.HasValue)
                 {
                     good &= cell.TriangleCount > cell.UsedEdgeCount;
@@ -133,7 +133,17 @@ namespace WitnessSolver
             // Check if any previous unchecked sections can now be checked
             foreach (var section in this.Sections)
             {
-                if (!section.ContainsCell(edge.LeftCell) && !section.ContainsCell(edge.RightCell) && !section.CheckSection())
+                if (edge.LeftCell != null && edge.LeftCell.Section == section)
+                {
+                    continue;
+                }
+
+                if (edge.RightCell != null && edge.RightCell.Section == section)
+                {
+                    continue;
+                }
+
+                if (!section.CheckSection())
                 {
                     good = false;
                     break;
@@ -158,7 +168,7 @@ namespace WitnessSolver
             // Restore the triangle count
             foreach (var cell in edge.AdjacentCells())
             {
-                this.Sections.First(section => section.ContainsCell(cell)).Checked = false;
+                cell.Section.Checked = false;
                 if (cell.TriangleCount.HasValue)
                 {
                     cell.UsedEdgeCount--;
@@ -168,11 +178,10 @@ namespace WitnessSolver
             // Check for section merge
             if (edge.LeftCell != null && edge.RightCell != null)
             {
-                var leftSection = this.Sections.First(section => section.ContainsCell(edge.LeftCell));
-                if (!leftSection.ContainsCell(edge.RightCell))
+                if (edge.LeftCell.Section != edge.RightCell.Section)
                 {
-                    var rightSection = this.Sections.First(section => section.ContainsCell(edge.RightCell));
-                    leftSection.UnionWith(rightSection);
+                    var rightSection = edge.RightCell.Section;
+                    edge.LeftCell.Section.UnionWith(rightSection);
                     this.Sections.Remove(rightSection);
                 }
             }

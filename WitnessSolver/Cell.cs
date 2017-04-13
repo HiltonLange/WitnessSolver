@@ -12,6 +12,7 @@ namespace WitnessSolver
         public int CellIndex;
         public int? TriangleCount;
         public int UsedEdgeCount;
+        public Section Section;
 
         public Cell(List<Edge> edgeLoopClockwise, int x, int y)
         {
