@@ -85,6 +85,8 @@ namespace WitnessSolver
                 throw new ArgumentException("Cannot apply wrap to puzzles of XWidth less than 2");
             }
 
+            this.Wrap = true;
+
             // Add edges between right hand points and left hand points
             for (int y = 0; y <= this.YSize; y++)
             {

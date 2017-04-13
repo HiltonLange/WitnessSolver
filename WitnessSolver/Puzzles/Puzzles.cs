@@ -20,6 +20,7 @@ namespace WitnessSolver
                 Test55(),
                 Triangle1(),
                 Triangle2(),
+                TriangleOptimization(),
                 WrapBasic(),
                 WrapLarge(),
             };

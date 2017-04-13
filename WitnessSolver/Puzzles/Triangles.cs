@@ -21,5 +21,19 @@
 
             return puzzle;
         }
+
+        public static Puzzle TriangleOptimization()
+        {
+            var puzzle = new RectanglePuzzle("TriangleOptimization", 6, 5, new Point(0, 5), new Point(6, 0));
+            puzzle.ExpectedSolutions = 0;
+
+            puzzle.Cell[0, 4].TriangleCount = 3;
+            puzzle.Points[0, 5].OutEdges[puzzle.Points[0, 4]].MustTraverse = true;
+            puzzle.Points[0, 4].OutEdges[puzzle.Points[1, 4]].MustTraverse = true;
+            puzzle.Points[1, 4].OutEdges[puzzle.Points[2, 4]].MustTraverse = true;
+            puzzle.Points[2, 4].OutEdges[puzzle.Points[2, 5]].MustTraverse = true;
+
+            return puzzle;
+        }
     }
 }

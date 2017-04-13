@@ -33,6 +33,7 @@ namespace WitnessSolver
 
         public PuzzleDrawer Drawer;
         public long ExpectedSolutions;
+        public bool Wrap;
 
         private void CalculateOptimizations()
         {
@@ -199,14 +200,6 @@ namespace WitnessSolver
             {
                 this.AllRouteCount++;
 
-                foreach (var cell in this.Cells)
-                {
-                    if (cell.TriangleCount.HasValue && cell.TriangleCount.Value != cell.UsedEdgeCount)
-                    {
-                        return false;
-                    }
-                }
-
                 // Check edge traversals
                 foreach (var edge in this.Edges)
                 {
@@ -286,6 +279,13 @@ namespace WitnessSolver
                     }
 
                     colorLetterCount[cell.StarColorLetter]++;
+                }
+
+                // Check for triangle
+                if (cell.TriangleCount.HasValue && cell.TriangleCount.Value != cell.UsedEdgeCount)
+                {
+                    good = false;
+                    break;
                 }
             }
 

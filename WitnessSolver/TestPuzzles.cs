@@ -73,6 +73,12 @@
         }
 
         [TestMethod]
+        public void TestTriangleOptimization()
+        {
+            TestPuzzle(Puzzles.TriangleOptimization());
+        }
+
+        [TestMethod]
         public void TestWrapBasic()
         {
             TestPuzzle(Puzzles.WrapBasic());
