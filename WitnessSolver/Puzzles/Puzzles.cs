@@ -21,6 +21,7 @@ namespace WitnessSolver
                 Triangle1(),
                 Triangle2(),
                 TriangleOptimization(),
+                TriangleSectionTrap(),
                 WrapBasic(),
                 WrapLarge(),
             };

@@ -35,5 +35,21 @@
 
             return puzzle;
         }
+
+        public static Puzzle TriangleSectionTrap()
+        {
+            var puzzle = new RectanglePuzzle("TriangleSectionTrap", 3, 2, new Point(3, 1), new Point(1, 1));
+            puzzle.ExpectedSolutions = 1;
+
+            puzzle.Cell[1, 0].TriangleCount = 1;
+            puzzle.Points[0, 1].OutEdges[puzzle.Points[1, 1]].MayTraverse = false;
+            puzzle.Points[0, 2].OutEdges[puzzle.Points[1, 2]].MayTraverse = false;
+            puzzle.Points[1, 0].OutEdges[puzzle.Points[1, 1]].MayTraverse = false;
+            puzzle.Points[2, 0].OutEdges[puzzle.Points[2, 1]].MayTraverse = false;
+            puzzle.Points[3, 0].OutEdges[puzzle.Points[3, 1]].MayTraverse = false;
+            puzzle.Points[2, 1].OutEdges[puzzle.Points[2, 2]].MayTraverse = false;
+
+            return puzzle;
+        }
     }
 }

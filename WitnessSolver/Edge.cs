@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace WitnessSolver
 {
@@ -31,6 +32,56 @@ namespace WitnessSolver
         private Edge reversedEdge;
 
         public Edge ReversedEdge => this.reversedEdge ?? (this.reversedEdge = this.End.OutEdges[this.Start]);
+
+        private char? shortName;
+
+        public char ShortName
+        {
+            get
+            {
+                if (this.shortName.HasValue)
+                {
+                    return this.shortName.Value;
+                }
+                int dx = this.End.X - this.Start.X;
+                int dy = this.End.Y - this.Start.Y;
+                if (dx > 1)
+                {
+                    dx = -1;
+                }
+                if (dx < -1)
+                {
+                    dx = 1;
+                }
+
+                if (dx == 1 && dy == 0)
+                {
+                    this.shortName = 'R';
+                }
+
+                if (dx == -1 && dy == 0)
+                {
+                    this.shortName = 'L';
+                }
+
+                if (dx == 0 && dy == 1)
+                {
+                    this.shortName = 'D';
+                }
+
+                if (dx == 0 && dy == -1)
+                {
+                    this.shortName = 'U';
+                }
+
+                if (!this.shortName.HasValue)
+                {
+                    throw new Exception("This edge has unexpected dx and dy");
+                }
+
+                return this.shortName.Value;
+            }
+        }
 
         public Edge(Point start, Point end)
         {

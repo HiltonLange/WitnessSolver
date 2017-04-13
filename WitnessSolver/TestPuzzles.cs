@@ -79,6 +79,12 @@
         }
 
         [TestMethod]
+        public void TestTriangleSectionTrap()
+        {
+            TestPuzzle(Puzzles.TriangleSectionTrap());
+        }
+
+        [TestMethod]
         public void TestWrapBasic()
         {
             TestPuzzle(Puzzles.WrapBasic());

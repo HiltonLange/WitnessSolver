@@ -121,6 +121,7 @@ namespace WitnessSolver
             // Check that we're not going past cells too many times
             foreach (var cell in edge.AdjacentCells())
             {
+                this.Sections.First(section => section.ContainsCell(cell)).Checked = false;
                 if (cell.TriangleCount.HasValue)
                 {
                     good &= cell.TriangleCount > cell.UsedEdgeCount;
@@ -156,6 +157,7 @@ namespace WitnessSolver
             // Restore the triangle count
             foreach (var cell in edge.AdjacentCells())
             {
+                this.Sections.First(section => section.ContainsCell(cell)).Checked = false;
                 if (cell.TriangleCount.HasValue)
                 {
                     cell.UsedEdgeCount--;
@@ -237,6 +239,12 @@ namespace WitnessSolver
 
                 this.GoodRouteCount++;
                 this.Solutions.Add(new List<Edge>(this.Route));
+                char[] route = new char[this.Route.Count];
+                for (int i = 0; i < this.Route.Count; i++)
+                {
+                    route[i] = this.Route[i].ShortName;
+                }
+                System.Diagnostics.Debug.WriteLine(new string(route));
                 return true;
             }
 
