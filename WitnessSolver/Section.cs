@@ -115,19 +115,9 @@ namespace WitnessSolver
             }
 
             // Check tetris
-            if (tetrisList.Count > 0)
+            if (good && tetrisList.Count > 0)
             {
-                if (tetrisList.Count > 1)
-                {
-                    // Multiple tetris not supported yet
-                    good = false;
-                }
-
-                if (!tetrisList[0].Equals(new Tetris(this)))
-                {
-                    // Shape doesn't match tetris
-                    good = false;
-                }
+                good &= SectionTetrisChecker.CanContainExactly(this, tetrisList);
             }
 
             this.Checked = true;

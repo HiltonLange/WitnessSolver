@@ -79,6 +79,7 @@
     <Compile Include="RectanglePuzzle.cs" />
     <Compile Include="RectanglePuzzleDrawer.cs" />
     <Compile Include="Section.cs" />
+    <Compile Include="SectionTetrisChecker.cs" />
     <Compile Include="TestPuzzles.cs" />
     <Compile Include="Tetris.cs" />
     <EmbeddedResource Include="Form1.resx">

@@ -91,9 +91,33 @@
         }
 
         [TestMethod]
-        public void TestTetris1()
+        public void TestTetrisSimple()
         {
-            TestPuzzle(Puzzles.Tetris1());
+            TestPuzzle(Puzzles.TetrisSimple());
+        }
+
+        [TestMethod]
+        public void TestTetrisCombine()
+        {
+            TestPuzzle(Puzzles.TetrisCombine());
+        }
+
+        [TestMethod]
+        public void TestTetrisComplex()
+        {
+            TestPuzzle(Puzzles.TetrisComplex());
+        }
+
+        [TestMethod]
+        public void TestTetrisBasicNegative()
+        {
+            TestPuzzle(Puzzles.TetrisBasicNegative());
+        }
+
+        [TestMethod]
+        public void TestTetrisBasicNegative2()
+        {
+            TestPuzzle(Puzzles.TetrisBasicNegative2());
         }
 
         [TestMethod]
