@@ -13,6 +13,7 @@ namespace WitnessSolver
         public bool AnyRotation = false;
         public int XMax { get; protected set; }
         public int YMax { get; protected set; }
+        public char ColorLetter = ' ';
 
         public bool HasNegative { get; protected set; }
 

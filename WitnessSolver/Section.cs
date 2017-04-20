@@ -96,6 +96,16 @@ namespace WitnessSolver
                 if (cell.Tetris != null)
                 {
                     tetrisList.Add(cell.Tetris);
+
+                    if (cell.Tetris.ColorLetter != ' ')
+                    {
+                        if (!colorLetterCount.ContainsKey(cell.Tetris.ColorLetter))
+                        {
+                            colorLetterCount[cell.Tetris.ColorLetter] = 0;
+                        }
+
+                        colorLetterCount[cell.Tetris.ColorLetter]++;
+                    }
                 }
             }
 

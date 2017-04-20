@@ -126,5 +126,50 @@ namespace WitnessSolver
 
             return puzzle;
         }
+
+        public static Puzzle TunnelTetrisPuzzle()
+        {
+            var puzzle = new RectanglePuzzle("Tunnel tetris puzzle", 5, 5, new Point(0, 5), new Point(5, 0));
+            puzzle.ExpectedSolutions = 4;
+
+            puzzle.Cell[0, 0].Tetris = new Tetris(
+                new List<TetrisCell>
+                {
+                    new TetrisCell(0,0),
+                });
+            puzzle.Cell[0, 0].Tetris.AnyRotation = true;
+
+            puzzle.Cell[0, 2].Tetris = new Tetris(
+                new List<TetrisCell>
+                {
+                    new TetrisCell(1,0),
+                    new TetrisCell(0,1),
+                    new TetrisCell(1,2),
+                });
+            puzzle.Cell[0, 2].Tetris.AnyRotation = true;
+
+            puzzle.Cell[4, 2].Tetris = new Tetris(
+                new List<TetrisCell>
+                {
+                    new TetrisCell(1,0),
+                    new TetrisCell(0,1),
+                    new TetrisCell(1,2),
+                });
+            puzzle.Cell[4, 2].Tetris.AnyRotation = true;
+
+            puzzle.Cell[2, 4].Tetris = new Tetris(
+                new List<TetrisCell>
+                {
+                    new TetrisCell(0,0),
+                    new TetrisCell(0,1),
+                    new TetrisCell(0,2),
+                    new TetrisCell(1,2),
+                });
+            puzzle.Cell[2, 4].Tetris.AnyRotation = true;
+
+            puzzle.Points[2, 1].OutEdges[puzzle.Points[2, 2]].MayTraverse = false;
+
+            return puzzle;
+        }
     }
 }

@@ -121,6 +121,12 @@
         }
 
         [TestMethod]
+        public void TestTunnelPuzzle()
+        {
+            TestPuzzle(Puzzles.TunnelPuzzle());
+        }
+
+        [TestMethod]
         [TestCategory("Long")]
         public void TestWrapLarge()
         {

@@ -13,19 +13,26 @@ namespace WitnessSolver
         internal const int StartSize = 20;
         internal const int EndSize = 7;
         internal const int PathThickness = 5;
+
         internal const int CellSquareSize = 14;
         internal const int CellStarSize1 = 7;
         internal const int CellStarSize2 = 10;
+
         internal const int CellTriangleSize = 7;
         internal const int CellTriangleSpacing = 15;
         internal Color CellTriangleColor = Color.Orange;
+
+        internal const int CellTetrisSize = 7;
+        internal const int CellTetrisSpacing = 5;
+        internal Color CellTetrisColor = Color.Red;
+        internal Color CellTetrisNegativeColor = Color.Blue;
 
         public Graphics FormGraphics;
         protected Graphics BufferGraphics;
         protected Puzzle Puzzle;
 
         public bool DrawAllGoodRoutes = true;
-        public int GoodRouteShowTimeMs = 1000;
+        public int GoodRouteShowTimeMs = 10000;
         public bool Decay = true;
         public double DecayRate = 0.9;
 

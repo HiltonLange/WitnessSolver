@@ -75,6 +75,7 @@
     <Compile Include="Puzzles\Test55.cs" />
     <Compile Include="Puzzles\Tetrises.cs" />
     <Compile Include="Puzzles\Triangles.cs" />
+    <Compile Include="Puzzles\TunnelPuzzle.cs" />
     <Compile Include="Puzzles\WrapPuzzles.cs" />
     <Compile Include="RectanglePuzzle.cs" />
     <Compile Include="RectanglePuzzleDrawer.cs" />

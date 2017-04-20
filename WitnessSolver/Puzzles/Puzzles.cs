@@ -29,6 +29,8 @@ namespace WitnessSolver
                 TriangleSectionTrap(),
                 WrapBasic(),
                 WrapLarge(),
+                TunnelPuzzle(),
+                TunnelTetrisPuzzle(),
             };
         }
     }

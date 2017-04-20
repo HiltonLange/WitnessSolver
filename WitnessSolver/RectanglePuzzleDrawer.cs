@@ -73,6 +73,17 @@ namespace WitnessSolver
             var cellXCenter = cell.X * ScaleSize + ScaleSize / 2 + GridOffset;
             var cellYCenter = cell.Y * ScaleSize + ScaleSize / 2 + GridOffset;
 
+            DrawCellSquare(cell, cellXCenter, cellYCenter);
+
+            DrawCellStar(cell, cellXCenter, cellYCenter);
+
+            DrawCellTriangle(cell, cellXCenter, cellYCenter);
+
+            DrawCellTetris(cell, cellXCenter, cellYCenter);
+        }
+
+        private void DrawCellSquare(Cell cell, int cellXCenter, int cellYCenter)
+        {
             if (cell.SquareColorLetter != ' ')
             {
                 this.BufferGraphics.FillRectangle(new SolidBrush(this.LetterColor[cell.SquareColorLetter]),
@@ -81,7 +92,10 @@ namespace WitnessSolver
                     CellSquareSize,
                     CellSquareSize);
             }
+        }
 
+        private void DrawCellStar(Cell cell, int cellXCenter, int cellYCenter)
+        {
             if (cell.StarColorLetter != ' ')
             {
                 this.BufferGraphics.FillPolygon(new SolidBrush(this.LetterColor[cell.StarColorLetter]),
@@ -102,7 +116,10 @@ namespace WitnessSolver
                         new PointF(cellXCenter - CellStarSize2, cellYCenter),
                     });
             }
+        }
 
+        private void DrawCellTriangle(Cell cell, int cellXCenter, int cellYCenter)
+        {
             if (cell.TriangleCount.HasValue)
             {
                 int trianglesXStart = cellXCenter - ((cell.TriangleCount.Value - 1) * CellTriangleSpacing) / 2;
@@ -116,6 +133,28 @@ namespace WitnessSolver
                     new PointF(triangleXCenter - CellTriangleSize, cellYCenter + CellTriangleSize),
                     new PointF(triangleXCenter + CellTriangleSize, cellYCenter + CellTriangleSize),
                     });
+                }
+            }
+        }
+
+        private void DrawCellTetris(Cell cell, int cellXCenter, int cellYCenter)
+        {
+            if (cell.Tetris != null)
+            {
+                foreach (var tetrisCell in cell.Tetris.TetrisCells)
+                {
+                    int drawX = cellXCenter + (2 * tetrisCell.X - cell.Tetris.XMax) * CellTetrisSpacing;
+                    int drawY = cellYCenter + (2 * tetrisCell.Y - cell.Tetris.YMax) * CellTetrisSpacing;
+
+                    if (tetrisCell.Count > 0)
+                    {
+                        this.BufferGraphics.FillRectangle(new SolidBrush(CellTetrisColor),
+                            drawX, drawY, CellTetrisSize, CellTetrisSize);
+                    } else
+                    {
+                        this.BufferGraphics.DrawRectangle(new Pen(CellTetrisNegativeColor),
+                            drawX, drawY, CellTetrisSize, CellTetrisSize);
+                    }
                 }
             }
         }
