@@ -23,6 +23,7 @@ namespace WitnessSolver
                 TetrisComplex(),
                 TetrisBasicNegative(),
                 TetrisBasicNegative2(),
+                TetrisRotationPuzzle(),
                 Triangle1(),
                 Triangle2(),
                 TriangleOptimization(),

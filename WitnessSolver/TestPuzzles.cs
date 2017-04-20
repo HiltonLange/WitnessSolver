@@ -127,6 +127,18 @@
         }
 
         [TestMethod]
+        public void TestTetrisRotation()
+        {
+            TestPuzzle(Puzzles.TetrisRotationPuzzle());
+        }
+
+        [TestMethod]
+        public void TestTunnelTetris()
+        {
+            TestPuzzle(Puzzles.TunnelTetrisPuzzle());
+        }
+
+        [TestMethod]
         [TestCategory("Long")]
         public void TestWrapLarge()
         {

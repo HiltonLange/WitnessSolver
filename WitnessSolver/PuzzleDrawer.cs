@@ -22,7 +22,7 @@ namespace WitnessSolver
         internal const int CellTriangleSpacing = 15;
         internal Color CellTriangleColor = Color.Orange;
 
-        internal const int CellTetrisSize = 7;
+        internal const int CellTetrisSize = 4;
         internal const int CellTetrisSpacing = 5;
         internal Color CellTetrisColor = Color.Red;
         internal Color CellTetrisNegativeColor = Color.Blue;
@@ -32,7 +32,7 @@ namespace WitnessSolver
         protected Puzzle Puzzle;
 
         public bool DrawAllGoodRoutes = true;
-        public int GoodRouteShowTimeMs = 10000;
+        public int GoodRouteShowTimeMs = 1000;
         public bool Decay = true;
         public double DecayRate = 0.9;
 

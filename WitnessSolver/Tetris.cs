@@ -9,10 +9,8 @@ namespace WitnessSolver
 {
     class Tetris
     {
-        // TODO: Add rotation support
-        // TODO: Improve constructor
         public List<TetrisCell> TetrisCells;
-        public bool AnyRotation = false;
+        public readonly bool AnyRotation;
         public int XMax { get; protected set; }
         public int YMax { get; protected set; }
         public char ColorLetter = ' ';

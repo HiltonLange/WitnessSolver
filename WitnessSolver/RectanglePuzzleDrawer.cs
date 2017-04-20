@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace WitnessSolver
 {
@@ -143,20 +144,57 @@ namespace WitnessSolver
             {
                 foreach (var tetrisCell in cell.Tetris.TetrisCells)
                 {
-                    int drawX = cellXCenter + (2 * tetrisCell.X - cell.Tetris.XMax) * CellTetrisSpacing;
-                    int drawY = cellYCenter + (2 * tetrisCell.Y - cell.Tetris.YMax) * CellTetrisSpacing;
+                    float tetrisCellXCenter = (2 * tetrisCell.X - cell.Tetris.XMax) * CellTetrisSpacing;
+                    float tetrisCellYCenter = (2 * tetrisCell.Y - cell.Tetris.YMax) * CellTetrisSpacing;
+
+                    var tetrisCellXCorners = new float[]
+                    {
+                        -CellTetrisSize, CellTetrisSize, CellTetrisSize, -CellTetrisSize,
+                    };
+                    var tetrisCellYCorners = new float[]
+                    {
+                        CellTetrisSize, CellTetrisSize, -CellTetrisSize, -CellTetrisSize,
+                    };
+
+                    if (cell.Tetris.AnyRotation)
+                    {
+                        Rotate30(ref tetrisCellXCenter, ref tetrisCellYCenter);
+                        for (int i = 0; i < 4; i++)
+                        {
+                            Rotate30(ref tetrisCellXCorners[i], ref tetrisCellYCorners[i]);
+                        }
+                    }
+
+                    tetrisCellXCenter += cellXCenter;
+                    tetrisCellYCenter += cellYCenter;
+
+                    var tetrisCellCorners = new[]
+                    {
+                        new PointF(tetrisCellXCenter + tetrisCellXCorners[0], tetrisCellYCenter + tetrisCellYCorners[0]),
+                        new PointF(tetrisCellXCenter + tetrisCellXCorners[1], tetrisCellYCenter + tetrisCellYCorners[1]),
+                        new PointF(tetrisCellXCenter + tetrisCellXCorners[2], tetrisCellYCenter + tetrisCellYCorners[2]),
+                        new PointF(tetrisCellXCenter + tetrisCellXCorners[3], tetrisCellYCenter + tetrisCellYCorners[3]),
+                    };
 
                     if (tetrisCell.Count > 0)
                     {
-                        this.BufferGraphics.FillRectangle(new SolidBrush(CellTetrisColor),
-                            drawX, drawY, CellTetrisSize, CellTetrisSize);
-                    } else
+                        this.BufferGraphics.FillPolygon(new SolidBrush(CellTetrisColor), tetrisCellCorners);
+                    }
+                    else
                     {
-                        this.BufferGraphics.DrawRectangle(new Pen(CellTetrisNegativeColor),
-                            drawX, drawY, CellTetrisSize, CellTetrisSize);
+                        this.BufferGraphics.DrawPolygon(new Pen(CellTetrisColor), tetrisCellCorners);
                     }
                 }
             }
+        }
+
+        private static void Rotate30(ref float x, ref float y)
+        {
+            double angle = -30 * Math.PI / 180;
+            double newX = Math.Cos(angle) * x - Math.Sin(angle) * y;
+            double newY = Math.Sin(angle) * x + Math.Cos(angle) * y;
+            x = (float) newX;
+            y = (float) newY;
         }
 
         protected override void DrawPoint(Point point)
