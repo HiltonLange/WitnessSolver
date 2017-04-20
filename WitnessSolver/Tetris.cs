@@ -9,6 +9,8 @@ namespace WitnessSolver
 {
     class Tetris
     {
+        // TODO: Add rotation support
+        // TODO: Improve constructor
         public List<TetrisCell> TetrisCells;
         public bool AnyRotation = false;
         public int XMax { get; protected set; }
@@ -16,6 +18,8 @@ namespace WitnessSolver
         public char ColorLetter = ' ';
 
         public bool HasNegative { get; protected set; }
+
+        public readonly List<Tetris> Orientations;
 
         public void Normalize()
         {
@@ -45,10 +49,30 @@ namespace WitnessSolver
             }
         }
 
-        public Tetris(List<TetrisCell> tetrisCells)
+        public Tetris(List<TetrisCell> tetrisCells, char colorLetter = ' ', bool anyRotation = false)
         {
             this.TetrisCells = tetrisCells;
+            this.ColorLetter = colorLetter;
+            this.AnyRotation = anyRotation;
             this.Normalize();
+            this.Orientations = new List<Tetris> { this };
+
+            if (this.AnyRotation)
+            {
+                this.Orientations.Add(this.Orientations[0].RotateClockwise());
+                this.Orientations.Add(this.Orientations[1].RotateClockwise());
+                this.Orientations.Add(this.Orientations[2].RotateClockwise());
+            }
+        }
+
+        private Tetris RotateClockwise()
+        {
+            List<TetrisCell> newCells = new List<TetrisCell>();
+            foreach (var tetrisCell in this.TetrisCells)
+            {
+                newCells.Add(new TetrisCell(this.YMax - tetrisCell.Y, tetrisCell.X, tetrisCell.Count));
+            }
+            return new Tetris(newCells, this.ColorLetter, false);
         }
     }
 

@@ -6,6 +6,9 @@ namespace WitnessSolver
 {
     internal abstract class Puzzle
     {
+        // TODO Support reflections
+        // TODO Support error cells
+
         protected string Name;
 
         public Point Start;

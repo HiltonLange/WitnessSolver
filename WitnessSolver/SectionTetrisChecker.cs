@@ -52,36 +52,36 @@ namespace WitnessSolver
                 return true;
             }
 
-            Tetris tetris = sortedTetrisList[tetrisIndex];
-
-            for (int x = 0; x <= xMax - tetris.XMax; x++)
+            foreach (var tetris in sortedTetrisList[tetrisIndex].Orientations)
             {
-                for (int y = 0; y <= yMax - tetris.YMax; y++)
+                for (int x = 0; x <= xMax - tetris.XMax; x++)
                 {
-                    bool good = true;
-                    foreach (var tetrisCell in tetris.TetrisCells)
+                    for (int y = 0; y <= yMax - tetris.YMax; y++)
                     {
-                        int count = emptyCellCount[tetrisCell.X + x, tetrisCell.Y + y] -= tetrisCell.Count;
-                        good &= count >= 0;
-                    }
-
-                    if (good)
-                    {
-                        if (CanContainExactly(sortedTetrisList, tetrisIndex+1, emptyCellCount, xMax, yMax))
+                        bool good = true;
+                        foreach (var tetrisCell in tetris.TetrisCells)
                         {
-                            return true;
+                            int count = emptyCellCount[tetrisCell.X + x, tetrisCell.Y + y] -= tetrisCell.Count;
+                            good &= count >= 0;
                         }
-                    }
 
-                    foreach (var tetrisCell in tetris.TetrisCells)
-                    {
-                        emptyCellCount[tetrisCell.X + x, tetrisCell.Y + y] += tetrisCell.Count;
+                        if (good)
+                        {
+                            if (CanContainExactly(sortedTetrisList, tetrisIndex + 1, emptyCellCount, xMax, yMax))
+                            {
+                                return true;
+                            }
+                        }
+
+                        foreach (var tetrisCell in tetris.TetrisCells)
+                        {
+                            emptyCellCount[tetrisCell.X + x, tetrisCell.Y + y] += tetrisCell.Count;
+                        }
                     }
                 }
             }
 
             return false;
         }
-
     }
 }
