@@ -58,6 +58,7 @@ namespace WitnessSolver
             var squareLetters = new HashSet<char>();
             var starLetters = new HashSet<char>();
             var colorLetterCount = new Dictionary<char, int>();
+            var tetrisList = new List<Tetris>();
             foreach (var cell in this.Cells)
             {
                 // Check for square
@@ -90,6 +91,12 @@ namespace WitnessSolver
                     good = false;
                     break;
                 }
+
+                // Check for tetris
+                if (cell.Tetris != null)
+                {
+                    tetrisList.Add(cell.Tetris);
+                }
             }
 
             // Only 1 square of a color allowed
@@ -103,6 +110,22 @@ namespace WitnessSolver
             {
                 if (colorLetterCount[starLetter] != 2)
                 {
+                    good = false;
+                }
+            }
+
+            // Check tetris
+            if (tetrisList.Count > 0)
+            {
+                if (tetrisList.Count > 1)
+                {
+                    // Multiple tetris not supported yet
+                    good = false;
+                }
+
+                if (!tetrisList[0].Equals(new Tetris(this)))
+                {
+                    // Shape doesn't match tetris
                     good = false;
                 }
             }

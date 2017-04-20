@@ -25,8 +25,9 @@ namespace WitnessSolver
         protected Puzzle Puzzle;
 
         public bool DrawAllGoodRoutes = true;
-        public int GoodRouteShowTimeMs = 2000;
+        public int GoodRouteShowTimeMs = 1000;
         public bool Decay = true;
+        public double DecayRate = 0.9;
 
         internal readonly Dictionary<char, Color> LetterColor = new Dictionary<char, Color>
         {
@@ -95,7 +96,7 @@ namespace WitnessSolver
                 System.Threading.Thread.Sleep(this.GoodRouteShowTimeMs);
                 if (this.Decay)
                 {
-                    this.GoodRouteShowTimeMs = (int)(this.GoodRouteShowTimeMs * 0.95);
+                    this.GoodRouteShowTimeMs = (int)(this.GoodRouteShowTimeMs * this.DecayRate);
                 }
             }
         }

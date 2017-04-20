@@ -13,6 +13,7 @@ namespace WitnessSolver
         public int? TriangleCount;
         public int UsedEdgeCount;
         public Section Section;
+        public Tetris Tetris;
 
         public Cell(List<Edge> edgeLoopClockwise, int x, int y)
         {

@@ -73,12 +73,14 @@
     <Compile Include="Puzzles\SamplePuzzle.cs" />
     <Compile Include="Puzzles\StartShed.cs" />
     <Compile Include="Puzzles\Test55.cs" />
+    <Compile Include="Puzzles\Tetrises.cs" />
     <Compile Include="Puzzles\Triangles.cs" />
     <Compile Include="Puzzles\WrapPuzzles.cs" />
     <Compile Include="RectanglePuzzle.cs" />
     <Compile Include="RectanglePuzzleDrawer.cs" />
     <Compile Include="Section.cs" />
     <Compile Include="TestPuzzles.cs" />
+    <Compile Include="Tetris.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

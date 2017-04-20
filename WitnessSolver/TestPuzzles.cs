@@ -91,6 +91,12 @@
         }
 
         [TestMethod]
+        public void TestTetris1()
+        {
+            TestPuzzle(Puzzles.Tetris1());
+        }
+
+        [TestMethod]
         [TestCategory("Long")]
         public void TestWrapLarge()
         {
