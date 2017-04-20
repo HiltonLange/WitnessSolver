@@ -245,17 +245,11 @@ namespace WitnessSolver
                 }
 
                 // Puzzle is solved!
-                this.Drawer.DrawState(true);
-                this.SendUpdate(false);
+                this.Drawer.DrawState(isSolved: true);
+                this.SendUpdate(isDone: false);
 
                 this.GoodRouteCount++;
                 this.Solutions.Add(new List<Edge>(this.Route));
-                char[] route = new char[this.Route.Count];
-                for (int i = 0; i < this.Route.Count; i++)
-                {
-                    route[i] = this.Route[i].ShortName;
-                }
-                System.Diagnostics.Debug.WriteLine(new string(route));
                 return true;
             }
 

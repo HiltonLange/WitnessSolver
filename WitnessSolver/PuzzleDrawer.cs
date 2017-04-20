@@ -24,6 +24,10 @@ namespace WitnessSolver
         protected Graphics BufferGraphics;
         protected Puzzle Puzzle;
 
+        public bool DrawAllGoodRoutes = true;
+        public int GoodRouteShowTimeMs = 2000;
+        public bool Decay = true;
+
         internal readonly Dictionary<char, Color> LetterColor = new Dictionary<char, Color>
         {
             {'R', Color.Red },
@@ -45,6 +49,11 @@ namespace WitnessSolver
         public void DrawState(bool isSolved)
         {
             if (!this.IsInitialized)
+            {
+                return;
+            }
+
+            if (isSolved && !this.DrawAllGoodRoutes)
             {
                 return;
             }
@@ -83,7 +92,11 @@ namespace WitnessSolver
 
             if (isSolved)
             {
-                System.Threading.Thread.Sleep(50);
+                System.Threading.Thread.Sleep(this.GoodRouteShowTimeMs);
+                if (this.Decay)
+                {
+                    this.GoodRouteShowTimeMs = (int)(this.GoodRouteShowTimeMs * 0.95);
+                }
             }
         }
 
