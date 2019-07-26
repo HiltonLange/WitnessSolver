@@ -32,6 +32,7 @@ namespace WitnessSolver
                 WrapLarge(),
                 TunnelPuzzle(),
                 TunnelTetrisPuzzle(),
+                TetrisCross(),
             };
         }
     }
