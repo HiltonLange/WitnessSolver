@@ -198,6 +198,43 @@ namespace WitnessSolver
             return puzzle;
         }
 
+        public static Puzzle Tetris3And3()
+        {
+            var puzzle = new RectanglePuzzle("Tetris3And3", 4, 4, new Point(0, 4), new Point(4, 0));
+            puzzle.ExpectedSolutions = 1;
+
+            puzzle.Cell[0, 1].Tetris = new Tetris(
+                new List<TetrisCell>
+                {
+                    new TetrisCell(0,0),
+                    new TetrisCell(0,1),
+                    new TetrisCell(0,2),
+                },
+                anyRotation: true);
+
+            puzzle.Cell[3, 1].Tetris = new Tetris(
+                new List<TetrisCell>
+                {
+                    new TetrisCell(0,0),
+                    new TetrisCell(0,1),
+                    new TetrisCell(0,2),
+                },
+                anyRotation: true);
+
+            for (int x = 0; x <= 4; x++)
+            {
+                for (int y = 0; y <= 4; y++)
+                {
+                    puzzle.Points[x, y].MustTraverse = true;
+                }
+            }
+
+            puzzle.Points[0, 4].MustTraverse = false;
+            puzzle.Points[4, 0].MustTraverse = false;
+
+            return puzzle;
+        }
+
         public static Puzzle TetrisCross()
         {
             var puzzle = new RectanglePuzzle("TetrisCross", 5, 5, new Point(0, 5), new Point(5, 0));

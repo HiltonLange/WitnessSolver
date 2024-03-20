@@ -18,6 +18,7 @@ namespace WitnessSolver
                 SamplePuzzle(),
                 StartShed(),
                 Test55(),
+                Tetris3And3(),
                 TetrisSimple(),
                 TetrisCombine(),
                 TetrisComplex(),

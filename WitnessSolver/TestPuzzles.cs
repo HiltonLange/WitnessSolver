@@ -133,6 +133,12 @@
         }
 
         [TestMethod]
+        public void TestTetris3And3()
+        {
+            TestPuzzle(Puzzles.Tetris3And3());
+        }
+
+        [TestMethod]
         public void TestTunnelTetris()
         {
             TestPuzzle(Puzzles.TunnelTetrisPuzzle());
