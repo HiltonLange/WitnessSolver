@@ -32,10 +32,10 @@ namespace WitnessSolver
 
         public List<List<Edge>> Solutions;
 
-        // Incremental counters to replace O(|Edges|) and O(|Points|) loops in CheckSolved
-        private int _mustTraverseEdgeRemaining;   // edges with MustTraverse not yet traversed
-        private int _invalidMayTraverseCount;     // !MayTraverse edges that have been traversed
-        private int _mustTraversePointRemaining;  // MustTraverse points not yet visited
+        // Pre-filtered lists for CheckSolved — built once in PrepareToSolve
+        private List<Edge> _mustTraverseEdges;   // edges where MustTraverse=true
+        private List<Edge> _mustNotTraverseEdges; // edges where MayTraverse=false
+        private List<Point> _mustTraversePoints;  // points where MustTraverse=true
 
         public event EventHandler<PuzzleSolveEventArgs> Update;
 
@@ -91,20 +91,18 @@ namespace WitnessSolver
                 new Section(new List<Cell>(this.Cells), this.Cells.Count),
             };
 
-            // Initialise incremental counters
-            _mustTraverseEdgeRemaining = 0;
-            _invalidMayTraverseCount = 0;
-            _mustTraversePointRemaining = 0;
+            // Pre-build small filtered lists for CheckSolved
+            _mustTraverseEdges = new List<Edge>();
+            _mustNotTraverseEdges = new List<Edge>();
+            _mustTraversePoints = new List<Point>();
             foreach (var edge in this.Edges)
             {
-                if (edge.MustTraverse) _mustTraverseEdgeRemaining++;
-                if (!edge.MayTraverse) _invalidMayTraverseCount++; // forbidden edges start as not-traversed (good)
+                if (edge.MustTraverse) _mustTraverseEdges.Add(edge);
+                if (!edge.MayTraverse) _mustNotTraverseEdges.Add(edge);
             }
-            // forbidden edges not traversed is fine — count starts at 0 meaning no bad traversals
-            _invalidMayTraverseCount = 0; // reset: count only TRAVERSED forbidden edges
             foreach (var point in this.Points)
             {
-                if (point.MustTraverse) _mustTraversePointRemaining++;
+                if (point.MustTraverse) _mustTraversePoints.Add(point);
             }
 
             this.Start.Visited = true;
@@ -118,11 +116,6 @@ namespace WitnessSolver
             this.Location.Visited = true;
             edge.Traversed = true;
             this.Route.Add(edge);
-
-            // Update incremental counters
-            if (edge.MustTraverse) _mustTraverseEdgeRemaining--;
-            if (!edge.MayTraverse) _invalidMayTraverseCount++;
-            if (edge.End.MustTraverse) _mustTraversePointRemaining--;
 
             if (edge.Need)
             {
@@ -191,11 +184,6 @@ namespace WitnessSolver
             edge.Traversed = false;
             this.Route.RemoveAt(this.Route.Count - 1);
 
-            // Restore incremental counters
-            if (edge.MustTraverse) _mustTraverseEdgeRemaining++;
-            if (!edge.MayTraverse) _invalidMayTraverseCount--;
-            if (edge.End.MustTraverse) _mustTraversePointRemaining++;
-
             if (edge.Need)
             {
                 edge.Start.NeedCount++;
@@ -249,10 +237,28 @@ namespace WitnessSolver
             {
                 this.AllRouteCount++;
 
-                // Check edge and point traversals via incremental counters (O(1))
-                if (_mustTraverseEdgeRemaining > 0 || _invalidMayTraverseCount > 0 || _mustTraversePointRemaining > 0)
+                // Check edge traversals (only the constrained edges, not all edges)
+                for (int i = 0; i < _mustTraverseEdges.Count; i++)
                 {
-                    return false;
+                    var e = _mustTraverseEdges[i];
+                    if (!e.Traversed && !e.ReversedEdge.Traversed) return false;
+                }
+                for (int i = 0; i < _mustNotTraverseEdges.Count; i++)
+                {
+                    var e = _mustNotTraverseEdges[i];
+                    if (e.Traversed || e.ReversedEdge.Traversed) return false;
+                }
+
+                // Check point traversals (only constrained points)
+                for (int i = 0; i < _mustTraversePoints.Count; i++)
+                {
+                    var p = _mustTraversePoints[i];
+                    bool anyTraversed = false;
+                    foreach (var inEdge in p.InEdges.Values)
+                    {
+                        if (inEdge.Traversed) { anyTraversed = true; break; }
+                    }
+                    if (!anyTraversed) return false;
                 }
 
                 // Check all sections
