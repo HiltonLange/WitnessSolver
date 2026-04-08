@@ -9,7 +9,7 @@ namespace WitnessSolver
         // TODO Support reflections
         // TODO Support error cells
 
-        protected string Name;
+        public string Name;
 
         public Point Start;
         protected Point Location;

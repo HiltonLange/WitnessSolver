@@ -1,75 +1,52 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WitnessSolver
 {
     public class PuzzleSolver
     {
         public Puzzle Puzzle;
+        public SolverGraph Graph;
 
         public int Solve()
         {
+            if (this.Graph != null)
+                return SolveGraph();
+            return SolveLegacy();
+        }
+
+        private int SolveLegacy()
+        {
             this.Puzzle.PrepareToSolve();
-            this.TryAllStepsIterative();
+            this.TryAllStepsLegacy();
             this.Puzzle.SendUpdate(true);
             return this.Puzzle.Solutions.Count;
         }
 
-        private void TryAllStepsRecursive()
+        private int SolveGraph()
         {
-            // If this is a valid route, immediately return
-            if (this.Puzzle.CheckSolved())
-            {
-                return;
-            }
-
-            // Enumerate valid out edges
-            var validEdges = this.Puzzle.PossibleOutEdges();
-
-            foreach (var outEdge in validEdges)
-            {
-                // Add an edge and check we haven't broken anything
-                var goodMove = this.Puzzle.AddEdge(outEdge);
-                if (goodMove)
-                {
-                    // If we can still move forward, then attempt to do so
-                    this.TryAllStepsRecursive();
-                }
-
-                // Undo added edge, restoring previous state
-                this.Puzzle.RemoveEdge(outEdge);
-            }
+            this.TryAllStepsGraph();
+            this.Graph.SendUpdate(true);
+            return this.Graph.Solutions.Count;
         }
 
-        private void TryAllStepsIterative()
+        private void TryAllStepsGraph()
         {
-            var stack = new Stack<PuzzleSolverState>();
-            stack.Push(new PuzzleSolverState());
+            var stack = new Stack<SolverState>();
+            stack.Push(new SolverState());
 
             while (stack.Count > 0)
             {
-                // Look at the next state on the stack to be processed
                 var state = stack.Peek();
 
                 if (state.Edges == null)
                 {
-                    // We've just arrived at this node. Enumerate possible out nodes
-
-                    if (this.Puzzle.CheckSolved())
+                    if (this.Graph.CheckSolved())
                     {
-                        // The puzzle is solved, pop this off the stack
                         stack.Pop();
                     }
                     else
                     {
-                        // The puzzle is unsolved, enumerate out edges
-                        var choiceEdges = this.Puzzle.PossibleOutEdges();
-                        state.Edges = choiceEdges;
-
-                        // Prepare iterator
+                        state.Edges = this.Graph.PossibleOutEdges();
                         state.EdgePointer = 0;
                         state.EdgeProcessed = false;
                     }
@@ -78,26 +55,65 @@ namespace WitnessSolver
                 {
                     if (state.EdgePointer < state.Edges.Count)
                     {
-                        // Iterator is pointing at an edge to process
                         var outEdge = state.Edges[state.EdgePointer];
 
                         if (!state.EdgeProcessed)
                         {
-                            // Edge is not processed
-                            var goodMove = this.Puzzle.AddEdge(outEdge);
-
-                            if (goodMove)
-                            {
-                                // Push the next node onto the stack
-                                var newState = new PuzzleSolverState();
-                                stack.Push(newState);
-                            }
-
+                            if (this.Graph.AddEdge(outEdge))
+                                stack.Push(new SolverState());
                             state.EdgeProcessed = true;
                         }
                         else
                         {
-                            // Edge has been processed, undo change
+                            this.Graph.RemoveEdge(outEdge);
+                            state.EdgePointer++;
+                            state.EdgeProcessed = false;
+                        }
+                    }
+                    else
+                    {
+                        stack.Pop();
+                    }
+                }
+            }
+        }
+
+        private void TryAllStepsLegacy()
+        {
+            var stack = new Stack<PuzzleSolverState>();
+            stack.Push(new PuzzleSolverState());
+
+            while (stack.Count > 0)
+            {
+                var state = stack.Peek();
+
+                if (state.Edges == null)
+                {
+                    if (this.Puzzle.CheckSolved())
+                    {
+                        stack.Pop();
+                    }
+                    else
+                    {
+                        state.Edges = this.Puzzle.PossibleOutEdges();
+                        state.EdgePointer = 0;
+                        state.EdgeProcessed = false;
+                    }
+                }
+                else
+                {
+                    if (state.EdgePointer < state.Edges.Count)
+                    {
+                        var outEdge = state.Edges[state.EdgePointer];
+
+                        if (!state.EdgeProcessed)
+                        {
+                            if (this.Puzzle.AddEdge(outEdge))
+                                stack.Push(new PuzzleSolverState());
+                            state.EdgeProcessed = true;
+                        }
+                        else
+                        {
                             this.Puzzle.RemoveEdge(outEdge);
                             state.EdgePointer++;
                             state.EdgeProcessed = false;
@@ -105,11 +121,17 @@ namespace WitnessSolver
                     }
                     else
                     {
-                        // Iterator is complete, pop this off the stack
                         stack.Pop();
                     }
                 }
             }
+        }
+
+        private class SolverState
+        {
+            public List<SolverEdge> Edges;
+            public int EdgePointer;
+            public bool EdgeProcessed;
         }
     }
 }

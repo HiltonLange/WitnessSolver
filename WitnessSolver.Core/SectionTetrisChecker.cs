@@ -14,12 +14,23 @@ namespace WitnessSolver
             int yMin = int.MaxValue;
             int xMax = int.MinValue;
             int yMax = int.MinValue;
-            foreach (var cell in section.Cells)
+
+            // Work with whichever cell set the section has
+            if (section.SolverCells != null)
             {
-                xMin = Math.Min(xMin, cell.X);
-                xMax = Math.Max(xMax, cell.X);
-                yMin = Math.Min(yMin, cell.Y);
-                yMax = Math.Max(yMax, cell.Y);
+                foreach (var cell in section.SolverCells)
+                {
+                    xMin = Math.Min(xMin, cell.X); xMax = Math.Max(xMax, cell.X);
+                    yMin = Math.Min(yMin, cell.Y); yMax = Math.Max(yMax, cell.Y);
+                }
+            }
+            else
+            {
+                foreach (var cell in section.Cells)
+                {
+                    xMin = Math.Min(xMin, cell.X); xMax = Math.Max(xMax, cell.X);
+                    yMin = Math.Min(yMin, cell.Y); yMax = Math.Max(yMax, cell.Y);
+                }
             }
 
             bool hasNegative = tetrisList.Any(tetris => tetris.HasNegative);
@@ -28,10 +39,21 @@ namespace WitnessSolver
             int[,] emptyCellCount = new int[xMax - xMin + 1 + 2 * buffer, yMax - yMin + 1 + 2 * buffer];
             int emptyCells = 0;
 
-            foreach (var cell in section.Cells)
+            if (section.SolverCells != null)
             {
-                emptyCellCount[cell.X - xMin + buffer, cell.Y - yMin + buffer]++;
-                emptyCells++;
+                foreach (var cell in section.SolverCells)
+                {
+                    emptyCellCount[cell.X - xMin + buffer, cell.Y - yMin + buffer]++;
+                    emptyCells++;
+                }
+            }
+            else
+            {
+                foreach (var cell in section.Cells)
+                {
+                    emptyCellCount[cell.X - xMin + buffer, cell.Y - yMin + buffer]++;
+                    emptyCells++;
+                }
             }
 
             int requiredCells = tetrisList.Sum<Tetris>(tetris => tetris.TetrisCells.Sum(tetrisCell => tetrisCell.Count));

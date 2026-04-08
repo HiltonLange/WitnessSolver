@@ -159,9 +159,10 @@ namespace WitnessSolver
 
         private void TestPuzzle(Puzzle puzzle)
         {
+            var graph = SolverGraph.Compile(puzzle);
             PuzzleSolver solver = new PuzzleSolver()
             {
-                Puzzle = puzzle,
+                Graph = graph,
             };
 
             int solutions = solver.Solve();
