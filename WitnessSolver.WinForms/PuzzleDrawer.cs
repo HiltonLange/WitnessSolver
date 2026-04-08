@@ -29,7 +29,7 @@ namespace WitnessSolver
 
         public Graphics FormGraphics;
         protected Graphics BufferGraphics;
-        protected Puzzle Puzzle;
+        protected SolverGraph Graph;
 
         public bool DrawAllGoodRoutes = true;
         public int GoodRouteShowTimeMs = 1000;
@@ -47,12 +47,16 @@ namespace WitnessSolver
             {'P', Color.Purple },
         };
 
-        protected PuzzleDrawer(Puzzle puzzle)
+        protected PuzzleDrawer()
         {
-            this.Puzzle = puzzle;
         }
 
-        public bool IsInitialized => this.FormGraphics != null;
+        public void SetGraph(SolverGraph graph)
+        {
+            this.Graph = graph;
+        }
+
+        public bool IsInitialized => this.FormGraphics != null && this.Graph != null;
 
         public void DrawState(bool isSolved)
         {
@@ -70,30 +74,30 @@ namespace WitnessSolver
 
             var currentContext = BufferedGraphicsManager.Current;
             var buffer = currentContext.Allocate(this.FormGraphics,
-                new Rectangle(0, 0, (this.Puzzle.XSize + (this.Puzzle.Wrap ? 2 : 1)) * ScaleSize, (this.Puzzle.YSize + 1) * ScaleSize));
+                new Rectangle(0, 0, (this.Graph.XSize + (this.Graph.Wrap ? 2 : 1)) * ScaleSize, (this.Graph.YSize + 1) * ScaleSize));
             this.BufferGraphics = buffer.Graphics;
             this.BufferGraphics.Clear(Color.LightGray);
 
-            foreach (var edge in this.Puzzle.Edges)
+            foreach (var edge in this.Graph.Edges)
             {
                 this.DrawEdge(edge, Pens.Gray, Pens.LightGray);
             }
 
-            foreach (var edge in this.Puzzle.Route)
+            foreach (var edge in this.Graph.Route)
             {
                 this.DrawEdge(edge, new Pen(lineColor, PathThickness), new Pen(Color.LightGray, PathThickness));
             }
 
             this.DrawStart();
 
-            foreach (var cell in this.Puzzle.Cells)
+            foreach (var cell in this.Graph.Cells)
             {
                 this.DrawCell(cell);
             }
 
-            foreach (var point in this.Puzzle.Points)
+            foreach (var node in this.Graph.Nodes)
             {
-                this.DrawPoint(point);
+                this.DrawNode(node);
             }
 
             buffer.Render();
@@ -108,12 +112,12 @@ namespace WitnessSolver
             }
         }
 
-        protected abstract void DrawPoint(Point point);
+        protected abstract void DrawNode(SolverNode node);
 
-        protected abstract void DrawCell(Cell cell);
+        protected abstract void DrawCell(SolverCell cell);
 
         protected abstract void DrawStart();
 
-        protected abstract void DrawEdge(Edge edge, Pen edgePen, Pen backgroundPen);
+        protected abstract void DrawEdge(SolverEdge edge, Pen edgePen, Pen backgroundPen);
     }
 }

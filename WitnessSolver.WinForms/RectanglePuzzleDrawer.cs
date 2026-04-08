@@ -5,23 +5,21 @@ namespace WitnessSolver
 {
     internal class RectanglePuzzleDrawer : PuzzleDrawer
     {
-        public RectanglePuzzleDrawer(Puzzle puzzle)
-            : base(puzzle)
+        public RectanglePuzzleDrawer()
         {
-            this.Puzzle = puzzle;
         }
 
         protected override void DrawStart()
         {
             this.BufferGraphics.FillEllipse(
                 Brushes.Black,
-                this.Puzzle.Start.X * ScaleSize + GridOffset - StartSize / 2,
-                this.Puzzle.Start.Y * ScaleSize + GridOffset - StartSize / 2,
+                this.Graph.Start.X * ScaleSize + GridOffset - StartSize / 2,
+                this.Graph.Start.Y * ScaleSize + GridOffset - StartSize / 2,
                 StartSize,
                 StartSize);
         }
 
-        protected override void DrawEdge(Edge edge, Pen edgePen, Pen backgroundPen)
+        protected override void DrawEdge(SolverEdge edge, Pen edgePen, Pen backgroundPen)
         {
             var edgeX1 = edge.Start.X * ScaleSize + GridOffset;
             var edgeX2 = edge.End.X * ScaleSize + GridOffset;
@@ -40,14 +38,13 @@ namespace WitnessSolver
             }
 
             this.DrawPartialLine(edgePen, edgeX1, edgeY1, edgeX2, edgeY2, EdgeLengthFraction);
-            //buffer.Graphics.DrawLine(pen, edgeX1 * 0.8F + edgeX2 * 0.2F, edgeY1, edgeX2, edgeY2);
 
-            if (!edge.MayTraverse || !edge.ReversedEdge.MayTraverse)
+            if (!edge.MayTraverse || !edge.Reverse.MayTraverse)
             {
                 this.DrawPartialLine(backgroundPen, edgeX1, edgeY1, edgeX2, edgeY2, EdgeBrokenLengthFraction);
             }
 
-            if (edge.MustTraverse || edge.ReversedEdge.MustTraverse)
+            if (edge.MustTraverse || edge.Reverse.MustTraverse)
             {
                 this.BufferGraphics.DrawRectangle(
                     Pens.Red,
@@ -69,25 +66,22 @@ namespace WitnessSolver
                 y2 * lengthFraction + y1 * (1 - lengthFraction));
         }
 
-        protected override void DrawCell(Cell cell)
+        protected override void DrawCell(SolverCell cell)
         {
             var cellXCenter = cell.X * ScaleSize + ScaleSize / 2 + GridOffset;
             var cellYCenter = cell.Y * ScaleSize + ScaleSize / 2 + GridOffset;
 
             DrawCellSquare(cell, cellXCenter, cellYCenter);
-
             DrawCellStar(cell, cellXCenter, cellYCenter);
-
             DrawCellTriangle(cell, cellXCenter, cellYCenter);
-
             DrawCellTetris(cell, cellXCenter, cellYCenter);
         }
 
-        private void DrawCellSquare(Cell cell, int cellXCenter, int cellYCenter)
+        private void DrawCellSquare(SolverCell cell, int cellXCenter, int cellYCenter)
         {
-            if (cell.SquareColorLetter != ' ')
+            if (cell.SquareColor != ' ')
             {
-                this.BufferGraphics.FillRectangle(new SolidBrush(this.LetterColor[cell.SquareColorLetter]),
+                this.BufferGraphics.FillRectangle(new SolidBrush(this.LetterColor[cell.SquareColor]),
                     cellXCenter - CellSquareSize / 2,
                     cellYCenter - CellSquareSize / 2,
                     CellSquareSize,
@@ -95,11 +89,11 @@ namespace WitnessSolver
             }
         }
 
-        private void DrawCellStar(Cell cell, int cellXCenter, int cellYCenter)
+        private void DrawCellStar(SolverCell cell, int cellXCenter, int cellYCenter)
         {
-            if (cell.StarColorLetter != ' ')
+            if (cell.StarColor != ' ')
             {
-                this.BufferGraphics.FillPolygon(new SolidBrush(this.LetterColor[cell.StarColorLetter]),
+                this.BufferGraphics.FillPolygon(new SolidBrush(this.LetterColor[cell.StarColor]),
                     new[]
                     {
                         new PointF(cellXCenter - CellStarSize1, cellYCenter + CellStarSize1),
@@ -108,7 +102,7 @@ namespace WitnessSolver
                         new PointF(cellXCenter - CellStarSize1, cellYCenter - CellStarSize1),
                     });
 
-                this.BufferGraphics.FillPolygon(new SolidBrush(this.LetterColor[cell.StarColorLetter]),
+                this.BufferGraphics.FillPolygon(new SolidBrush(this.LetterColor[cell.StarColor]),
                     new[]
                     {
                         new PointF(cellXCenter, cellYCenter + CellStarSize2),
@@ -119,7 +113,7 @@ namespace WitnessSolver
             }
         }
 
-        private void DrawCellTriangle(Cell cell, int cellXCenter, int cellYCenter)
+        private void DrawCellTriangle(SolverCell cell, int cellXCenter, int cellYCenter)
         {
             if (cell.TriangleCount.HasValue)
             {
@@ -130,15 +124,15 @@ namespace WitnessSolver
                     this.BufferGraphics.FillPolygon(new SolidBrush(CellTriangleColor),
                     new[]
                     {
-                    new PointF(triangleXCenter, cellYCenter - CellTriangleSize),
-                    new PointF(triangleXCenter - CellTriangleSize, cellYCenter + CellTriangleSize),
-                    new PointF(triangleXCenter + CellTriangleSize, cellYCenter + CellTriangleSize),
+                        new PointF(triangleXCenter, cellYCenter - CellTriangleSize),
+                        new PointF(triangleXCenter - CellTriangleSize, cellYCenter + CellTriangleSize),
+                        new PointF(triangleXCenter + CellTriangleSize, cellYCenter + CellTriangleSize),
                     });
                 }
             }
         }
 
-        private void DrawCellTetris(Cell cell, int cellXCenter, int cellYCenter)
+        private void DrawCellTetris(SolverCell cell, int cellXCenter, int cellYCenter)
         {
             if (cell.Tetris != null)
             {
@@ -197,17 +191,17 @@ namespace WitnessSolver
             y = (float) newY;
         }
 
-        protected override void DrawPoint(Point point)
+        protected override void DrawNode(SolverNode node)
         {
-            if (!point.MustTraverse && !point.End)
+            if (!node.MustTraverse && !node.IsEnd)
             {
                 return;
             }
 
-            var pointX = point.X * ScaleSize + GridOffset;
-            var pointY = point.Y * ScaleSize + GridOffset;
+            var pointX = node.X * ScaleSize + GridOffset;
+            var pointY = node.Y * ScaleSize + GridOffset;
 
-            if (point.MustTraverse)
+            if (node.MustTraverse)
             {
                 this.BufferGraphics.DrawRectangle(
                     Pens.Red,
@@ -217,7 +211,7 @@ namespace WitnessSolver
                     MustTraverseSize);
             }
 
-            if (point.End)
+            if (node.IsEnd)
             {
                 this.BufferGraphics.DrawLine(
                     new Pen(Color.Black, PathThickness),

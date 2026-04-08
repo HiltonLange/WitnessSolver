@@ -18,8 +18,9 @@ namespace WitnessSolver
             var graph = SolverGraph.Compile(puzzle);
 
             // Inject the WinForms drawer
-            var drawer = new RectanglePuzzleDrawer(puzzle);
+            var drawer = new RectanglePuzzleDrawer();
             drawer.FormGraphics = this.outputPanel.CreateGraphics();
+            drawer.SetGraph(graph);
             graph.Drawer = drawer;
 
             drawer.DrawState(false);
