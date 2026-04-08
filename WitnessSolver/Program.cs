@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
 [assembly: InternalsVisibleTo("WitnessSolver.Tests")]
+[assembly: InternalsVisibleTo("TimingHarness")]
 
 namespace WitnessSolver
 {

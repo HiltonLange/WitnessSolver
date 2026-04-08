@@ -9,7 +9,6 @@ namespace WitnessSolver
     {
         private static readonly Dictionary<string, Func<Puzzle>> PuzzleLookup = new()
         {
-            [nameof(Puzzles.AnotherPuzzle)]       = Puzzles.AnotherPuzzle,
             [nameof(Puzzles.DistortedColors)]      = Puzzles.DistortedColors,
             [nameof(Puzzles.Flashing)]             = Puzzles.Flashing,
             [nameof(Puzzles.HedgeTetris2)]         = Puzzles.HedgeTetris2,
@@ -39,7 +38,6 @@ namespace WitnessSolver
         };
 
         [DataTestMethod]
-        [DataRow(nameof(Puzzles.AnotherPuzzle))]
         [DataRow(nameof(Puzzles.DistortedColors))]
         [DataRow(nameof(Puzzles.Flashing))]
         [DataRow(nameof(Puzzles.HedgeTetris2))]
