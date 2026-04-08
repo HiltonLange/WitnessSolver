@@ -55,7 +55,6 @@ namespace WitnessSolver
 
             // Calculate point into
             // Only 2 edges into a mandatory point makes them both mandatory edges
-            // Sum up mandatory edge count from a point
             foreach (var point in this.Points)
             {
                 if (point.MustTraverse && point.OutEdges.Count == 2)
@@ -65,14 +64,18 @@ namespace WitnessSolver
                         outEdge.CalculatedMustTraverse = true;
                     }
                 }
-
-                point.NeedCount = point.OutEdges.Values.Count(edge => edge.Need);
             }
 
             // Cache computed edge properties (Need, Valid, ReversedEdge) after all flags are set
             foreach (var edge in this.Edges)
             {
                 edge.CacheComputedProperties();
+            }
+
+            // Now that Need is cached, compute NeedCount per point
+            foreach (var point in this.Points)
+            {
+                point.NeedCount = point.OutEdges.Values.Count(edge => edge.Need);
             }
 
             // Number all the cells for easy enumeration
