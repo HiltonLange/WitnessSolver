@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
+
+[assembly: InternalsVisibleTo("WitnessSolver.Tests")]
 
 namespace WitnessSolver
 {
