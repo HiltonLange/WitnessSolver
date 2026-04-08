@@ -73,6 +73,7 @@
     <Compile Include="Puzzles\SamplePuzzle.cs" />
     <Compile Include="Puzzles\StartShed.cs" />
     <Compile Include="Puzzles\Test55.cs" />
+    <Compile Include="Puzzles\Hedges.cs" />
     <Compile Include="Puzzles\Tetrises.cs" />
     <Compile Include="Puzzles\Triangles.cs" />
     <Compile Include="Puzzles\TunnelPuzzle.cs" />
