@@ -36,8 +36,39 @@ Replace two `Where(...).ToList()` calls with a single manual loop filling a pre-
 
 ---
 
-## Implementation notes (filled in after coding)
+## Implementation notes
 
-## Test results (filled in after running)
+All planned changes were implemented. One significant misstep: initially attempted to reuse a single `_outEdgeBuffer` list across calls to `PossibleOutEdges`. This caused a regression where all puzzles returned 0 solutions, because `PuzzleSolverState.Edges` holds a reference to the returned list. When the next stack frame called `PossibleOutEdges` and cleared the buffer, the parent frame's edge list was wiped. Fixed by keeping per-call `new List<Edge>()` allocation (pre-sized to avoid resizing) while still eliminating all the LINQ enumerator allocations.
+
+Changes actually landed:
+- `PossibleOutEdges`: manual loop, pre-sized new list, no LINQ
+- `AddEdge`/`RemoveEdge`: inlined `AdjacentCells()` yield iterator
+- `AddEdge`: inlined `OutEdges.Values.Any()` outer-edge check
+- `CheckSolved`: inlined `Sections.All()` and `InEdges.Values.Any()`
+- `Section.CheckSection`: instance fields for 4 collections, cleared per call
+- `SectionTetrisChecker`: replaced `Any`/`Sum`/`OrderByDescending` with explicit loops + `List.Sort`
+- Removed all `using System.Linq` from hot-path files
+
+## Test results
+
+| Puzzle | Baseline | Optimised | Δ |
+|---|---|---|---|
+| SamplePuzzle | 41 ms | 31 ms | -24% |
+| MiddleChurch | 23 ms | 15 ms | -35% |
+| Flashing | 1090 ms | 823 ms | -24% |
+| Test55 | 2253 ms | 1437 ms | -36% |
+| TunnelPuzzle | 2230 ms | 1282 ms | -43% |
+| TetrisSimple | 397 ms | 251 ms | -37% |
+| TetrisCombine | 531 ms | 292 ms | -45% |
+| TetrisBasicNegative | 68 ms | 39 ms | -43% |
+| TetrisRotationPuzzle | 642 ms | 328 ms | -49% |
+| TunnelTetrisPuzzle | 2541 ms | 1259 ms | -50% |
+| TetrisComplex | 446 ms | 231 ms | -48% |
+| TetrisCross | 3952 ms | 2082 ms | -47% |
+| **TOTAL** | **14,405 ms** | **8,171 ms** | **-43%** |
+
+24/24 tests pass, no regressions.
 
 ## Findings
+
+Actual improvement was **43%**, well above the predicted 15–25%. The Section collection reuse turned out to be more impactful than expected — `CheckSection` is called far more frequently than anticipated (it is called not just at solved-check time but during section-split validation on every edge add). The LINQ enumerator eliminations across `PossibleOutEdges`, `AddEdge`, and `CheckSolved` compounded well. The `_outEdgeBuffer` reuse was the one failed attempt — it was conceptually correct in isolation but incompatible with the solver's state model where each stack frame holds a reference to its edge list.
