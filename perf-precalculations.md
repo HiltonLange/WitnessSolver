@@ -49,8 +49,60 @@ Combined realistic estimate: **15–25% improvement** (~11–12 s total)
 
 ---
 
-## Implementation notes (filled in after coding)
+## Implementation notes
 
-## Test results (filled in after running)
+Changes #1 and #2 were implemented together as planned:
+- `Edge.cs`: `Need` and `Valid` changed from computed properties to `{ get; private set; }` fields. `CacheComputedProperties()` method added (called once from `CalculateOptimizations()`). `reversedEdge` is also eagerly resolved there to eliminate the dictionary lookup on first hot-path access.
+- `Puzzle.cs`: `CalculateOptimizations()` calls `edge.CacheComputedProperties()` after all flags are set, then computes `NeedCount` using the cached `Need` values.
+
+**Bug caught during implementation**: Initial commit had `NeedCount` computed *before* `CacheComputedProperties()` was called. Since `Need` is a field defaulting to `false`, all `NeedCount` values were 0, disabling MustTraverse pruning entirely. `TriangleOptimization` (0-solution 6x5 grid, relies on pruning) took 136 s. Fixed by splitting the double-duty points loop into two passes: one for setting `CalculatedMustTraverse`, then cache all edges, then compute `NeedCount`.
+
+Change #3 (Section constraint buckets) and #4 (cached tetris sort) were skipped as planned.
+
+Change #5 (array-based OutEdges) was not attempted in this branch — complexity not warranted given results achieved.
+
+## Test results
+
+```
+    40 ms   196 solutions  SamplePuzzle
+     0 ms     1 solutions  Triangle1
+     0 ms     2 solutions  Triangle2
+     0 ms     0 solutions  TriangleOptimization
+     0 ms     1 solutions  TriangleSectionTrap
+     1 ms     1 solutions  Overlays
+     0 ms     1 solutions  StartShed
+    21 ms     5 solutions  MiddleChurch
+   995 ms   239 solutions  Flashing
+    65 ms    46 solutions  DistortedColors
+     0 ms     6 solutions  NewPuzzle
+  2024 ms 46204 solutions  Test55
+     0 ms     5 solutions  WrapBasic
+  1619 ms     4 solutions  TunnelPuzzle
+   291 ms    10 solutions  TetrisSimple
+   382 ms     3 solutions  TetrisCombine
+    51 ms   116 solutions  TetrisBasicNegative
+    32 ms     4 solutions  TetrisBasicNegative2
+   430 ms    88 solutions  TetrisRotationPuzzle
+    20 ms     1 solutions  Tetris3And3
+  1896 ms   116 solutions  TunnelTetrisPuzzle
+    19 ms     0 solutions  HedgeTetris2
+   370 ms   246 solutions  TetrisComplex
+  3111 ms   126 solutions  TetrisCross
+------
+ 11367 ms  TOTAL
+```
+
+MSTest (non-Long): 24/24 passed.
 
 ## Findings
+
+**Result: 11,367 ms vs 14,405 ms baseline — 21% improvement.**
+
+Prediction was 10–20%; actual result slightly exceeded the upper bound.
+
+The gain comes entirely from eliminating redundant property-expression evaluation:
+- `Need` was re-evaluated on every `AddEdge`/`RemoveEdge` NeedCount update and every `PossibleOutEdges` call. Now a single field read.
+- `Valid` was re-evaluated on every `PossibleOutEdges` call. Now a single field read.
+- `ReversedEdge` dictionary lookup happens zero times during solving (eagerly resolved at setup).
+
+The hidden bug (NeedCount computed before caching) was a useful reminder: when splitting a compound initialisation loop, order dependencies must be explicit. The fix — three separate passes — is cleaner than the original single loop anyway.
