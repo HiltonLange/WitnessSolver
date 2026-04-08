@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace WitnessSolver
 {
@@ -9,6 +8,12 @@ namespace WitnessSolver
         public bool Checked;
         public bool Correct;
         internal readonly int cellMax;
+
+        // Reused per CheckSection call to avoid per-call heap allocation
+        private readonly HashSet<char> _squareLetters = new HashSet<char>();
+        private readonly HashSet<char> _starLetters = new HashSet<char>();
+        private readonly Dictionary<char, int> _colorLetterCount = new Dictionary<char, int>();
+        private readonly List<Tetris> _tetrisList = new List<Tetris>();
 
         public Section(IEnumerable<Cell> cells, int cellMax)
             : this(cellMax)
@@ -55,10 +60,14 @@ namespace WitnessSolver
 
             var good = true;
 
-            var squareLetters = new HashSet<char>();
-            var starLetters = new HashSet<char>();
-            var colorLetterCount = new Dictionary<char, int>();
-            var tetrisList = new List<Tetris>();
+            _squareLetters.Clear();
+            _starLetters.Clear();
+            _colorLetterCount.Clear();
+            _tetrisList.Clear();
+            var squareLetters = _squareLetters;
+            var starLetters = _starLetters;
+            var colorLetterCount = _colorLetterCount;
+            var tetrisList = _tetrisList;
             foreach (var cell in this.Cells)
             {
                 // Check for square
@@ -140,7 +149,8 @@ namespace WitnessSolver
             var sections = new List<Section>();
 
             var visited = new bool[this.cellMax];
-            var startCell = this.Cells.First();
+            Cell startCell = null;
+            foreach (var c in this.Cells) { startCell = c; break; }
 
             var cells = new HashSet<Cell> { startCell };
             var cellQueue = new Queue<Cell>(cells);
@@ -167,7 +177,9 @@ namespace WitnessSolver
             }
 
             sections.Add(new Section(cells, this.cellMax));
-            sections.Add(new Section(this.Cells.Where(cell => !visited[cell.CellIndex]), this.cellMax));
+            var remainingCells = new List<Cell>();
+            foreach (var cell in this.Cells) { if (!visited[cell.CellIndex]) remainingCells.Add(cell); }
+            sections.Add(new Section(remainingCells, this.cellMax));
 
             return sections;
         }

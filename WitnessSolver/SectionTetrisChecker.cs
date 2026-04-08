@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WitnessSolver
 {
@@ -22,7 +19,8 @@ namespace WitnessSolver
                 yMax = Math.Max(yMax, cell.Y);
             }
 
-            bool hasNegative = tetrisList.Any(tetris => tetris.HasNegative);
+            bool hasNegative = false;
+            foreach (var t in tetrisList) { if (t.HasNegative) { hasNegative = true; break; } }
             int buffer = hasNegative ? 2 : 0;
 
             int[,] emptyCellCount = new int[xMax - xMin + 1 + 2 * buffer, yMax - yMin + 1 + 2 * buffer];
@@ -34,13 +32,18 @@ namespace WitnessSolver
                 emptyCells++;
             }
 
-            int requiredCells = tetrisList.Sum<Tetris>(tetris => tetris.TetrisCells.Sum(tetrisCell => tetrisCell.Count));
+            int requiredCells = 0;
+            foreach (var tetris in tetrisList)
+                foreach (var tc in tetris.TetrisCells)
+                    requiredCells += tc.Count;
             if (requiredCells != emptyCells)
             {
                 return false;
             }
 
-            var sortedTetrisList = tetrisList.OrderByDescending(tetris => tetris.HasNegative).ToList();
+            // Sort negatives first without LINQ allocation
+            var sortedTetrisList = new List<Tetris>(tetrisList);
+            sortedTetrisList.Sort((a, b) => b.HasNegative.CompareTo(a.HasNegative));
 
             return SectionTetrisChecker.CanContainExactly(sortedTetrisList, 0, emptyCellCount, xMax - xMin + 2 * buffer, yMax - yMin + 2 * buffer);
         }

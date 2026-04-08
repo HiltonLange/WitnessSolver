@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace WitnessSolver
 {
@@ -31,6 +30,9 @@ namespace WitnessSolver
         private List<Section> Sections;
 
         public List<List<Edge>> Solutions;
+
+        // Pre-allocated list reused by PossibleOutEdges to avoid per-call allocation
+        private readonly List<Edge> _outEdgeBuffer = new List<Edge>(8);
 
         public event EventHandler<PuzzleSolveEventArgs> Update;
 
@@ -66,7 +68,9 @@ namespace WitnessSolver
                     }
                 }
 
-                point.NeedCount = point.OutEdges.Values.Count(edge => edge.Need);
+                int needCount = 0;
+                foreach (var e in point.OutEdges.Values) { if (e.Need) needCount++; }
+                point.NeedCount = needCount;
             }
 
             // Number all the cells for easy enumeration
@@ -105,7 +109,12 @@ namespace WitnessSolver
             // Check for section split
             if (edge.LeftCell != null && edge.RightCell != null)
             {
-                if (this.Location.OutEdges.Values.Any(outEdge => outEdge.LeftCell == null || outEdge.RightCell == null))
+                bool hasOuterEdge = false;
+                foreach (var outEdge in this.Location.OutEdges.Values)
+                {
+                    if (outEdge.LeftCell == null || outEdge.RightCell == null) { hasOuterEdge = true; break; }
+                }
+                if (hasOuterEdge)
                 {
                     // We have reached an outer edge, likely a section split here
                     var oldSection = edge.LeftCell.Section;
@@ -122,10 +131,21 @@ namespace WitnessSolver
 
             var good = true;
 
-            // Check that we're not going past cells too many times
-            foreach (var cell in edge.AdjacentCells())
+            // Check that we're not going past cells too many times (inlined AdjacentCells)
+            if (edge.LeftCell != null)
             {
-               cell.Section.Checked = false;
+                var cell = edge.LeftCell;
+                cell.Section.Checked = false;
+                if (cell.TriangleCount.HasValue)
+                {
+                    good &= cell.TriangleCount > cell.UsedEdgeCount;
+                    cell.UsedEdgeCount++;
+                }
+            }
+            if (edge.RightCell != null)
+            {
+                var cell = edge.RightCell;
+                cell.Section.Checked = false;
                 if (cell.TriangleCount.HasValue)
                 {
                     good &= cell.TriangleCount > cell.UsedEdgeCount;
@@ -168,14 +188,16 @@ namespace WitnessSolver
                 edge.End.NeedCount++;
             }
 
-            // Restore the triangle count
-            foreach (var cell in edge.AdjacentCells())
+            // Restore the triangle count (inlined AdjacentCells)
+            if (edge.LeftCell != null)
             {
-                cell.Section.Checked = false;
-                if (cell.TriangleCount.HasValue)
-                {
-                    cell.UsedEdgeCount--;
-                }
+                edge.LeftCell.Section.Checked = false;
+                if (edge.LeftCell.TriangleCount.HasValue) edge.LeftCell.UsedEdgeCount--;
+            }
+            if (edge.RightCell != null)
+            {
+                edge.RightCell.Section.Checked = false;
+                if (edge.RightCell.TriangleCount.HasValue) edge.RightCell.UsedEdgeCount--;
             }
 
             // Check for section merge
@@ -192,19 +214,34 @@ namespace WitnessSolver
 
         public List<Edge> PossibleOutEdges()
         {
+            _outEdgeBuffer.Clear();
+
             if (this.Location.NeedCount > 1)
             {
-                return new List<Edge>();
+                return _outEdgeBuffer;
             }
 
-            var choiceEdges = this.Location.OutEdges.Values.Where(edge => !edge.Used && edge.Valid && !edge.End.Visited);
-
-            if (this.Location.NeedCount == 1)
+            bool needOnly = this.Location.NeedCount == 1;
+            foreach (var edge in this.Location.OutEdges.Values)
             {
-                return choiceEdges.Where(edge => edge.Need).Take(1).ToList();
+                if (!edge.Used && edge.Valid && !edge.End.Visited)
+                {
+                    if (needOnly)
+                    {
+                        if (edge.Need)
+                        {
+                            _outEdgeBuffer.Add(edge);
+                            return _outEdgeBuffer; // Take(1)
+                        }
+                    }
+                    else
+                    {
+                        _outEdgeBuffer.Add(edge);
+                    }
+                }
             }
 
-            return choiceEdges.ToList();
+            return _outEdgeBuffer;
         }
 
         public bool CheckSolved()
@@ -234,7 +271,12 @@ namespace WitnessSolver
                 {
                     if (point.MustTraverse)
                     {
-                        if (!point.InEdges.Values.Any(edge => edge.Traversed))
+                        bool anyTraversed = false;
+                        foreach (var inEdge in point.InEdges.Values)
+                        {
+                            if (inEdge.Traversed) { anyTraversed = true; break; }
+                        }
+                        if (!anyTraversed)
                         {
                             return false;
                         }
@@ -242,7 +284,12 @@ namespace WitnessSolver
                 }
 
                 // Check all sections
-                if (!this.Sections.All(section => section.CheckSection()))
+                bool allSectionsGood = true;
+                for (int i = 0; i < this.Sections.Count; i++)
+                {
+                    if (!this.Sections[i].CheckSection()) { allSectionsGood = false; break; }
+                }
+                if (!allSectionsGood)
                 {
                     return false;
                 }
