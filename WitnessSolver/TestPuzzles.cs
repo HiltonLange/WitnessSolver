@@ -1,178 +1,66 @@
-﻿namespace WitnessSolver
+namespace WitnessSolver
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
     public class TestPuzzles
     {
-
-        [TestMethod]
-        private void TestAnotherPuzzle()
-        {
-            TestPuzzle(Puzzles.AnotherPuzzle());
-        }
-
-        [TestMethod]
-        public void TestFlashing()
-        {
-            TestPuzzle(Puzzles.Flashing());
-        }
-
-        [TestMethod]
-        public void TestMiddleChurch()
-        {
-            TestPuzzle(Puzzles.MiddleChurch());
-        }
-
-        [TestMethod]
-        public void TestNewPuzzle()
-        {
-            TestPuzzle(Puzzles.NewPuzzle());
-        }
-
-        [TestMethod]
-        public void TestOverlays()
-        {
-            TestPuzzle(Puzzles.Overlays());
-        }
-
-        [TestMethod]
-        public void TestSamplePuzzle()
-        {
-            TestPuzzle(Puzzles.SamplePuzzle());
-        }
-
-        [TestMethod]
-        public void TestStartShed()
-        {
-            TestPuzzle(Puzzles.StartShed());
-        }
-
-        [TestMethod]
-        public void TestTest55()
-        {
-            TestPuzzle(Puzzles.Test55());
-        }
-
-        [TestMethod]
-        public void TestDistortedColors()
-        {
-            TestPuzzle(Puzzles.DistortedColors());
-        }
-
-        [TestMethod]
-        public void TestTriangle1()
-        {
-            TestPuzzle(Puzzles.Triangle1());
-        }
-
-        [TestMethod]
-        public void TestTriangle2()
-        {
-            TestPuzzle(Puzzles.Triangle2());
-        }
-
-        [TestMethod]
-        public void TestTriangleOptimization()
-        {
-            TestPuzzle(Puzzles.TriangleOptimization());
-        }
-
-        [TestMethod]
-        public void TestTriangleSectionTrap()
-        {
-            TestPuzzle(Puzzles.TriangleSectionTrap());
-        }
-
-        [TestMethod]
-        public void TestWrapBasic()
-        {
-            TestPuzzle(Puzzles.WrapBasic());
-        }
-
-        [TestMethod]
-        public void TestTetrisSimple()
-        {
-            TestPuzzle(Puzzles.TetrisSimple());
-        }
-
-        [TestMethod]
-        public void TestTetrisCombine()
-        {
-            TestPuzzle(Puzzles.TetrisCombine());
-        }
-
-        [TestMethod]
-        public void TestTetrisComplex()
-        {
-            TestPuzzle(Puzzles.TetrisComplex());
-        }
-
-        [TestMethod]
-        public void TestTetrisBasicNegative()
-        {
-            TestPuzzle(Puzzles.TetrisBasicNegative());
-        }
-
-        [TestMethod]
-        public void TestTetrisBasicNegative2()
-        {
-            TestPuzzle(Puzzles.TetrisBasicNegative2());
-        }
-
-        [TestMethod]
-        public void TestTunnelPuzzle()
-        {
-            TestPuzzle(Puzzles.TunnelPuzzle());
-        }
-
-        [TestMethod]
-        public void TestTetrisRotation()
-        {
-            TestPuzzle(Puzzles.TetrisRotationPuzzle());
-        }
-
-        [TestMethod]
-        public void TestTetris3And3()
-        {
-            TestPuzzle(Puzzles.Tetris3And3());
-        }
-
-        [TestMethod]
-        public void TestTunnelTetris()
-        {
-            TestPuzzle(Puzzles.TunnelTetrisPuzzle());
-        }
-
-        [TestMethod]
-        public void TestTetrisCross()
-        {
-            TestPuzzle(Puzzles.TetrisCross());
-        }
-
-        [TestMethod]
-        [TestCategory("Long")]
-        public void TestWrapLarge()
-        {
-            TestPuzzle(Puzzles.WrapLarge());
-        }
-
-        [TestMethod]
-        [TestCategory("Long")]
-        public void TestComplexBeginning()
-        {
-            TestPuzzle(Puzzles.ComplexBeginning());
-        }
-
-        private void TestPuzzle(Puzzle puzzle)
-        {
-            PuzzleSolver solver = new PuzzleSolver()
+        public static IEnumerable<object[]> PuzzlesToTest =>
+            new[]
             {
-                Puzzle = puzzle,
-            };
+                Puzzles.AnotherPuzzle(),
+                Puzzles.DistortedColors(),
+                Puzzles.Flashing(),
+                Puzzles.HedgeTetris2(),
+                Puzzles.MiddleChurch(),
+                Puzzles.NewPuzzle(),
+                Puzzles.Overlays(),
+                Puzzles.SamplePuzzle(),
+                Puzzles.StartShed(),
+                Puzzles.Test55(),
+                Puzzles.Tetris3And3(),
+                Puzzles.TetrisBasicNegative(),
+                Puzzles.TetrisBasicNegative2(),
+                Puzzles.TetrisCombine(),
+                Puzzles.TetrisComplex(),
+                Puzzles.TetrisCross(),
+                Puzzles.TetrisRotationPuzzle(),
+                Puzzles.TetrisSimple(),
+                Puzzles.Triangle1(),
+                Puzzles.Triangle2(),
+                Puzzles.TriangleOptimization(),
+                Puzzles.TriangleSectionTrap(),
+                Puzzles.TunnelPuzzle(),
+                Puzzles.TunnelTetrisPuzzle(),
+                Puzzles.WrapBasic(),
+            }.Select(p => new object[] { p });
 
-            int solutions = solver.Solve();
-            Assert.AreEqual(puzzle.ExpectedSolutions, solutions);
+        public static IEnumerable<object[]> LongPuzzlesToTest =>
+            new[]
+            {
+                Puzzles.ComplexBeginning(),
+                Puzzles.WrapLarge(),
+            }.Select(p => new object[] { p });
+
+        [DataTestMethod]
+        [DynamicData(nameof(PuzzlesToTest))]
+        public void SolvesCorrectly(object puzzleObj)
+        {
+            var puzzle = (Puzzle)puzzleObj;
+            var solver = new PuzzleSolver { Puzzle = puzzle };
+            Assert.AreEqual(puzzle.ExpectedSolutions, solver.Solve());
+        }
+
+        [DataTestMethod]
+        [DynamicData(nameof(LongPuzzlesToTest))]
+        [TestCategory("Long")]
+        public void SolvesCorrectlyLong(object puzzleObj)
+        {
+            var puzzle = (Puzzle)puzzleObj;
+            var solver = new PuzzleSolver { Puzzle = puzzle };
+            Assert.AreEqual(puzzle.ExpectedSolutions, solver.Solve());
         }
     }
 }
