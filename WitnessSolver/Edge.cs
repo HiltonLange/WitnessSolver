@@ -16,14 +16,9 @@ namespace WitnessSolver
         public bool MustTraverse;
         public bool CalculatedMustTraverse;
 
-        public bool Need
-            =>
-                this.MustTraverse || this.CalculatedMustTraverse || this.ReversedEdge.MustTraverse ||
-                this.ReversedEdge.CalculatedMustTraverse;
-
-        public bool Valid
-            =>
-                this.MayTraverse && this.ReversedEdge.MayTraverse;
+        // Cached after CalculateOptimizations — stable for lifetime of solve
+        public bool Need { get; private set; }
+        public bool Valid { get; private set; }
 
         public bool Used
             =>
@@ -31,7 +26,27 @@ namespace WitnessSolver
 
         private Edge reversedEdge;
 
-        public Edge ReversedEdge => this.reversedEdge ?? (this.reversedEdge = this.End.OutEdges[this.Start]);
+        public Edge ReversedEdge
+        {
+            get
+            {
+                if (this.reversedEdge == null)
+                    this.reversedEdge = this.End.OutEdges[this.Start];
+                return this.reversedEdge;
+            }
+        }
+
+        /// <summary>Called once from CalculateOptimizations after all edges and flags are set.</summary>
+        public void CacheComputedProperties()
+        {
+            // Eagerly resolve ReversedEdge to eliminate future dictionary lookups
+            if (this.reversedEdge == null)
+                this.reversedEdge = this.End.OutEdges[this.Start];
+
+            this.Need = this.MustTraverse || this.CalculatedMustTraverse ||
+                        this.reversedEdge.MustTraverse || this.reversedEdge.CalculatedMustTraverse;
+            this.Valid = this.MayTraverse && this.reversedEdge.MayTraverse;
+        }
 
         private char? shortName;
 

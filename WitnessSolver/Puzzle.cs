@@ -69,6 +69,12 @@ namespace WitnessSolver
                 point.NeedCount = point.OutEdges.Values.Count(edge => edge.Need);
             }
 
+            // Cache computed edge properties (Need, Valid, ReversedEdge) after all flags are set
+            foreach (var edge in this.Edges)
+            {
+                edge.CacheComputedProperties();
+            }
+
             // Number all the cells for easy enumeration
             int cellIdx = 0;
             foreach (var cell in this.Cells)
