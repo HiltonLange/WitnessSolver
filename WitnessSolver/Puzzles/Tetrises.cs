@@ -278,5 +278,38 @@ namespace WitnessSolver
 
             return puzzle;
         }
+
+        public static Puzzle SwampyBoots()
+        {
+            var puzzle = new RectanglePuzzle("Swampy Boots", 4, 4, new Point(0, 4), new Point(4, 0));
+            puzzle.ExpectedSolutions = 1;
+
+            puzzle.Cell[0, 0].Tetris = new Tetris(
+                new List<TetrisCell>
+                {
+                    new TetrisCell(0,0),
+                    new TetrisCell(1,0),
+                    new TetrisCell(2,0),
+                    new TetrisCell(2,1),
+                    new TetrisCell(2,2),
+                },
+                anyRotation: false);
+            puzzle.Cell[3, 1].Tetris = new Tetris(
+                new List<TetrisCell>
+                {
+                    new TetrisCell(0,0),
+                    new TetrisCell(0,1),
+                    new TetrisCell(0,2),
+                });
+            puzzle.Cell[1, 2].Tetris = new Tetris(
+                new List<TetrisCell>
+                {
+                    new TetrisCell(0,0),
+                    new TetrisCell(0,1),
+                    new TetrisCell(3,0),
+                    new TetrisCell(3,1),
+                });
+            return puzzle;
+        }
     }
 }

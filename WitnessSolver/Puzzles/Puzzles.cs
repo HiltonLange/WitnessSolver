@@ -34,6 +34,7 @@ namespace WitnessSolver
                 TunnelPuzzle(),
                 TunnelTetrisPuzzle(),
                 TetrisCross(),
+                SwampyBoots(),
             };
         }
     }
