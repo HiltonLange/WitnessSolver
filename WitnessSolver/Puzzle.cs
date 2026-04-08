@@ -31,9 +31,6 @@ namespace WitnessSolver
 
         public List<List<Edge>> Solutions;
 
-        // Pre-allocated list reused by PossibleOutEdges to avoid per-call allocation
-        private readonly List<Edge> _outEdgeBuffer = new List<Edge>(8);
-
         public event EventHandler<PuzzleSolveEventArgs> Update;
 
         public PuzzleDrawer Drawer;
@@ -214,13 +211,12 @@ namespace WitnessSolver
 
         public List<Edge> PossibleOutEdges()
         {
-            _outEdgeBuffer.Clear();
-
             if (this.Location.NeedCount > 1)
             {
-                return _outEdgeBuffer;
+                return new List<Edge>(0);
             }
 
+            var result = new List<Edge>(this.Location.OutEdges.Count);
             bool needOnly = this.Location.NeedCount == 1;
             foreach (var edge in this.Location.OutEdges.Values)
             {
@@ -230,18 +226,18 @@ namespace WitnessSolver
                     {
                         if (edge.Need)
                         {
-                            _outEdgeBuffer.Add(edge);
-                            return _outEdgeBuffer; // Take(1)
+                            result.Add(edge);
+                            return result; // Take(1)
                         }
                     }
                     else
                     {
-                        _outEdgeBuffer.Add(edge);
+                        result.Add(edge);
                     }
                 }
             }
 
-            return _outEdgeBuffer;
+            return result;
         }
 
         public bool CheckSolved()
