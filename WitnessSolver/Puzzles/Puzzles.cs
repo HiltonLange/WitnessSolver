@@ -9,6 +9,7 @@ namespace WitnessSolver
             return new List<Puzzle>
             {
                 AnotherPuzzle(),
+                HedgeTetris2(),
                 ComplexBeginning(),
                 DistortedColors(),
                 Flashing(),
@@ -35,7 +36,6 @@ namespace WitnessSolver
                 TunnelTetrisPuzzle(),
                 TetrisCross(),
                 SwampyBoots(),
-                HedgeTetris2(),
             };
         }
     }

@@ -1,64 +1,83 @@
 namespace WitnessSolver
 {
+    using System;
     using System.Collections.Generic;
-    using System.Linq;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
     public class TestPuzzles
     {
-        public static IEnumerable<object[]> PuzzlesToTest =>
-            new[]
-            {
-                Puzzles.AnotherPuzzle(),
-                Puzzles.DistortedColors(),
-                Puzzles.Flashing(),
-                Puzzles.HedgeTetris2(),
-                Puzzles.MiddleChurch(),
-                Puzzles.NewPuzzle(),
-                Puzzles.Overlays(),
-                Puzzles.SamplePuzzle(),
-                Puzzles.StartShed(),
-                Puzzles.Test55(),
-                Puzzles.Tetris3And3(),
-                Puzzles.TetrisBasicNegative(),
-                Puzzles.TetrisBasicNegative2(),
-                Puzzles.TetrisCombine(),
-                Puzzles.TetrisComplex(),
-                Puzzles.TetrisCross(),
-                Puzzles.TetrisRotationPuzzle(),
-                Puzzles.TetrisSimple(),
-                Puzzles.Triangle1(),
-                Puzzles.Triangle2(),
-                Puzzles.TriangleOptimization(),
-                Puzzles.TriangleSectionTrap(),
-                Puzzles.TunnelPuzzle(),
-                Puzzles.TunnelTetrisPuzzle(),
-                Puzzles.WrapBasic(),
-            }.Select(p => new object[] { p });
-
-        public static IEnumerable<object[]> LongPuzzlesToTest =>
-            new[]
-            {
-                Puzzles.ComplexBeginning(),
-                Puzzles.WrapLarge(),
-            }.Select(p => new object[] { p });
+        private static readonly Dictionary<string, Func<Puzzle>> PuzzleLookup = new()
+        {
+            [nameof(Puzzles.AnotherPuzzle)]       = Puzzles.AnotherPuzzle,
+            [nameof(Puzzles.DistortedColors)]      = Puzzles.DistortedColors,
+            [nameof(Puzzles.Flashing)]             = Puzzles.Flashing,
+            [nameof(Puzzles.HedgeTetris2)]         = Puzzles.HedgeTetris2,
+            [nameof(Puzzles.MiddleChurch)]         = Puzzles.MiddleChurch,
+            [nameof(Puzzles.NewPuzzle)]            = Puzzles.NewPuzzle,
+            [nameof(Puzzles.Overlays)]             = Puzzles.Overlays,
+            [nameof(Puzzles.SamplePuzzle)]         = Puzzles.SamplePuzzle,
+            [nameof(Puzzles.StartShed)]            = Puzzles.StartShed,
+            [nameof(Puzzles.Test55)]               = Puzzles.Test55,
+            [nameof(Puzzles.Tetris3And3)]          = Puzzles.Tetris3And3,
+            [nameof(Puzzles.TetrisBasicNegative)]  = Puzzles.TetrisBasicNegative,
+            [nameof(Puzzles.TetrisBasicNegative2)] = Puzzles.TetrisBasicNegative2,
+            [nameof(Puzzles.TetrisCombine)]        = Puzzles.TetrisCombine,
+            [nameof(Puzzles.TetrisComplex)]        = Puzzles.TetrisComplex,
+            [nameof(Puzzles.TetrisCross)]          = Puzzles.TetrisCross,
+            [nameof(Puzzles.TetrisRotationPuzzle)] = Puzzles.TetrisRotationPuzzle,
+            [nameof(Puzzles.TetrisSimple)]         = Puzzles.TetrisSimple,
+            [nameof(Puzzles.Triangle1)]            = Puzzles.Triangle1,
+            [nameof(Puzzles.Triangle2)]            = Puzzles.Triangle2,
+            [nameof(Puzzles.TriangleOptimization)] = Puzzles.TriangleOptimization,
+            [nameof(Puzzles.TriangleSectionTrap)]  = Puzzles.TriangleSectionTrap,
+            [nameof(Puzzles.TunnelPuzzle)]         = Puzzles.TunnelPuzzle,
+            [nameof(Puzzles.TunnelTetrisPuzzle)]   = Puzzles.TunnelTetrisPuzzle,
+            [nameof(Puzzles.WrapBasic)]            = Puzzles.WrapBasic,
+            [nameof(Puzzles.ComplexBeginning)]     = Puzzles.ComplexBeginning,
+            [nameof(Puzzles.WrapLarge)]            = Puzzles.WrapLarge,
+        };
 
         [DataTestMethod]
-        [DynamicData(nameof(PuzzlesToTest))]
-        public void SolvesCorrectly(object puzzleObj)
+        [DataRow(nameof(Puzzles.AnotherPuzzle))]
+        [DataRow(nameof(Puzzles.DistortedColors))]
+        [DataRow(nameof(Puzzles.Flashing))]
+        [DataRow(nameof(Puzzles.HedgeTetris2))]
+        [DataRow(nameof(Puzzles.MiddleChurch))]
+        [DataRow(nameof(Puzzles.NewPuzzle))]
+        [DataRow(nameof(Puzzles.Overlays))]
+        [DataRow(nameof(Puzzles.SamplePuzzle))]
+        [DataRow(nameof(Puzzles.StartShed))]
+        [DataRow(nameof(Puzzles.Test55))]
+        [DataRow(nameof(Puzzles.Tetris3And3))]
+        [DataRow(nameof(Puzzles.TetrisBasicNegative))]
+        [DataRow(nameof(Puzzles.TetrisBasicNegative2))]
+        [DataRow(nameof(Puzzles.TetrisCombine))]
+        [DataRow(nameof(Puzzles.TetrisComplex))]
+        [DataRow(nameof(Puzzles.TetrisCross))]
+        [DataRow(nameof(Puzzles.TetrisRotationPuzzle))]
+        [DataRow(nameof(Puzzles.TetrisSimple))]
+        [DataRow(nameof(Puzzles.Triangle1))]
+        [DataRow(nameof(Puzzles.Triangle2))]
+        [DataRow(nameof(Puzzles.TriangleOptimization))]
+        [DataRow(nameof(Puzzles.TriangleSectionTrap))]
+        [DataRow(nameof(Puzzles.TunnelPuzzle))]
+        [DataRow(nameof(Puzzles.TunnelTetrisPuzzle))]
+        [DataRow(nameof(Puzzles.WrapBasic))]
+        public void SolvesCorrectly(string name)
         {
-            var puzzle = (Puzzle)puzzleObj;
+            var puzzle = PuzzleLookup[name]();
             var solver = new PuzzleSolver { Puzzle = puzzle };
             Assert.AreEqual(puzzle.ExpectedSolutions, solver.Solve());
         }
 
         [DataTestMethod]
-        [DynamicData(nameof(LongPuzzlesToTest))]
+        [DataRow(nameof(Puzzles.ComplexBeginning))]
+        [DataRow(nameof(Puzzles.WrapLarge))]
         [TestCategory("Long")]
-        public void SolvesCorrectlyLong(object puzzleObj)
+        public void SolvesCorrectlyLong(string name)
         {
-            var puzzle = (Puzzle)puzzleObj;
+            var puzzle = PuzzleLookup[name]();
             var solver = new PuzzleSolver { Puzzle = puzzle };
             Assert.AreEqual(puzzle.ExpectedSolutions, solver.Solve());
         }
