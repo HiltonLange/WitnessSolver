@@ -32,6 +32,11 @@ namespace WitnessSolver
 
         public List<List<Edge>> Solutions;
 
+        // Incremental counters to replace O(|Edges|) and O(|Points|) loops in CheckSolved
+        private int _mustTraverseEdgeRemaining;   // edges with MustTraverse not yet traversed
+        private int _invalidMayTraverseCount;     // !MayTraverse edges that have been traversed
+        private int _mustTraversePointRemaining;  // MustTraverse points not yet visited
+
         public event EventHandler<PuzzleSolveEventArgs> Update;
 
         public PuzzleDrawer Drawer;
@@ -85,6 +90,23 @@ namespace WitnessSolver
             {
                 new Section(new List<Cell>(this.Cells), this.Cells.Count),
             };
+
+            // Initialise incremental counters
+            _mustTraverseEdgeRemaining = 0;
+            _invalidMayTraverseCount = 0;
+            _mustTraversePointRemaining = 0;
+            foreach (var edge in this.Edges)
+            {
+                if (edge.MustTraverse) _mustTraverseEdgeRemaining++;
+                if (!edge.MayTraverse) _invalidMayTraverseCount++; // forbidden edges start as not-traversed (good)
+            }
+            // forbidden edges not traversed is fine — count starts at 0 meaning no bad traversals
+            _invalidMayTraverseCount = 0; // reset: count only TRAVERSED forbidden edges
+            foreach (var point in this.Points)
+            {
+                if (point.MustTraverse) _mustTraversePointRemaining++;
+            }
+
             this.Start.Visited = true;
             this.SendUpdate(false);
             this.Drawer.DrawState(false);
@@ -96,6 +118,12 @@ namespace WitnessSolver
             this.Location.Visited = true;
             edge.Traversed = true;
             this.Route.Add(edge);
+
+            // Update incremental counters
+            if (edge.MustTraverse) _mustTraverseEdgeRemaining--;
+            if (!edge.MayTraverse) _invalidMayTraverseCount++;
+            if (edge.End.MustTraverse) _mustTraversePointRemaining--;
+
             if (edge.Need)
             {
                 edge.Start.NeedCount--;
@@ -162,6 +190,12 @@ namespace WitnessSolver
             this.Location = edge.Start;
             edge.Traversed = false;
             this.Route.RemoveAt(this.Route.Count - 1);
+
+            // Restore incremental counters
+            if (edge.MustTraverse) _mustTraverseEdgeRemaining++;
+            if (!edge.MayTraverse) _invalidMayTraverseCount--;
+            if (edge.End.MustTraverse) _mustTraversePointRemaining++;
+
             if (edge.Need)
             {
                 edge.Start.NeedCount++;
@@ -215,30 +249,10 @@ namespace WitnessSolver
             {
                 this.AllRouteCount++;
 
-                // Check edge traversals
-                foreach (var edge in this.Edges)
+                // Check edge and point traversals via incremental counters (O(1))
+                if (_mustTraverseEdgeRemaining > 0 || _invalidMayTraverseCount > 0 || _mustTraversePointRemaining > 0)
                 {
-                    if (edge.MustTraverse && !edge.Traversed && !edge.ReversedEdge.Traversed)
-                    {
-                        return false;
-                    }
-
-                    if (!edge.MayTraverse && (edge.Traversed || edge.ReversedEdge.Traversed))
-                    {
-                        return false;
-                    }
-                }
-
-                // Check point traversals
-                foreach (var point in this.Points)
-                {
-                    if (point.MustTraverse)
-                    {
-                        if (!point.InEdges.Values.Any(edge => edge.Traversed))
-                        {
-                            return false;
-                        }
-                    }
+                    return false;
                 }
 
                 // Check all sections

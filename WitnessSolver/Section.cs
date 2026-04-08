@@ -8,6 +8,7 @@ namespace WitnessSolver
         public readonly HashSet<Cell> Cells;
         public bool Checked;
         public bool Correct;
+        public bool HasConstraints;
         internal readonly int cellMax;
 
         public Section(IEnumerable<Cell> cells, int cellMax)
@@ -18,6 +19,7 @@ namespace WitnessSolver
             {
                 cell.Section = this;
             }
+            this.ComputeHasConstraints();
         }
 
         public Section(HashSet<Cell> cells, int cellMax)
@@ -28,12 +30,27 @@ namespace WitnessSolver
             {
                 cell.Section = this;
             }
+            this.ComputeHasConstraints();
         }
 
         private Section(int cellMax)
         {
             this.cellMax = cellMax;
             this.Checked = false;
+        }
+
+        private void ComputeHasConstraints()
+        {
+            foreach (var cell in this.Cells)
+            {
+                if (cell.SquareColorLetter != ' ' || cell.StarColorLetter != ' ' ||
+                    cell.TriangleCount.HasValue || cell.Tetris != null)
+                {
+                    this.HasConstraints = true;
+                    return;
+                }
+            }
+            this.HasConstraints = false;
         }
 
         public void UnionWith(Section section)
@@ -44,10 +61,17 @@ namespace WitnessSolver
                 cell.Section = this;
             }
             this.Checked = false;
+            if (!this.HasConstraints && section.HasConstraints)
+                this.HasConstraints = true;
         }
 
         public bool CheckSection()
         {
+            if (!this.HasConstraints)
+            {
+                return true;
+            }
+
             if (this.Checked)
             {
                 return this.Correct;
