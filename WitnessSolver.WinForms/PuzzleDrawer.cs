@@ -72,6 +72,9 @@ namespace WitnessSolver
 
             var lineColor = isSolved ? Color.Green : Color.DarkRed;
 
+            // Clear entire panel surface before drawing (prevents artifacts from previous puzzle)
+            this.FormGraphics.Clear(Color.FromArgb(40, 40, 45));
+
             var currentContext = BufferedGraphicsManager.Current;
             var buffer = currentContext.Allocate(this.FormGraphics,
                 new Rectangle(0, 0, (this.Graph.XSize + (this.Graph.Wrap ? 2 : 1)) * ScaleSize, (this.Graph.YSize + 1) * ScaleSize));

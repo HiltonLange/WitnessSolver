@@ -38,6 +38,8 @@ namespace WitnessSolver
             graph.Drawer = drawer;
             graph.CancellationToken = this._cts.Token;
 
+            this.outputPanel.Invalidate();
+            this.outputPanel.Update();
             drawer.DrawState(false);
             graph.Update += this.OnSolveUpdate;
 
