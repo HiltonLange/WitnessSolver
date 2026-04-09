@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -77,17 +78,22 @@ namespace WitnessSolver
                 return this.Correct;
 
             var good = true;
-            var squareLetters = new HashSet<char>();
-            var starLetters = new HashSet<char>();
-            var colorLetterCount = new Dictionary<char, int>();
-            var tetrisList = new List<Tetris>();
+
+            // Use stackalloc for color tracking — avoids HashSet/Dictionary allocs
+            // Colors: R=0, G=1, B=2, W=3, L=4, Y=5, P=6
+            Span<int> colorCounts = stackalloc int[7];
+            Span<bool> hasStarColor = stackalloc bool[7];
+            int squareColorCount = 0;
+            char firstSquareColor = ' ';
+            List<Tetris> tetrisList = null;
 
             if (this._useSolverCells)
             {
                 foreach (var cell in this.SolverCells)
                 {
-                    if (!ProcessCellForCheck(cell.SquareColor, cell.StarColor, cell.TriangleCount,
-                        cell.UsedEdgeCount, cell.Tetris, squareLetters, starLetters, colorLetterCount, tetrisList))
+                    if (!CheckCell(cell.SquareColor, cell.StarColor, cell.TriangleCount,
+                        cell.UsedEdgeCount, cell.Tetris, colorCounts, hasStarColor,
+                        ref squareColorCount, ref firstSquareColor, ref tetrisList))
                     {
                         good = false;
                         break;
@@ -98,8 +104,9 @@ namespace WitnessSolver
             {
                 foreach (var cell in this.Cells)
                 {
-                    if (!ProcessCellForCheck(cell.SquareColorLetter, cell.StarColorLetter, cell.TriangleCount,
-                        cell.UsedEdgeCount, cell.Tetris, squareLetters, starLetters, colorLetterCount, tetrisList))
+                    if (!CheckCell(cell.SquareColorLetter, cell.StarColorLetter, cell.TriangleCount,
+                        cell.UsedEdgeCount, cell.Tetris, colorCounts, hasStarColor,
+                        ref squareColorCount, ref firstSquareColor, ref tetrisList))
                     {
                         good = false;
                         break;
@@ -107,14 +114,12 @@ namespace WitnessSolver
                 }
             }
 
-            if (good && squareLetters.Count > 1)
-                good = false;
-
+            // Star color check: exactly 2 of each star color
             if (good)
             {
-                foreach (var starLetter in starLetters)
+                for (int i = 0; i < 7; i++)
                 {
-                    if (colorLetterCount[starLetter] != 2)
+                    if (hasStarColor[i] && colorCounts[i] != 2)
                     {
                         good = false;
                         break;
@@ -122,7 +127,7 @@ namespace WitnessSolver
                 }
             }
 
-            if (good && tetrisList.Count > 0)
+            if (good && tetrisList != null)
                 good &= SectionTetrisChecker.CanContainExactly(this, tetrisList);
 
             this.Checked = true;
@@ -130,24 +135,29 @@ namespace WitnessSolver
             return good;
         }
 
-        private static bool ProcessCellForCheck(char squareColor, char starColor, int? triangleCount,
-            int usedEdgeCount, Tetris tetris, HashSet<char> squareLetters, HashSet<char> starLetters,
-            Dictionary<char, int> colorLetterCount, List<Tetris> tetrisList)
+        private static bool CheckCell(char squareColor, char starColor, int? triangleCount,
+            int usedEdgeCount, Tetris tetris, Span<int> colorCounts, Span<bool> hasStarColor,
+            ref int squareColorCount, ref char firstSquareColor, ref List<Tetris> tetrisList)
         {
             if (squareColor != ' ')
             {
-                squareLetters.Add(squareColor);
-                if (!colorLetterCount.ContainsKey(squareColor))
-                    colorLetterCount[squareColor] = 0;
-                colorLetterCount[squareColor]++;
+                if (squareColorCount == 0)
+                    firstSquareColor = squareColor;
+                else if (squareColor != firstSquareColor)
+                    return false; // Multiple square colors — fail immediately
+                squareColorCount++;
+                int idx = ColorIndex(squareColor);
+                if (idx >= 0) colorCounts[idx]++;
             }
 
             if (starColor != ' ')
             {
-                starLetters.Add(starColor);
-                if (!colorLetterCount.ContainsKey(starColor))
-                    colorLetterCount[starColor] = 0;
-                colorLetterCount[starColor]++;
+                int idx = ColorIndex(starColor);
+                if (idx >= 0)
+                {
+                    hasStarColor[idx] = true;
+                    colorCounts[idx]++;
+                }
             }
 
             if (triangleCount.HasValue && triangleCount.Value != usedEdgeCount)
@@ -155,16 +165,31 @@ namespace WitnessSolver
 
             if (tetris != null)
             {
+                tetrisList ??= new List<Tetris>();
                 tetrisList.Add(tetris);
                 if (tetris.ColorLetter != ' ')
                 {
-                    if (!colorLetterCount.ContainsKey(tetris.ColorLetter))
-                        colorLetterCount[tetris.ColorLetter] = 0;
-                    colorLetterCount[tetris.ColorLetter]++;
+                    int idx = ColorIndex(tetris.ColorLetter);
+                    if (idx >= 0) colorCounts[idx]++;
                 }
             }
 
             return true;
+        }
+
+        private static int ColorIndex(char c)
+        {
+            switch (c)
+            {
+                case 'R': return 0;
+                case 'G': return 1;
+                case 'B': return 2;
+                case 'W': return 3;
+                case 'L': return 4;
+                case 'Y': return 5;
+                case 'P': return 6;
+                default: return -1;
+            }
         }
 
         public List<Section> FindSubSections()
