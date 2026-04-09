@@ -32,7 +32,7 @@ namespace WitnessSolver
 
         [TestMethod, TestCategory("Long")] public void TestWrapLarge() => Solve(Puzzles.WrapLarge());
         [TestMethod, TestCategory("Long")] public void TestComplexBeginning() => Solve(Puzzles.ComplexBeginning());
-        [TestMethod, TestCategory("Long")] public void TestAnotherPuzzle() => Solve(Puzzles.AnotherPuzzle());
+        [TestMethod, TestCategory("VeryLong")] public void TestAnotherPuzzle() => Solve(Puzzles.AnotherPuzzle());
 
         private static void Solve(Puzzle puzzle)
         {
