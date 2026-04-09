@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace WitnessSolver
 {
@@ -23,6 +24,7 @@ namespace WitnessSolver
         public List<List<SolverEdge>> Solutions;
 
         public IPuzzleDrawer Drawer;
+        public CancellationToken CancellationToken;
         public event EventHandler<SolveEventArgs> Update;
 
         private long _stepCount;
@@ -395,6 +397,7 @@ namespace WitnessSolver
             this._stepCountLoop++;
             if (this._stepCountLoop == StepShowPeriod)
             {
+                this.CancellationToken.ThrowIfCancellationRequested();
                 this.Drawer?.DrawState(false);
                 this.SendUpdate(false);
                 this._stepCountLoop = 0;
