@@ -267,6 +267,22 @@ namespace WitnessSolver
                 }
             }
 
+            // Dead-end pruning: if not at an End and no valid out edges, this path is stuck
+            if (good && !this.Location.IsEnd)
+            {
+                bool hasOut = false;
+                var outEdges = this.Location.OutEdges;
+                for (int i = 0; i < outEdges.Length; i++)
+                {
+                    if (!outEdges[i].IsUsed && outEdges[i].Valid && !outEdges[i].End.Visited)
+                    {
+                        hasOut = true;
+                        break;
+                    }
+                }
+                if (!hasOut) return false;
+            }
+
             // Section validity
             for (int i = 0; i < this.Sections.Count; i++)
             {
