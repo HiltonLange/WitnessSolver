@@ -157,6 +157,13 @@ namespace WitnessSolver
             TestPuzzle(Puzzles.ComplexBeginning());
         }
 
+        [TestMethod]
+        [TestCategory("Long")]
+        public void TestAnotherPuzzle()
+        {
+            TestPuzzle(Puzzles.AnotherPuzzle());
+        }
+
         private void TestPuzzle(Puzzle puzzle)
         {
             var graph = SolverGraph.Compile(puzzle);
