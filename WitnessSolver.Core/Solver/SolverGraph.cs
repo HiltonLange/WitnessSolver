@@ -33,6 +33,12 @@ namespace WitnessSolver
         private int _allRouteCount;
         private int _goodRouteCount;
 
+        // Incremental must-traverse tracking
+        private int _remainingMustTraverseEdges;
+        private int _remainingMustTraversePoints;
+        // Pre-filtered lists for may-not-traverse check (usually empty or tiny)
+        private SolverEdge[] _mayNotTraverseEdges;
+
         private SolverGraph(SolverNode[] nodes, SolverEdge[] edges, SolverCell[] cells,
             SolverNode start, int xSize, int ySize, bool wrap, long expectedSolutions, string name)
         {
@@ -197,6 +203,24 @@ namespace WitnessSolver
             graph.Location = startSolverNode;
             startSolverNode.Visited = true;
 
+            // Precompute incremental counters
+            int mustEdges = 0;
+            var mayNotList = new List<SolverEdge>();
+            foreach (var edge in solverEdges)
+            {
+                if (edge.MustTraverse) mustEdges++;
+                if (!edge.MayTraverse) mayNotList.Add(edge);
+            }
+            graph._remainingMustTraverseEdges = mustEdges;
+
+            int mustPoints = 0;
+            foreach (var node in solverNodes)
+            {
+                if (node.MustTraverse) mustPoints++;
+            }
+            graph._remainingMustTraversePoints = mustPoints;
+            graph._mayNotTraverseEdges = mayNotList.ToArray();
+
             return graph;
         }
 
@@ -237,6 +261,11 @@ namespace WitnessSolver
                 edge.Start.NeedCount--;
                 edge.End.NeedCount--;
             }
+
+            // Incremental must-traverse tracking
+            if (edge.MustTraverse) _remainingMustTraverseEdges--;
+            if (edge.Reverse.MustTraverse) _remainingMustTraverseEdges--;
+            if (this.Location.MustTraverse) _remainingMustTraversePoints--;
 
             // Section split check
             if (edge.AdjacentCells.Length == 2)
@@ -288,6 +317,11 @@ namespace WitnessSolver
 
         public void RemoveEdge(SolverEdge edge)
         {
+            // Undo incremental tracking before state changes
+            if (this.Location.MustTraverse) _remainingMustTraversePoints++;
+            if (edge.MustTraverse) _remainingMustTraverseEdges++;
+            if (edge.Reverse.MustTraverse) _remainingMustTraverseEdges++;
+
             this.Location.Visited = false;
             this.Location = edge.Start;
             edge.Traversed = false;
@@ -355,25 +389,16 @@ namespace WitnessSolver
             {
                 this._allRouteCount++;
 
-                foreach (var edge in this.Edges)
-                {
-                    if (edge.MustTraverse && !edge.Traversed && !edge.Reverse.Traversed)
-                        return false;
-                    if (!edge.MayTraverse && (edge.Traversed || edge.Reverse.Traversed))
-                        return false;
-                }
+                // O(1) check: all must-traverse obligations satisfied?
+                if (_remainingMustTraverseEdges > 0 || _remainingMustTraversePoints > 0)
+                    return false;
 
-                foreach (var node in this.Nodes)
+                // Check may-not-traverse violations (pre-filtered, usually empty)
+                for (int i = 0; i < _mayNotTraverseEdges.Length; i++)
                 {
-                    if (node.MustTraverse)
-                    {
-                        bool found = false;
-                        foreach (var edge in node.OutEdges)
-                        {
-                            if (edge.Reverse.Traversed) { found = true; break; }
-                        }
-                        if (!found) return false;
-                    }
+                    var e = _mayNotTraverseEdges[i];
+                    if (e.Traversed || e.Reverse.Traversed)
+                        return false;
                 }
 
                 foreach (var section in this.Sections)
