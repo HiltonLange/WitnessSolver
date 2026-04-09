@@ -21,3 +21,10 @@ jobs:
 
       - name: Solve all puzzles (correctness + timing)
         run: dotnet run --project WitnessSolver.TimingHarness --configuration Release --no-build -- Long
+
+      - name: Upload perf results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: perf-results
+          path: perf-results.json

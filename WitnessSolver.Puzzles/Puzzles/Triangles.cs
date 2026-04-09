@@ -2,7 +2,7 @@ namespace WitnessSolver
 {
     public static partial class Puzzles
     {
-        [PuzzleDefinition]
+        [PuzzleDefinition(PuzzleCategory.Trivial)]
         public static Puzzle Triangle1()
         {
             var puzzle = new RectanglePuzzle("Triangle1", 1, 2, new Point(0, 2), new Point(1, 0));
@@ -13,7 +13,7 @@ namespace WitnessSolver
             return puzzle;
         }
 
-        [PuzzleDefinition]
+        [PuzzleDefinition(PuzzleCategory.Trivial)]
         public static Puzzle Triangle2()
         {
             var puzzle = new RectanglePuzzle("Triangle2", 1, 2, new Point(0, 2), new Point(1, 0));
@@ -24,7 +24,7 @@ namespace WitnessSolver
             return puzzle;
         }
 
-        [PuzzleDefinition]
+        [PuzzleDefinition(PuzzleCategory.Trivial)]
         public static Puzzle TriangleOptimization()
         {
             var puzzle = new RectanglePuzzle("TriangleOptimization", 6, 5, new Point(0, 5), new Point(6, 0));
@@ -39,7 +39,7 @@ namespace WitnessSolver
             return puzzle;
         }
 
-        [PuzzleDefinition]
+        [PuzzleDefinition(PuzzleCategory.Trivial)]
         public static Puzzle TriangleSectionTrap()
         {
             var puzzle = new RectanglePuzzle("TriangleSectionTrap", 3, 2, new Point(3, 1), new Point(1, 1));
@@ -57,5 +57,6 @@ namespace WitnessSolver
         }
     }
 }
+
 
 

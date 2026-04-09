@@ -26,6 +26,6 @@ namespace WitnessSolver
         }
 
         public static IEnumerable<object[]> NormalAndLongPuzzles
-            => PuzzleLibrary.Where(PuzzleCategory.Long).Select(e => new object[] { e.Name, e });
+            => PuzzleLibrary.Below(PuzzleCategory.Medium).Select(e => new object[] { e.Name, e });
     }
 }

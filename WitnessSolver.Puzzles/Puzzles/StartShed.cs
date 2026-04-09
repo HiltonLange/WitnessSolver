@@ -2,7 +2,7 @@ namespace WitnessSolver
 {
     public static partial class Puzzles
     {
-        [PuzzleDefinition]
+        [PuzzleDefinition(PuzzleCategory.Trivial)]
         public static Puzzle StartShed()
         {
             var puzzle = new RectanglePuzzle("Start shed", 3, 3, new Point(3, 0), new Point(0, 1));
@@ -24,5 +24,6 @@ namespace WitnessSolver
         }
     }
 }
+
 
 

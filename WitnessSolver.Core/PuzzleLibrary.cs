@@ -9,14 +9,18 @@ namespace WitnessSolver
     {
         public string Name { get; }
         public PuzzleCategory Category { get; }
+        public long ExpectedSolutions { get; }
         public Func<Puzzle> Factory { get; }
 
-        public PuzzleEntry(string name, PuzzleCategory category, Func<Puzzle> factory)
+        public PuzzleEntry(string name, PuzzleCategory category, long expectedSolutions, Func<Puzzle> factory)
         {
             this.Name = name;
             this.Category = category;
+            this.ExpectedSolutions = expectedSolutions;
             this.Factory = factory;
         }
+
+        public override string ToString() => this.Name;
     }
 
     public static class PuzzleLibrary
@@ -27,13 +31,22 @@ namespace WitnessSolver
         public static void RegisterAssembly(System.Reflection.Assembly assembly)
         {
             _assemblies.Add(assembly);
-            _entries = null; // force re-discovery
+            _entries = null;
         }
 
         public static IReadOnlyList<PuzzleEntry> All => _entries ??= Discover();
 
-        public static IEnumerable<PuzzleEntry> Where(PuzzleCategory maxCategory)
-            => All.Where(e => e.Category <= maxCategory);
+        public static IEnumerable<PuzzleEntry> Below(PuzzleCategory category)
+            => All.Where(e => e.Category < category);
+
+        public static IEnumerable<PuzzleEntry> AtLeast(PuzzleCategory category)
+            => All.Where(e => e.Category >= category);
+
+        public static IEnumerable<PuzzleEntry> Between(PuzzleCategory min, PuzzleCategory max)
+            => All.Where(e => e.Category >= min && e.Category <= max);
+
+        public static IEnumerable<PuzzleEntry> AtMost(PuzzleCategory category)
+            => All.Where(e => e.Category <= category);
 
         private static List<PuzzleEntry> Discover()
         {
@@ -54,12 +67,16 @@ namespace WitnessSolver
                         if (method.GetParameters().Length != 0) continue;
 
                         var factory = (Func<Puzzle>)Delegate.CreateDelegate(typeof(Func<Puzzle>), method);
-                        entries.Add(new PuzzleEntry(method.Name, attr.Category, factory));
+                        var puzzle = factory();
+                        entries.Add(new PuzzleEntry(method.Name, attr.Category, puzzle.ExpectedSolutions, factory));
                     }
                 }
             }
 
-            return entries.OrderBy(e => e.Category).ThenBy(e => e.Name).ToList();
+            return entries
+                .OrderBy(e => (int)e.Category)
+                .ThenBy(e => e.ExpectedSolutions)
+                .ToList();
         }
     }
 }
