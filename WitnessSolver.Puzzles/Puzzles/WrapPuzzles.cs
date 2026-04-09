@@ -2,6 +2,7 @@ namespace WitnessSolver
 {
     public static partial class Puzzles
     {
+        [PuzzleDefinition]
         public static Puzzle WrapBasic()
         {
             var puzzle = new RectanglePuzzle("WrapBasic", 2, 2, new Point(1, 0), new Point(0, 2));
@@ -16,6 +17,7 @@ namespace WitnessSolver
             return puzzle;
         }
 
+        [PuzzleDefinition(PuzzleCategory.Long)]
         public static Puzzle WrapLarge()
         {
             var puzzle = new RectanglePuzzle("WrapLarge", 5, 6, new Point(0, 6), new Point(0, 0));
@@ -33,4 +35,6 @@ namespace WitnessSolver
         }
     }
 }
+
+
 

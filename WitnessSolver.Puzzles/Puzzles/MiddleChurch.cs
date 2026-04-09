@@ -2,6 +2,7 @@ namespace WitnessSolver
 {
     public static partial class Puzzles
     {
+        [PuzzleDefinition]
         public static Puzzle MiddleChurch()
         {
             var puzzle = new RectanglePuzzle("Middle church", 4, 4, new Point(0, 4), new Point(4, 0));
@@ -31,4 +32,5 @@ namespace WitnessSolver
         }
     }
 }
+
 

@@ -19,15 +19,5 @@ jobs:
       - name: Build
         run: dotnet build WitnessSolver.sln --configuration Release
 
-      - name: Run tests (Normal + Long, exclude VeryLong)
-        run: dotnet test WitnessSolver.Tests/WitnessSolver.Tests.csproj --configuration Release --no-build --filter "TestCategory!=VeryLong" --logger "trx;LogFileName=results.trx" --results-directory TestResults
-
-      - name: Run timing harness
-        run: dotnet run --project WitnessSolver.TimingHarness --configuration Release --no-build
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-results
-          path: TestResults/*.trx
+      - name: Solve all puzzles (correctness + timing)
+        run: dotnet run --project WitnessSolver.TimingHarness --configuration Release --no-build -- Long

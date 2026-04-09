@@ -2,6 +2,7 @@ namespace WitnessSolver
 {
     public static partial class Puzzles
     {
+        [PuzzleDefinition]
         public static Puzzle DistortedColors()
         {
             var puzzle = new RectanglePuzzle("Distorted colors", 6, 6, new Point(0, 6), new Point(6, 0));
@@ -47,4 +48,5 @@ namespace WitnessSolver
         }
     }
 }
+
 

@@ -4,6 +4,7 @@ namespace WitnessSolver
 {
     public static partial class Puzzles
     {
+        [PuzzleDefinition]
         public static Puzzle TunnelPuzzle()
         {
             var puzzle = new RectanglePuzzle("Tunnel puzzle", 5, 5, new Point(0, 5), new Point(5, 0));
@@ -56,4 +57,5 @@ namespace WitnessSolver
         }
     }
 }
+
 
