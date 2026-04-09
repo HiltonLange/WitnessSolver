@@ -159,11 +159,8 @@ namespace WitnessSolver
 
         private void TestPuzzle(Puzzle puzzle)
         {
-            PuzzleSolver solver = new PuzzleSolver()
-            {
-                Puzzle = puzzle,
-            };
-
+            var graph = SolverGraph.Compile(puzzle);
+            var solver = new PuzzleSolver(graph);
             int solutions = solver.Solve();
             Assert.AreEqual(puzzle.ExpectedSolutions, solutions);
         }

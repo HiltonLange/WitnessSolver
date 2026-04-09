@@ -15,15 +15,17 @@ namespace WitnessSolver
         {
             this.btnSolve.Enabled = false;
             var puzzle = (Puzzle)this.cmbPuzzle.SelectedItem;
+            var graph = SolverGraph.Compile(puzzle);
 
-            // Inject the WinForms drawer into the puzzle
-            var drawer = new RectanglePuzzleDrawer(puzzle);
+            // Inject the WinForms drawer
+            var drawer = new RectanglePuzzleDrawer();
             drawer.FormGraphics = this.outputPanel.CreateGraphics();
-            puzzle.Drawer = drawer;
+            drawer.SetGraph(graph);
+            graph.Drawer = drawer;
 
             drawer.DrawState(false);
-            puzzle.Update += this.puzzle_OnUpdate;
-            var solver = new PuzzleSolver { Puzzle = puzzle };
+            graph.Update += this.puzzle_OnUpdate;
+            var solver = new PuzzleSolver(graph);
 
             Task.Run(() => solver.Solve()).ContinueWith((res) =>
             {
@@ -31,7 +33,7 @@ namespace WitnessSolver
             });
         }
 
-        private void puzzle_OnUpdate(object sender, Puzzle.PuzzleSolveEventArgs e)
+        private void puzzle_OnUpdate(object sender, SolverGraph.SolveEventArgs e)
         {
             if (this.Disposing || this.IsDisposed)
             {
