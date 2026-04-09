@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WitnessSolver.Core\WitnessSolver.Core.csproj" />
+    <ProjectReference Include="..\WitnessSolver.Puzzles\WitnessSolver.Puzzles.csproj" />
   </ItemGroup>
 
 </Project>
