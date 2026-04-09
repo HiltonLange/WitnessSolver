@@ -28,6 +28,7 @@ namespace WitnessSolver
         [TestMethod] public void TestTetris3And3() => Solve(Puzzles.Tetris3And3());
         [TestMethod] public void TestTunnelTetris() => Solve(Puzzles.TunnelTetrisPuzzle());
         [TestMethod] public void TestTetrisCross() => Solve(Puzzles.TetrisCross());
+        [TestMethod] public void TestHedgeTetris2() => Solve(Puzzles.HedgeTetris2());
 
         [TestMethod, TestCategory("Long")] public void TestWrapLarge() => Solve(Puzzles.WrapLarge());
         [TestMethod, TestCategory("Long")] public void TestComplexBeginning() => Solve(Puzzles.ComplexBeginning());
