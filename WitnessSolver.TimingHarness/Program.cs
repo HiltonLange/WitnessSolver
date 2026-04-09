@@ -29,6 +29,9 @@ var puzzles = new List<(string Name, Func<Puzzle> Factory)>
     ("TetrisComplex",        Puzzles.TetrisComplex),
     ("TetrisCross",          Puzzles.TetrisCross),
     ("SwampyBoots",          Puzzles.SwampyBoots),
+    // Long
+    ("WrapLarge",            Puzzles.WrapLarge),
+    ("ComplexBeginning",     Puzzles.ComplexBeginning),
 };
 
 Console.WriteLine($"{"Time",8}  {"Solutions",10}  Puzzle");
