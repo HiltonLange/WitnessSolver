@@ -1,18 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0-windows</TargetFramework>
-    <OutputType>WinExe</OutputType>
-    <UseWindowsForms>true</UseWindowsForms>
+    <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>WitnessSolver</RootNamespace>
-    <AssemblyName>WitnessSolver</AssemblyName>
+    <AssemblyName>WitnessSolver.Puzzles</AssemblyName>
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\WitnessSolver.Core\WitnessSolver.Core.csproj" />
-    <ProjectReference Include="..\WitnessSolver.Puzzles\WitnessSolver.Puzzles.csproj" />
   </ItemGroup>
 
 </Project>
