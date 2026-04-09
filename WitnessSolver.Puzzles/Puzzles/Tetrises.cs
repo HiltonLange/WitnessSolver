@@ -77,7 +77,7 @@ namespace WitnessSolver
             return puzzle;
         }
 
-        [PuzzleDefinition(PuzzleCategory.Short)]
+        [PuzzleDefinition(PuzzleCategory.Medium)]
         public static Puzzle TetrisBasicNegative()
         {
             var puzzle = new RectanglePuzzle("TetrisBasicNegative", 4, 4, new Point(0, 4), new Point(4, 0));
@@ -101,7 +101,7 @@ namespace WitnessSolver
             return puzzle;
         }
 
-        [PuzzleDefinition(PuzzleCategory.Short)]
+        [PuzzleDefinition(PuzzleCategory.Medium)]
         public static Puzzle TetrisBasicNegative2()
         {
             var puzzle = new RectanglePuzzle("TetrisBasicNegative2", 4, 4, new Point(0, 4), new Point(4, 0));
@@ -288,7 +288,7 @@ namespace WitnessSolver
             return puzzle;
         }
 
-        [PuzzleDefinition(PuzzleCategory.Short)]
+        [PuzzleDefinition(PuzzleCategory.Medium)]
         public static Puzzle SwampyBoots()
         {
             var puzzle = new RectanglePuzzle("Swampy Boots", 4, 4, new Point(0, 4), new Point(4, 0));
@@ -323,6 +323,7 @@ namespace WitnessSolver
         }
     }
 }
+
 
 
 
