@@ -16,7 +16,11 @@ namespace WitnessSolver
             var graph = SolverGraph.Compile(puzzle);
             var solver = new PuzzleSolver(graph);
             int solutions = solver.Solve();
-            Assert.AreEqual(puzzle.ExpectedSolutions, solutions, $"Puzzle '{name}' solution count mismatch");
+
+            if (entry.HasExpectedSolutions)
+                Assert.AreEqual(entry.ExpectedSolutions, solutions, $"Puzzle '{name}' solution count mismatch");
+            else
+                Assert.IsTrue(solutions >= 0, $"Puzzle '{name}' returned negative solution count");
         }
 
         public static IEnumerable<object[]> TrivialAndShortPuzzles

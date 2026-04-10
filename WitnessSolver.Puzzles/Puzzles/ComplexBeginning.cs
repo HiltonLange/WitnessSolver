@@ -2,7 +2,7 @@ namespace WitnessSolver
 {
     public static partial class Puzzles
     {
-        [PuzzleDefinition(PuzzleCategory.Long)]
+        [PuzzleDefinition(PuzzleCategory.Long, expectedSolutions: 321102)]
         public static Puzzle ComplexBeginning()
         {
             Point[] starts =
@@ -21,8 +21,6 @@ namespace WitnessSolver
             };
 
             var puzzle = new RectanglePuzzle("Complex beginning", 7, 7, starts[3], ends[0]);
-            puzzle.ExpectedSolutions = 321102;
-
             puzzle.Cell[0, 0].SquareColorLetter = 'L';
             puzzle.Cell[0, 1].SquareColorLetter = 'W';
             puzzle.Cell[1, 0].SquareColorLetter = 'W';
@@ -57,6 +55,7 @@ namespace WitnessSolver
 
     }
 }
+
 
 
 

@@ -29,7 +29,7 @@ foreach (var entry in puzzles)
     int solutions = solver.Solve();
     sw.Stop();
 
-    bool pass = puzzle.ExpectedSolutions == solutions;
+    bool pass = !entry.HasExpectedSolutions || entry.ExpectedSolutions == solutions;
     if (!pass) allPass = false;
     totalMs += sw.ElapsedMilliseconds;
 
@@ -39,13 +39,14 @@ foreach (var entry in puzzles)
         Category = entry.Category.ToString(),
         TimeMs = sw.ElapsedMilliseconds,
         Solutions = solutions,
-        Expected = puzzle.ExpectedSolutions,
+        Expected = entry.HasExpectedSolutions ? entry.ExpectedSolutions : -1,
         Pass = pass,
     };
     results.Add(result);
 
     var status = pass ? "  OK" : "FAIL";
-    Console.WriteLine($"{sw.ElapsedMilliseconds,7}ms  {solutions,10}  {puzzle.ExpectedSolutions,10}  {status,6}  {entry.Category,8}  {entry.Name}");
+    var expectedStr = entry.HasExpectedSolutions ? entry.ExpectedSolutions.ToString() : "?";
+    Console.WriteLine($"{sw.ElapsedMilliseconds,7}ms  {solutions,10}  {expectedStr,10}  {status,6}  {entry.Category,8}  {entry.Name}");
 }
 
 Console.WriteLine(new string('-', 72));

@@ -37,8 +37,12 @@ namespace WitnessSolver
                     if (method.GetParameters().Length != 0) continue;
 
                     var factory = (Func<Puzzle>)Delegate.CreateDelegate(typeof(Func<Puzzle>), method);
-                    var puzzle = factory();
-                    entries.Add(new PuzzleEntry(method.Name, attr.Category, puzzle.ExpectedSolutions, factory));
+                    entries.Add(new PuzzleEntry(
+                        method.Name,
+                        attr.Category,
+                        attr.ExpectedSolutions,
+                        attr.HasExpectedSolutions,
+                        factory));
                 }
             }
 

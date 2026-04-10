@@ -4,12 +4,10 @@ namespace WitnessSolver
 {
     public static partial class Puzzles
     {
-        [PuzzleDefinition(PuzzleCategory.Medium)]
+        [PuzzleDefinition(PuzzleCategory.Medium, expectedSolutions: 4)]
         public static Puzzle TunnelPuzzle()
         {
             var puzzle = new RectanglePuzzle("Tunnel puzzle", 5, 5, new Point(0, 5), new Point(5, 0));
-            puzzle.ExpectedSolutions = 4;
-
             puzzle.Cell[0, 0].StarColorLetter = 'G';
             puzzle.Cell[4, 0].StarColorLetter = 'G';
             puzzle.Cell[4, 4].StarColorLetter = 'G';
@@ -57,6 +55,7 @@ namespace WitnessSolver
         }
     }
 }
+
 
 
 
