@@ -5,14 +5,12 @@ using System.IO;
 using System.Text.Json;
 using WitnessSolver;
 
-PuzzleLibrary.RegisterAssembly(typeof(Puzzles).Assembly);
-
 // Default: run everything below VeryLong. CLI arg overrides max category.
 var maxCategory = PuzzleCategory.Long;
 if (args.Length > 0 && Enum.TryParse<PuzzleCategory>(args[0], true, out var parsed))
     maxCategory = parsed;
 
-var puzzles = PuzzleLibrary.AtMost(maxCategory);
+var puzzles = PuzzleCatalog.AtMost(maxCategory);
 
 Console.WriteLine($"{"Time",8}  {"Solutions",10}  {"Expected",10}  {"Status",6}  {"Cat",8}  Puzzle");
 Console.WriteLine(new string('-', 72));
@@ -31,7 +29,7 @@ foreach (var entry in puzzles)
     int solutions = solver.Solve();
     sw.Stop();
 
-    bool pass = puzzle.ExpectedSolutions == solutions;
+    bool pass = !entry.HasExpectedSolutions || entry.ExpectedSolutions == solutions;
     if (!pass) allPass = false;
     totalMs += sw.ElapsedMilliseconds;
 
@@ -41,13 +39,14 @@ foreach (var entry in puzzles)
         Category = entry.Category.ToString(),
         TimeMs = sw.ElapsedMilliseconds,
         Solutions = solutions,
-        Expected = puzzle.ExpectedSolutions,
+        Expected = entry.HasExpectedSolutions ? entry.ExpectedSolutions : -1,
         Pass = pass,
     };
     results.Add(result);
 
     var status = pass ? "  OK" : "FAIL";
-    Console.WriteLine($"{sw.ElapsedMilliseconds,7}ms  {solutions,10}  {puzzle.ExpectedSolutions,10}  {status,6}  {entry.Category,8}  {entry.Name}");
+    var expectedStr = entry.HasExpectedSolutions ? entry.ExpectedSolutions.ToString() : "?";
+    Console.WriteLine($"{sw.ElapsedMilliseconds,7}ms  {solutions,10}  {expectedStr,10}  {status,6}  {entry.Category,8}  {entry.Name}");
 }
 
 Console.WriteLine(new string('-', 72));

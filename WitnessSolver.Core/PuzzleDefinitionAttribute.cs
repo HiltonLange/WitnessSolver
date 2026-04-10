@@ -15,10 +15,14 @@ namespace WitnessSolver
     public class PuzzleDefinitionAttribute : Attribute
     {
         public PuzzleCategory Category { get; }
+        public long ExpectedSolutions { get; }
+        public bool HasExpectedSolutions { get; }
 
-        public PuzzleDefinitionAttribute(PuzzleCategory category = PuzzleCategory.Medium)
+        public PuzzleDefinitionAttribute(PuzzleCategory category = PuzzleCategory.Medium, long expectedSolutions = -1)
         {
             this.Category = category;
+            this.ExpectedSolutions = expectedSolutions;
+            this.HasExpectedSolutions = expectedSolutions >= 0;
         }
     }
 }

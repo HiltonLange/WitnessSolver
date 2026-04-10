@@ -35,7 +35,6 @@ namespace WitnessSolver
         public event EventHandler<PuzzleSolveEventArgs> Update;
 
         public IPuzzleDrawer Drawer;
-        public long ExpectedSolutions;
         public bool Wrap;
 
         private void CalculateOptimizations()
