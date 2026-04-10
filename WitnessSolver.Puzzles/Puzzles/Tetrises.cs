@@ -4,6 +4,7 @@ namespace WitnessSolver
 {
     public static partial class Puzzles
     {
+        [PuzzleDefinition(PuzzleCategory.Medium)]
         public static Puzzle TetrisSimple()
         {
             var puzzle = new RectanglePuzzle("TetrisSimple", 5, 4, new Point(0, 4), new Point(5, 0));
@@ -28,6 +29,7 @@ namespace WitnessSolver
             return puzzle;
         }
 
+        [PuzzleDefinition(PuzzleCategory.Medium)]
         public static Puzzle TetrisCombine()
         {
             var puzzle = new RectanglePuzzle("TetrisCombine", 4, 5, new Point(0, 5), new Point(4, 0));
@@ -51,6 +53,7 @@ namespace WitnessSolver
             return puzzle;
         }
 
+        [PuzzleDefinition(PuzzleCategory.Medium)]
         public static Puzzle TetrisComplex()
         {
             var puzzle = new RectanglePuzzle("TetrisComplex", 4, 5, new Point(0, 5), new Point(4, 0));
@@ -74,6 +77,7 @@ namespace WitnessSolver
             return puzzle;
         }
 
+        [PuzzleDefinition(PuzzleCategory.Medium)]
         public static Puzzle TetrisBasicNegative()
         {
             var puzzle = new RectanglePuzzle("TetrisBasicNegative", 4, 4, new Point(0, 4), new Point(4, 0));
@@ -97,6 +101,7 @@ namespace WitnessSolver
             return puzzle;
         }
 
+        [PuzzleDefinition(PuzzleCategory.Medium)]
         public static Puzzle TetrisBasicNegative2()
         {
             var puzzle = new RectanglePuzzle("TetrisBasicNegative2", 4, 4, new Point(0, 4), new Point(4, 0));
@@ -127,6 +132,7 @@ namespace WitnessSolver
             return puzzle;
         }
 
+        [PuzzleDefinition(PuzzleCategory.Medium)]
         public static Puzzle TetrisRotationPuzzle()
         {
             var puzzle = new RectanglePuzzle("Tetris rotation", 4, 5, new Point(0, 5), new Point(4, 0));
@@ -153,6 +159,7 @@ namespace WitnessSolver
             return puzzle;
         }
 
+        [PuzzleDefinition(PuzzleCategory.Medium)]
         public static Puzzle TunnelTetrisPuzzle()
         {
             var puzzle = new RectanglePuzzle("Tunnel tetris puzzle", 5, 5, new Point(0, 5), new Point(5, 0));
@@ -198,6 +205,7 @@ namespace WitnessSolver
             return puzzle;
         }
 
+        [PuzzleDefinition(PuzzleCategory.Short)]
         public static Puzzle Tetris3And3()
         {
             var puzzle = new RectanglePuzzle("Tetris3And3", 4, 4, new Point(0, 4), new Point(4, 0));
@@ -235,6 +243,7 @@ namespace WitnessSolver
             return puzzle;
         }
 
+        [PuzzleDefinition(PuzzleCategory.Medium)]
         public static Puzzle TetrisCross()
         {
             var puzzle = new RectanglePuzzle("TetrisCross", 5, 5, new Point(0, 5), new Point(5, 0));
@@ -279,6 +288,7 @@ namespace WitnessSolver
             return puzzle;
         }
 
+        [PuzzleDefinition(PuzzleCategory.Medium)]
         public static Puzzle SwampyBoots()
         {
             var puzzle = new RectanglePuzzle("Swampy Boots", 4, 4, new Point(0, 4), new Point(4, 0));
@@ -313,4 +323,7 @@ namespace WitnessSolver
         }
     }
 }
+
+
+
 
