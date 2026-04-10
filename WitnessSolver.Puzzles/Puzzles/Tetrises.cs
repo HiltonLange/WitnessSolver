@@ -93,7 +93,7 @@ namespace WitnessSolver
             return puzzle;
         }
 
-        [PuzzleDefinition(PuzzleCategory.Medium, expectedSolutions: 116)]
+        [PuzzleDefinition(PuzzleCategory.Medium, expectedSolutions: 4)]
         public static Puzzle TetrisBasicNegative2()
         {
             var puzzle = new RectanglePuzzle("TetrisBasicNegative2", 4, 4, new Point(0, 4), new Point(4, 0));

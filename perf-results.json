@@ -1,0 +1,207 @@
+{
+  "Timestamp": "2026-04-10T20:18:59.1300462Z",
+  "Commit": "local",
+  "TotalMs": 8253,
+  "Results": [
+    {
+      "Name": "TriangleOptimization",
+      "Category": "Trivial",
+      "TimeMs": 3,
+      "Solutions": 0,
+      "Expected": 0,
+      "Pass": true
+    },
+    {
+      "Name": "Overlays",
+      "Category": "Trivial",
+      "TimeMs": 1,
+      "Solutions": 1,
+      "Expected": 1,
+      "Pass": true
+    },
+    {
+      "Name": "StartShed",
+      "Category": "Trivial",
+      "TimeMs": 0,
+      "Solutions": 1,
+      "Expected": 1,
+      "Pass": true
+    },
+    {
+      "Name": "Triangle1",
+      "Category": "Trivial",
+      "TimeMs": 0,
+      "Solutions": 1,
+      "Expected": 1,
+      "Pass": true
+    },
+    {
+      "Name": "TriangleSectionTrap",
+      "Category": "Trivial",
+      "TimeMs": 0,
+      "Solutions": 1,
+      "Expected": 1,
+      "Pass": true
+    },
+    {
+      "Name": "Triangle2",
+      "Category": "Trivial",
+      "TimeMs": 0,
+      "Solutions": 2,
+      "Expected": 2,
+      "Pass": true
+    },
+    {
+      "Name": "WrapBasic",
+      "Category": "Trivial",
+      "TimeMs": 0,
+      "Solutions": 5,
+      "Expected": 5,
+      "Pass": true
+    },
+    {
+      "Name": "NewPuzzle",
+      "Category": "Trivial",
+      "TimeMs": 0,
+      "Solutions": 6,
+      "Expected": 6,
+      "Pass": true
+    },
+    {
+      "Name": "HedgeTetris2",
+      "Category": "Short",
+      "TimeMs": 52,
+      "Solutions": 0,
+      "Expected": 0,
+      "Pass": true
+    },
+    {
+      "Name": "Tetris3And3",
+      "Category": "Short",
+      "TimeMs": 41,
+      "Solutions": 1,
+      "Expected": 1,
+      "Pass": true
+    },
+    {
+      "Name": "MiddleChurch",
+      "Category": "Short",
+      "TimeMs": 16,
+      "Solutions": 5,
+      "Expected": 5,
+      "Pass": true
+    },
+    {
+      "Name": "SamplePuzzle",
+      "Category": "Short",
+      "TimeMs": 19,
+      "Solutions": 196,
+      "Expected": 196,
+      "Pass": true
+    },
+    {
+      "Name": "SwampyBoots",
+      "Category": "Medium",
+      "TimeMs": 69,
+      "Solutions": 1,
+      "Expected": 1,
+      "Pass": true
+    },
+    {
+      "Name": "TetrisCombine",
+      "Category": "Medium",
+      "TimeMs": 702,
+      "Solutions": 3,
+      "Expected": 3,
+      "Pass": true
+    },
+    {
+      "Name": "TetrisBasicNegative2",
+      "Category": "Medium",
+      "TimeMs": 25,
+      "Solutions": 4,
+      "Expected": 4,
+      "Pass": true
+    },
+    {
+      "Name": "TunnelPuzzle",
+      "Category": "Medium",
+      "TimeMs": 1124,
+      "Solutions": 4,
+      "Expected": 4,
+      "Pass": true
+    },
+    {
+      "Name": "TetrisSimple",
+      "Category": "Medium",
+      "TimeMs": 210,
+      "Solutions": 10,
+      "Expected": 10,
+      "Pass": true
+    },
+    {
+      "Name": "DistortedColors",
+      "Category": "Medium",
+      "TimeMs": 51,
+      "Solutions": 46,
+      "Expected": 46,
+      "Pass": true
+    },
+    {
+      "Name": "TetrisRotationPuzzle",
+      "Category": "Medium",
+      "TimeMs": 298,
+      "Solutions": 88,
+      "Expected": 88,
+      "Pass": true
+    },
+    {
+      "Name": "TetrisBasicNegative",
+      "Category": "Medium",
+      "TimeMs": 36,
+      "Solutions": 116,
+      "Expected": 116,
+      "Pass": true
+    },
+    {
+      "Name": "TunnelTetrisPuzzle",
+      "Category": "Medium",
+      "TimeMs": 1272,
+      "Solutions": 116,
+      "Expected": 116,
+      "Pass": true
+    },
+    {
+      "Name": "TetrisCross",
+      "Category": "Medium",
+      "TimeMs": 2225,
+      "Solutions": 126,
+      "Expected": 126,
+      "Pass": true
+    },
+    {
+      "Name": "Flashing",
+      "Category": "Medium",
+      "TimeMs": 399,
+      "Solutions": 239,
+      "Expected": 239,
+      "Pass": true
+    },
+    {
+      "Name": "TetrisComplex",
+      "Category": "Medium",
+      "TimeMs": 229,
+      "Solutions": 246,
+      "Expected": 246,
+      "Pass": true
+    },
+    {
+      "Name": "Test55",
+      "Category": "Medium",
+      "TimeMs": 1481,
+      "Solutions": 46204,
+      "Expected": 46204,
+      "Pass": true
+    }
+  ]
+}
