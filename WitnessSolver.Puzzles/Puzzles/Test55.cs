@@ -2,6 +2,7 @@ namespace WitnessSolver
 {
     public static partial class Puzzles
     {
+        [PuzzleDefinition(PuzzleCategory.Medium)]
         public static Puzzle Test55()
         {
             var puzzle = new RectanglePuzzle("Test 5x5", 5, 5, new Point(0, 5), new Point(5, 0));
@@ -19,4 +20,6 @@ namespace WitnessSolver
         }
     }
 }
+
+
 

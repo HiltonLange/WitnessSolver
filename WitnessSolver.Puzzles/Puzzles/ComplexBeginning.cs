@@ -2,6 +2,7 @@ namespace WitnessSolver
 {
     public static partial class Puzzles
     {
+        [PuzzleDefinition(PuzzleCategory.Long)]
         public static Puzzle ComplexBeginning()
         {
             Point[] starts =
@@ -56,4 +57,6 @@ namespace WitnessSolver
 
     }
 }
+
+
 

@@ -29,7 +29,8 @@ namespace WitnessSolver
             this.btnCancel.Enabled = true;
             this._cts = new CancellationTokenSource();
 
-            var puzzle = (Puzzle)this.cmbPuzzle.SelectedItem;
+            var entry = (PuzzleEntry)this.cmbPuzzle.SelectedItem;
+            var puzzle = entry.Factory();
             var graph = SolverGraph.Compile(puzzle);
 
             var drawer = new RectanglePuzzleDrawer();
@@ -109,9 +110,9 @@ namespace WitnessSolver
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            foreach (var puzzle in Puzzles.AllPuzzles())
+            foreach (var entry in PuzzleLibrary.All)
             {
-                this.cmbPuzzle.Items.Add(puzzle);
+                this.cmbPuzzle.Items.Add(entry);
             }
 
             if (this.cmbPuzzle.Items.Count > 0)
