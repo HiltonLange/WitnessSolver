@@ -8,14 +8,8 @@ namespace WitnessSolver
     [TestClass]
     public class TestPuzzles
     {
-        [AssemblyInitialize]
-        public static void Init(TestContext _)
-        {
-            PuzzleLibrary.RegisterAssembly(typeof(Puzzles).Assembly);
-        }
-
         [TestMethod]
-        [DynamicData(nameof(NormalAndLongPuzzles))]
+        [DynamicData(nameof(TrivialAndShortPuzzles))]
         public void SolvePuzzle(string name, PuzzleEntry entry)
         {
             var puzzle = entry.Factory();
@@ -25,7 +19,7 @@ namespace WitnessSolver
             Assert.AreEqual(puzzle.ExpectedSolutions, solutions, $"Puzzle '{name}' solution count mismatch");
         }
 
-        public static IEnumerable<object[]> NormalAndLongPuzzles
-            => PuzzleLibrary.Below(PuzzleCategory.Medium).Select(e => new object[] { e.Name, e });
+        public static IEnumerable<object[]> TrivialAndShortPuzzles
+            => PuzzleCatalog.Below(PuzzleCategory.Medium).Select(e => new object[] { e.Name, e });
     }
 }

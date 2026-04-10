@@ -5,14 +5,12 @@ using System.IO;
 using System.Text.Json;
 using WitnessSolver;
 
-PuzzleLibrary.RegisterAssembly(typeof(Puzzles).Assembly);
-
 // Default: run everything below VeryLong. CLI arg overrides max category.
 var maxCategory = PuzzleCategory.Long;
 if (args.Length > 0 && Enum.TryParse<PuzzleCategory>(args[0], true, out var parsed))
     maxCategory = parsed;
 
-var puzzles = PuzzleLibrary.AtMost(maxCategory);
+var puzzles = PuzzleCatalog.AtMost(maxCategory);
 
 Console.WriteLine($"{"Time",8}  {"Solutions",10}  {"Expected",10}  {"Status",6}  {"Cat",8}  Puzzle");
 Console.WriteLine(new string('-', 72));
