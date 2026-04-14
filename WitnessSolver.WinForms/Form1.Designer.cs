@@ -40,6 +40,10 @@
             this.lblStepsCaption = new System.Windows.Forms.Label();
             this.lblRoutesCaption = new System.Windows.Forms.Label();
             this.lblSolutionsCaption = new System.Windows.Forms.Label();
+            this.btnBrowse = new System.Windows.Forms.Button();
+            this.btnPrev = new System.Windows.Forms.Button();
+            this.btnNext = new System.Windows.Forms.Button();
+            this.lblBrowse = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // cmbPuzzle
