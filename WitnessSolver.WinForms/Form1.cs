@@ -110,7 +110,7 @@ namespace WitnessSolver
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            foreach (var entry in PuzzleLibrary.All)
+            foreach (var entry in PuzzleCatalog.All)
             {
                 this.cmbPuzzle.Items.Add(entry);
             }

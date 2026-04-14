@@ -4,12 +4,10 @@ namespace WitnessSolver
 {
     public static partial class Puzzles
     {
-        [PuzzleDefinition(PuzzleCategory.Medium)]
+        [PuzzleDefinition(PuzzleCategory.Medium, expectedSolutions: 10)]
         public static Puzzle TetrisSimple()
         {
             var puzzle = new RectanglePuzzle("TetrisSimple", 5, 4, new Point(0, 4), new Point(5, 0));
-            puzzle.ExpectedSolutions = 10;
-
             puzzle.Cell[4, 3].Tetris = new Tetris(
                 new List<TetrisCell>()
                 {
@@ -29,12 +27,10 @@ namespace WitnessSolver
             return puzzle;
         }
 
-        [PuzzleDefinition(PuzzleCategory.Medium)]
+        [PuzzleDefinition(PuzzleCategory.Medium, expectedSolutions: 3)]
         public static Puzzle TetrisCombine()
         {
             var puzzle = new RectanglePuzzle("TetrisCombine", 4, 5, new Point(0, 5), new Point(4, 0));
-            puzzle.ExpectedSolutions = 3;
-
             puzzle.Cell[1, 3].Tetris = new Tetris(
                 new List<TetrisCell>()
                 {
@@ -53,12 +49,10 @@ namespace WitnessSolver
             return puzzle;
         }
 
-        [PuzzleDefinition(PuzzleCategory.Medium)]
+        [PuzzleDefinition(PuzzleCategory.Medium, expectedSolutions: 246)]
         public static Puzzle TetrisComplex()
         {
             var puzzle = new RectanglePuzzle("TetrisComplex", 4, 5, new Point(0, 5), new Point(4, 0));
-            puzzle.ExpectedSolutions = 246;
-
             puzzle.Cell[0, 2].Tetris = new Tetris(
                 new List<TetrisCell>()
                 {
@@ -77,12 +71,10 @@ namespace WitnessSolver
             return puzzle;
         }
 
-        [PuzzleDefinition(PuzzleCategory.Medium)]
+        [PuzzleDefinition(PuzzleCategory.Medium, expectedSolutions: 116)]
         public static Puzzle TetrisBasicNegative()
         {
             var puzzle = new RectanglePuzzle("TetrisBasicNegative", 4, 4, new Point(0, 4), new Point(4, 0));
-            puzzle.ExpectedSolutions = 116;
-
             puzzle.Cell[3, 3].Tetris = new Tetris(
                 new List<TetrisCell>()
                 {
@@ -101,12 +93,10 @@ namespace WitnessSolver
             return puzzle;
         }
 
-        [PuzzleDefinition(PuzzleCategory.Medium)]
+        [PuzzleDefinition(PuzzleCategory.Medium, expectedSolutions: 4)]
         public static Puzzle TetrisBasicNegative2()
         {
             var puzzle = new RectanglePuzzle("TetrisBasicNegative2", 4, 4, new Point(0, 4), new Point(4, 0));
-            puzzle.ExpectedSolutions = 4;
-
             puzzle.Cell[0, 1].Tetris = new Tetris(
                 new List<TetrisCell>()
                 {
@@ -132,12 +122,10 @@ namespace WitnessSolver
             return puzzle;
         }
 
-        [PuzzleDefinition(PuzzleCategory.Medium)]
+        [PuzzleDefinition(PuzzleCategory.Medium, expectedSolutions: 88)]
         public static Puzzle TetrisRotationPuzzle()
         {
             var puzzle = new RectanglePuzzle("Tetris rotation", 4, 5, new Point(0, 5), new Point(4, 0));
-            puzzle.ExpectedSolutions = 88;
-
             puzzle.Cell[3, 4].Tetris = new Tetris(
                 new List<TetrisCell>
                 {
@@ -159,12 +147,10 @@ namespace WitnessSolver
             return puzzle;
         }
 
-        [PuzzleDefinition(PuzzleCategory.Medium)]
+        [PuzzleDefinition(PuzzleCategory.Medium, expectedSolutions: 116)]
         public static Puzzle TunnelTetrisPuzzle()
         {
             var puzzle = new RectanglePuzzle("Tunnel tetris puzzle", 5, 5, new Point(0, 5), new Point(5, 0));
-            puzzle.ExpectedSolutions = 116;
-
             puzzle.Cell[0, 0].Tetris = new Tetris(
                 new List<TetrisCell>
                 {
@@ -205,12 +191,10 @@ namespace WitnessSolver
             return puzzle;
         }
 
-        [PuzzleDefinition(PuzzleCategory.Short)]
+        [PuzzleDefinition(PuzzleCategory.Short, expectedSolutions: 1)]
         public static Puzzle Tetris3And3()
         {
             var puzzle = new RectanglePuzzle("Tetris3And3", 4, 4, new Point(0, 4), new Point(4, 0));
-            puzzle.ExpectedSolutions = 1;
-
             puzzle.Cell[0, 1].Tetris = new Tetris(
                 new List<TetrisCell>
                 {
@@ -243,12 +227,10 @@ namespace WitnessSolver
             return puzzle;
         }
 
-        [PuzzleDefinition(PuzzleCategory.Medium)]
+        [PuzzleDefinition(PuzzleCategory.Medium, expectedSolutions: 126)]
         public static Puzzle TetrisCross()
         {
             var puzzle = new RectanglePuzzle("TetrisCross", 5, 5, new Point(0, 5), new Point(5, 0));
-            puzzle.ExpectedSolutions = 126;
-
             puzzle.Cell[2, 0].Tetris = new Tetris(
                 new List<TetrisCell>
                 {
@@ -288,12 +270,10 @@ namespace WitnessSolver
             return puzzle;
         }
 
-        [PuzzleDefinition(PuzzleCategory.Medium)]
+        [PuzzleDefinition(PuzzleCategory.Medium, expectedSolutions: 1)]
         public static Puzzle SwampyBoots()
         {
             var puzzle = new RectanglePuzzle("Swampy Boots", 4, 4, new Point(0, 4), new Point(4, 0));
-            puzzle.ExpectedSolutions = 1;
-
             puzzle.Cell[0, 0].Tetris = new Tetris(
                 new List<TetrisCell>
                 {
@@ -323,6 +303,7 @@ namespace WitnessSolver
         }
     }
 }
+
 
 
 

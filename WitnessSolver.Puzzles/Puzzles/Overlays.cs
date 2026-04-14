@@ -2,12 +2,10 @@ namespace WitnessSolver
 {
     public static partial class Puzzles
     {
-        [PuzzleDefinition(PuzzleCategory.Trivial)]
+        [PuzzleDefinition(PuzzleCategory.Trivial, expectedSolutions: 1)]
         public static Puzzle Overlays()
         {
             var puzzle = new RectanglePuzzle("Overlays", 5, 5, new Point(0, 5), new Point(5, 0));
-            puzzle.ExpectedSolutions = 1;
-
             puzzle.Cell[0, 0].StarColorLetter = 'P';
             puzzle.Cell[1, 0].StarColorLetter = 'G';
             puzzle.Cell[4, 4].StarColorLetter = 'G';
@@ -74,6 +72,7 @@ namespace WitnessSolver
 
     }
 }
+
 
 
 

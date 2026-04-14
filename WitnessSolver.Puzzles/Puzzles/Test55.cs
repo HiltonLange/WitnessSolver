@@ -2,7 +2,7 @@ namespace WitnessSolver
 {
     public static partial class Puzzles
     {
-        [PuzzleDefinition(PuzzleCategory.Medium)]
+        [PuzzleDefinition(PuzzleCategory.Medium, expectedSolutions: 46204)]
         public static Puzzle Test55()
         {
             var puzzle = new RectanglePuzzle("Test 5x5", 5, 5, new Point(0, 5), new Point(5, 0));
@@ -14,12 +14,11 @@ namespace WitnessSolver
             //puzzle.Points[3, 0].OutEdges[puzzle.Points[3, 1]].MustTraverse = true;
             puzzle.Cell[0, 0].StarColorLetter = 'W';
             puzzle.Cell[4, 4].StarColorLetter = 'W';
-            puzzle.ExpectedSolutions = 46204;
-
             return puzzle;
         }
     }
 }
+
 
 
 

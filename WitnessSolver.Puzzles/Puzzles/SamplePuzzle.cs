@@ -2,12 +2,10 @@ namespace WitnessSolver
 {
     public static partial class Puzzles
     {
-        [PuzzleDefinition(PuzzleCategory.Short)]
+        [PuzzleDefinition(PuzzleCategory.Short, expectedSolutions: 196)]
         public static Puzzle SamplePuzzle()
         {
             var puzzle = new RectanglePuzzle("Sample puzzle", 4, 4, new Point(0, 4), new Point(4, 0));
-            puzzle.ExpectedSolutions = 196;
-
             puzzle.Cell[0, 1].SquareColorLetter = 'R';
             puzzle.Cell[0, 2].SquareColorLetter = 'R';
             puzzle.Cell[0, 3].SquareColorLetter = 'R';
@@ -30,6 +28,7 @@ namespace WitnessSolver
         }
     }
 }
+
 
 
 
