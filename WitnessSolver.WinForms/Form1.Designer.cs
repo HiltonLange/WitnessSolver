@@ -178,8 +178,8 @@
             // 
             // pnlBrowseControls
             // 
-            this.pnlBrowseControls.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.pnlBrowseControls.Location = new System.Drawing.Point(160, 655);
+            this.pnlBrowseControls.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.pnlBrowseControls.Size = new System.Drawing.Size(626, 28);
             this.pnlBrowseControls.Visible = false;
             this.pnlBrowseControls.Controls.Add(this.trkSolution);
@@ -189,13 +189,13 @@
             // trkSolution
             // 
             this.trkSolution.Location = new System.Drawing.Point(0, 0);
-            this.trkSolution.Size = new System.Drawing.Size(300, 28);
+            this.trkSolution.Size = new System.Drawing.Size(250, 28);
             this.trkSolution.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trkSolution.ValueChanged += new System.EventHandler(this.trkSolution_ValueChanged);
             // 
             // nudSolution
             // 
-            this.nudSolution.Location = new System.Drawing.Point(305, 3);
+            this.nudSolution.Location = new System.Drawing.Point(255, 3);
             this.nudSolution.Size = new System.Drawing.Size(80, 23);
             this.nudSolution.Minimum = 1;
             this.nudSolution.Maximum = 1;
@@ -203,11 +203,11 @@
             // 
             // lblBrowse
             // 
-            this.lblBrowse.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.lblBrowse.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.lblBrowse.ForeColor = System.Drawing.Color.DimGray;
-            this.lblBrowse.Location = new System.Drawing.Point(390, 5);
-            this.lblBrowse.Size = new System.Drawing.Size(236, 18);
-            this.lblBrowse.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblBrowse.Location = new System.Drawing.Point(340, 5);
+            this.lblBrowse.Size = new System.Drawing.Size(286, 18);
+            this.lblBrowse.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.lblBrowse.Text = "";
             // 
             // Form1

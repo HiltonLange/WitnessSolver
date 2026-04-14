@@ -218,9 +218,8 @@ namespace WitnessSolver
         private void UpdateBrowseLabel()
         {
             int stored = this._graph?.Solutions?.StoredCount ?? 0;
-            int total = this._graph?.Solutions?.TotalFound ?? 0;
             this.lblBrowse.Text = stored > 0
-                ? $"Solution {this._browseIndex + 1} of {stored:N0}" + (total > stored ? $" (sampled from {total:N0})" : "")
+                ? $"Solution {this._browseIndex + 1:N0} of {stored:N0}"
                 : "";
         }
 

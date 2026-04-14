@@ -9,19 +9,16 @@ namespace WitnessSolver
 
         public int TotalFound { get; private set; }
         public int StoredCount { get { lock (_lock) { return _solutions.Count; } } }
-        public int MaxStored { get; set; } = 10000;
+        public int MaxStored { get; set; } = 20_000_000;
 
         public void Add(int[] routeEdgeIndices)
         {
             TotalFound++;
 
-            if (ShouldStore(TotalFound))
+            lock (_lock)
             {
-                lock (_lock)
-                {
-                    if (_solutions.Count < MaxStored)
-                        _solutions.Add(routeEdgeIndices);
-                }
+                if (_solutions.Count < MaxStored)
+                    _solutions.Add(routeEdgeIndices);
             }
         }
 
@@ -40,14 +37,6 @@ namespace WitnessSolver
                 _solutions.Clear();
                 TotalFound = 0;
             }
-        }
-
-        private static bool ShouldStore(int n)
-        {
-            if (n <= 1000) return true;
-            if (n <= 10000) return n % 10 == 0;
-            if (n <= 100000) return n % 100 == 0;
-            return n % 1000 == 0;
         }
     }
 }
