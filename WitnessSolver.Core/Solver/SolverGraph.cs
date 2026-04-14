@@ -35,8 +35,6 @@ namespace WitnessSolver
         // Incremental must-traverse tracking
         private int _remainingMustTraverseEdges;
         private int _remainingMustTraversePoints;
-        // Pre-filtered lists for may-not-traverse check (usually empty or tiny)
-        private SolverEdge[] _mayNotTraverseEdges;
 
         private SolverGraph(SolverNode[] nodes, SolverEdge[] edges, SolverCell[] cells,
             SolverNode start, int xSize, int ySize, bool wrap, string name)
@@ -203,11 +201,9 @@ namespace WitnessSolver
 
             // Precompute incremental counters
             int mustEdges = 0;
-            var mayNotList = new List<SolverEdge>();
             foreach (var edge in solverEdges)
             {
                 if (edge.MustTraverse) mustEdges++;
-                if (!edge.MayTraverse) mayNotList.Add(edge);
             }
             graph._remainingMustTraverseEdges = mustEdges;
 
@@ -217,7 +213,6 @@ namespace WitnessSolver
                 if (node.MustTraverse) mustPoints++;
             }
             graph._remainingMustTraversePoints = mustPoints;
-            graph._mayNotTraverseEdges = mayNotList.ToArray();
 
             return graph;
         }
@@ -391,13 +386,8 @@ namespace WitnessSolver
                 if (_remainingMustTraverseEdges > 0 || _remainingMustTraversePoints > 0)
                     return false;
 
-                // Check may-not-traverse violations (pre-filtered, usually empty)
-                for (int i = 0; i < _mayNotTraverseEdges.Length; i++)
-                {
-                    var e = _mayNotTraverseEdges[i];
-                    if (e.Traversed || e.Reverse.Traversed)
-                        return false;
-                }
+                // MayTraverse (broken edges) are already excluded by PossibleOutEdges via
+                // edge.Valid — the solver can never traverse a broken edge, so no check needed.
 
                 foreach (var section in this.Sections)
                 {
