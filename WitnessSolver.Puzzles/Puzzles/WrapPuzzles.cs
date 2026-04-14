@@ -2,12 +2,11 @@ namespace WitnessSolver
 {
     public static partial class Puzzles
     {
+        [PuzzleDefinition(PuzzleCategory.Trivial, expectedSolutions: 5)]
         public static Puzzle WrapBasic()
         {
             var puzzle = new RectanglePuzzle("WrapBasic", 2, 2, new Point(1, 0), new Point(0, 2));
             puzzle.AddWrap();
-            puzzle.ExpectedSolutions = 5;
-
             puzzle.Cell[2, 0].SquareColorLetter = 'B';
             puzzle.Cell[0, 0].SquareColorLetter = 'B';
             puzzle.Cell[2, 1].TriangleCount = 1;
@@ -16,10 +15,10 @@ namespace WitnessSolver
             return puzzle;
         }
 
+        [PuzzleDefinition(PuzzleCategory.Long, expectedSolutions: 82)]
         public static Puzzle WrapLarge()
         {
             var puzzle = new RectanglePuzzle("WrapLarge", 5, 6, new Point(0, 6), new Point(0, 0));
-            puzzle.ExpectedSolutions = 82;
             puzzle.AddWrap();
 
             for (int x = 0; x < 6; x++)
@@ -33,4 +32,8 @@ namespace WitnessSolver
         }
     }
 }
+
+
+
+
 

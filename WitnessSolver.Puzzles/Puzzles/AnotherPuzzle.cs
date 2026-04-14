@@ -2,10 +2,10 @@ namespace WitnessSolver
 {
     public static partial class Puzzles
     {
+        [PuzzleDefinition(PuzzleCategory.VeryLong, expectedSolutions: 13948825)]
         public static Puzzle AnotherPuzzle()
         {
             var puzzle = new RectanglePuzzle("Another puzzle", 6, 6, new Point(3, 0), new Point(0, 1));
-            puzzle.ExpectedSolutions = 13948825;
             puzzle.Points[0, 2].MustTraverse = true;
             puzzle.Points[1, 2].MustTraverse = true;
             puzzle.Points[2, 1].MustTraverse = true;
@@ -20,4 +20,7 @@ namespace WitnessSolver
         }
     }
 }
+
+
+
 
