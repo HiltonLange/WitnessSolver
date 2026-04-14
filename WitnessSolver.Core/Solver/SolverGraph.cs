@@ -15,7 +15,6 @@ namespace WitnessSolver
         public readonly int XSize;
         public readonly int YSize;
         public readonly bool Wrap;
-        public readonly long ExpectedSolutions;
         public readonly string Name;
 
         public readonly List<SolverEdge> Route;
@@ -40,7 +39,7 @@ namespace WitnessSolver
         private SolverEdge[] _mayNotTraverseEdges;
 
         private SolverGraph(SolverNode[] nodes, SolverEdge[] edges, SolverCell[] cells,
-            SolverNode start, int xSize, int ySize, bool wrap, long expectedSolutions, string name)
+            SolverNode start, int xSize, int ySize, bool wrap, string name)
         {
             this.Nodes = nodes;
             this.Edges = edges;
@@ -49,7 +48,6 @@ namespace WitnessSolver
             this.XSize = xSize;
             this.YSize = ySize;
             this.Wrap = wrap;
-            this.ExpectedSolutions = expectedSolutions;
             this.Name = name;
             this.Route = new List<SolverEdge>();
             this.Solutions = new List<List<SolverEdge>>();
@@ -193,7 +191,7 @@ namespace WitnessSolver
 
             var graph = new SolverGraph(solverNodes, solverEdges, solverCells,
                 startSolverNode, puzzle.XSize, puzzle.YSize, puzzle.Wrap,
-                puzzle.ExpectedSolutions, puzzle.Name);
+                puzzle.Name);
 
             // Initialize sections
             graph.Sections = new List<Section>

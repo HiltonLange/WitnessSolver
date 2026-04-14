@@ -2,10 +2,10 @@ namespace WitnessSolver
 {
     public static partial class Puzzles
     {
+        [PuzzleDefinition(PuzzleCategory.Medium, expectedSolutions: 46)]
         public static Puzzle DistortedColors()
         {
             var puzzle = new RectanglePuzzle("Distorted colors", 6, 6, new Point(0, 6), new Point(6, 0));
-            puzzle.ExpectedSolutions = 46;
             puzzle.Cell[0, 0].SquareColorLetter = 'Y';
             puzzle.Cell[0, 1].SquareColorLetter = 'Y';
             puzzle.Cell[0, 2].SquareColorLetter = 'Y';
@@ -47,4 +47,8 @@ namespace WitnessSolver
         }
     }
 }
+
+
+
+
 
