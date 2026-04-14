@@ -49,7 +49,7 @@ namespace WitnessSolver
             var entry = (PuzzleEntry)this.cmbPuzzle.SelectedItem;
             this._expectedSolutions = entry.HasExpectedSolutions ? entry.ExpectedSolutions : -1;
             var puzzle = entry.Factory();
-            this._graph = SolverGraph.Compile(puzzle);
+            this._graph = SolverGraph.Compile(puzzle, new SolutionStore());
             this._graph.CancellationToken = this._cts.Token;
 
             this._drawer = new RectanglePuzzleDrawer();

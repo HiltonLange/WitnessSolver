@@ -20,7 +20,7 @@ namespace WitnessSolver
         public readonly List<SolverEdge> Route;
         public List<Section> Sections;
         public SolverNode Location;
-        public readonly SolutionStore Solutions;
+        public readonly ISolutionStore Solutions;
 
         public IPuzzleDrawer Drawer;
         public CancellationToken CancellationToken;
@@ -37,7 +37,7 @@ namespace WitnessSolver
         private int _remainingMustTraversePoints;
 
         private SolverGraph(SolverNode[] nodes, SolverEdge[] edges, SolverCell[] cells,
-            SolverNode start, int xSize, int ySize, bool wrap, string name)
+            SolverNode start, int xSize, int ySize, bool wrap, string name, ISolutionStore solutionStore)
         {
             this.Nodes = nodes;
             this.Edges = edges;
@@ -48,10 +48,10 @@ namespace WitnessSolver
             this.Wrap = wrap;
             this.Name = name;
             this.Route = new List<SolverEdge>();
-            this.Solutions = new SolutionStore();
+            this.Solutions = solutionStore;
         }
 
-        public static SolverGraph Compile(Puzzle puzzle)
+        public static SolverGraph Compile(Puzzle puzzle, ISolutionStore solutionStore = null)
         {
             // Phase 1: Infer calculated must-traverse (color separation, constrained points)
             foreach (var edge in puzzle.Edges)
@@ -191,7 +191,7 @@ namespace WitnessSolver
 
             var graph = new SolverGraph(solverNodes, solverEdges, solverCells,
                 startSolverNode, puzzle.XSize, puzzle.YSize, puzzle.Wrap,
-                puzzle.Name);
+                puzzle.Name, solutionStore ?? new NullSolutionStore());
 
             // Initialize sections
             graph.Sections = new List<Section>

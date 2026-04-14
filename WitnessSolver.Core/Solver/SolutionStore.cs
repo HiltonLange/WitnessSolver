@@ -2,7 +2,15 @@ using System.Collections.Generic;
 
 namespace WitnessSolver
 {
-    public class SolutionStore
+    public interface ISolutionStore
+    {
+        int TotalFound { get; }
+        int StoredCount { get; }
+        void Add(int[] routeEdgeIndices);
+        int[] Get(int index);
+    }
+
+    public class SolutionStore : ISolutionStore
     {
         private readonly List<int[]> _solutions = new List<int[]>();
         private readonly object _lock = new object();
@@ -29,14 +37,13 @@ namespace WitnessSolver
                 return index >= 0 && index < _solutions.Count ? _solutions[index] : null;
             }
         }
+    }
 
-        public void Clear()
-        {
-            lock (_lock)
-            {
-                _solutions.Clear();
-                TotalFound = 0;
-            }
-        }
+    public class NullSolutionStore : ISolutionStore
+    {
+        public int TotalFound { get; private set; }
+        public int StoredCount => 0;
+        public void Add(int[] routeEdgeIndices) => TotalFound++;
+        public int[] Get(int index) => null;
     }
 }
