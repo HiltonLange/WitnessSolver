@@ -206,8 +206,8 @@
             this.lblBrowse.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblBrowse.ForeColor = System.Drawing.Color.DimGray;
             this.lblBrowse.Location = new System.Drawing.Point(390, 5);
-            this.lblBrowse.Size = new System.Drawing.Size(230, 18);
-            this.lblBrowse.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblBrowse.Size = new System.Drawing.Size(236, 18);
+            this.lblBrowse.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.lblBrowse.Text = "";
             // 
             // Form1

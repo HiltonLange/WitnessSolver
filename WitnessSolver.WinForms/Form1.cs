@@ -106,6 +106,18 @@ namespace WitnessSolver
                 this._lastSeenSolutionCount = snapshot.SolutionsFound;
             }
 
+            // Update browse controls if new solutions arrived
+            if (this._browseMode)
+            {
+                int stored = this._graph.Solutions.StoredCount;
+                if (this.trkSolution.Maximum != Math.Max(0, stored - 1))
+                {
+                    this.trkSolution.Maximum = Math.Max(0, stored - 1);
+                    this.nudSolution.Maximum = stored;
+                    UpdateBrowseLabel();
+                }
+            }
+
             if (!this._browseMode)
                 this.outputPanel.Invalidate();
         }
