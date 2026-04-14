@@ -14,7 +14,6 @@ namespace WitnessSolver
         private System.Windows.Forms.Timer _renderTimer;
         private RectanglePuzzleDrawer _drawer;
         private SolverGraph _graph;
-        private bool _solving;
         private bool _browseMode;
         private int _browseIndex;
         private long _expectedSolutions = -1;
@@ -28,6 +27,10 @@ namespace WitnessSolver
         private void btnSolve_Click(object sender, EventArgs e)
         {
             if (this.cmbPuzzle.SelectedItem == null) return;
+
+            // Stop any previous solve
+            this._renderTimer?.Stop();
+            this._cts?.Cancel();
 
             this.btnSolve.Enabled = false;
             this.btnCancel.Enabled = true;
@@ -44,17 +47,20 @@ namespace WitnessSolver
             this._drawer = new RectanglePuzzleDrawer();
             this._drawer.SetGraph(this._graph);
 
-            this._solving = true;
+            // Reset shared snapshot
+            SolverSnapshot.Publish(null);
+
             this.lblSteps.Text = "0";
             this.lblRoutes.Text = "0";
             this.lblSolutions.Text = ExpectedText(0);
             this.lblStatus.Text = "Solving...";
             this.btnBrowse.Enabled = false;
+            this.btnBrowse.Text = "Browse";
             this.btnPrev.Enabled = false;
             this.btnNext.Enabled = false;
             this.lblBrowse.Text = "";
 
-            // Force initial static board render
+            // Draw initial static board
             this.outputPanel.Invalidate();
 
             this._stopwatch = Stopwatch.StartNew();
@@ -80,13 +86,21 @@ namespace WitnessSolver
             this.lblSolutions.Text = ExpectedText(snapshot.SolutionsFound);
             this.lblElapsed.Text = this._stopwatch.Elapsed.ToString(@"mm\:ss\.f");
 
+            // Enable browse once we have solutions
+            if (snapshot.SolutionsFound > 0 && !this.btnBrowse.Enabled)
+                this.btnBrowse.Enabled = true;
+
             if (!this._browseMode)
                 this.outputPanel.Invalidate();
         }
 
         private void OutputPanel_Paint(object sender, PaintEventArgs e)
         {
-            if (this._drawer == null || this._graph == null) return;
+            if (this._drawer == null || this._graph == null)
+            {
+                e.Graphics.Clear(PuzzleDrawer.BackgroundColor);
+                return;
+            }
 
             int[] route = null;
             Color routeColor = Color.DarkRed;
@@ -110,7 +124,6 @@ namespace WitnessSolver
         {
             this._renderTimer.Stop();
             this._stopwatch.Stop();
-            this._solving = false;
 
             this.btnSolve.Enabled = true;
             this.btnCancel.Enabled = false;
