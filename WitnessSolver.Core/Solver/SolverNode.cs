@@ -13,6 +13,7 @@ namespace WitnessSolver
         // Solver-mutable state
         public bool Visited;
         public int NeedCount;
+        public int AvailableEdgeCount;
 
         public SolverNode(int x, int y, int index, SolverEdge[] outEdges, bool isEnd, bool mustTraverse, bool isOnBoundary, int needCount)
         {

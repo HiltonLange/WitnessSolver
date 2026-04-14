@@ -159,6 +159,7 @@ namespace WitnessSolver
                 var outEdges = new SolverEdge[point.OutEdges.Count];
                 int i = 0;
                 int needCount = 0;
+                int availableCount = 0;
                 bool isOnBoundary = false;
 
                 foreach (var edge in point.OutEdges.Values)
@@ -166,11 +167,13 @@ namespace WitnessSolver
                     var se = edgeMap[edge];
                     outEdges[i++] = se;
                     if (se.Need) needCount++;
+                    if (se.Valid) availableCount++;
                     if (se.AdjacentCells.Length < 2) isOnBoundary = true;
                 }
 
                 // SolverNode was created with null OutEdges — set them now via reflection-free approach
                 SetNodeOutEdges(node, outEdges, needCount, isOnBoundary);
+                node.AvailableEdgeCount = availableCount;
             }
 
             // Phase 8: Wire EdgeLoop on each SolverCell
@@ -255,10 +258,18 @@ namespace WitnessSolver
                 edge.End.NeedCount--;
             }
 
+            // Decrement available edge counts — this edge is now used from both endpoints
+            edge.Start.AvailableEdgeCount--;
+            edge.End.AvailableEdgeCount--;
+
             // Incremental must-traverse tracking
             if (edge.MustTraverse) _remainingMustTraverseEdges--;
             if (edge.Reverse.MustTraverse) _remainingMustTraverseEdges--;
             if (this.Location.MustTraverse) _remainingMustTraversePoints--;
+
+            // Dead-end pruning: if we're at a non-End node with no available edges, we're stuck
+            if (!this.Location.IsEnd && this.Location.AvailableEdgeCount == 0)
+                return false;
 
             // Section split check
             if (edge.AdjacentCells.Length == 2)
@@ -314,6 +325,10 @@ namespace WitnessSolver
             if (this.Location.MustTraverse) _remainingMustTraversePoints++;
             if (edge.MustTraverse) _remainingMustTraverseEdges++;
             if (edge.Reverse.MustTraverse) _remainingMustTraverseEdges++;
+
+            // Restore available edge counts
+            edge.Start.AvailableEdgeCount++;
+            edge.End.AvailableEdgeCount++;
 
             this.Location.Visited = false;
             this.Location = edge.Start;

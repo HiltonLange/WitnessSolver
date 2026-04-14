@@ -107,9 +107,6 @@ namespace WitnessSolver
                 }
             }
 
-            if (good && squareLetters.Count > 1)
-                good = false;
-
             if (good)
             {
                 foreach (var starLetter in starLetters)
@@ -137,6 +134,8 @@ namespace WitnessSolver
             if (squareColor != ' ')
             {
                 squareLetters.Add(squareColor);
+                if (squareLetters.Count > 1)
+                    return false; // Multiple square colors — section can never be valid
                 if (!colorLetterCount.ContainsKey(squareColor))
                     colorLetterCount[squareColor] = 0;
                 colorLetterCount[squareColor]++;
