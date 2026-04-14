@@ -20,7 +20,7 @@ namespace WitnessSolver
         public readonly List<SolverEdge> Route;
         public List<Section> Sections;
         public SolverNode Location;
-        public List<List<SolverEdge>> Solutions;
+        public readonly SolutionStore Solutions;
 
         public IPuzzleDrawer Drawer;
         public CancellationToken CancellationToken;
@@ -48,7 +48,7 @@ namespace WitnessSolver
             this.Wrap = wrap;
             this.Name = name;
             this.Route = new List<SolverEdge>();
-            this.Solutions = new List<List<SolverEdge>>();
+            this.Solutions = new SolutionStore();
         }
 
         public static SolverGraph Compile(Puzzle puzzle)
@@ -118,6 +118,7 @@ namespace WitnessSolver
             // Phase 5: Create SolverEdges
             var edgeList = new List<SolverEdge>();
             var edgeMap = new Dictionary<Edge, SolverEdge>();
+            int edgeIndex = 0;
 
             foreach (var edge in puzzle.Edges)
             {
@@ -133,6 +134,7 @@ namespace WitnessSolver
                 bool valid = edge.MayTraverse && edge.ReversedEdge.MayTraverse;
 
                 var solverEdge = new SolverEdge(
+                    edgeIndex++,
                     startNode, endNode, adjCells,
                     need, valid,
                     edge.MustTraverse, edge.MayTraverse,
@@ -394,10 +396,9 @@ namespace WitnessSolver
                     if (!section.CheckSection()) return false;
                 }
 
-                this.Drawer?.DrawState(true);
-                this.SendUpdate(false);
                 this._goodRouteCount++;
-                this.Solutions.Add(new List<SolverEdge>(this.Route));
+                this.Solutions.Add(RouteToIndices());
+                PublishSnapshot(false);
                 return true;
             }
 
@@ -411,14 +412,36 @@ namespace WitnessSolver
             if (this._stepCountLoop == StepShowPeriod)
             {
                 this.CancellationToken.ThrowIfCancellationRequested();
-                this.Drawer?.DrawState(false);
-                this.SendUpdate(false);
+                PublishSnapshot(false);
                 this._stepCountLoop = 0;
             }
         }
 
+        private void PublishSnapshot(bool isComplete)
+        {
+            SolverSnapshot.Publish(new SolverSnapshot(
+                RouteToIndices(),
+                this._stepCount,
+                this._allRouteCount,
+                this._goodRouteCount,
+                isComplete));
+        }
+
+        private int[] RouteToIndices()
+        {
+            var indices = new int[this.Route.Count];
+            for (int i = 0; i < this.Route.Count; i++)
+            {
+                // Find edge index in the Edges array
+                // Use a precomputed index field on SolverEdge for O(1)
+                indices[i] = this.Route[i].Index;
+            }
+            return indices;
+        }
+
         public void SendUpdate(bool isDone)
         {
+            PublishSnapshot(isDone);
             this.Update?.Invoke(this, new SolveEventArgs
             {
                 EdgesAdded = this._stepCount,

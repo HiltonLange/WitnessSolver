@@ -2,6 +2,7 @@ namespace WitnessSolver
 {
     public class SolverEdge
     {
+        public readonly int Index;
         public readonly SolverNode Start;
         public readonly SolverNode End;
         public SolverEdge Reverse;
@@ -17,8 +18,9 @@ namespace WitnessSolver
 
         public bool IsUsed => this.Traversed || this.Reverse.Traversed;
 
-        public SolverEdge(SolverNode start, SolverNode end, SolverCell[] adjacentCells, bool need, bool valid, bool mustTraverse, bool mayTraverse, char shortName)
+        public SolverEdge(int index, SolverNode start, SolverNode end, SolverCell[] adjacentCells, bool need, bool valid, bool mustTraverse, bool mayTraverse, char shortName)
         {
+            this.Index = index;
             this.Start = start;
             this.End = end;
             this.AdjacentCells = adjacentCells;
