@@ -28,7 +28,7 @@ namespace WitnessSolver
         internal Color CellTetrisNegativeColor = Color.Blue;
 
         internal static readonly Color BackgroundColor = Color.FromArgb(40, 40, 45);
-        internal static readonly Color GridBackgroundColor = Color.FromArgb(60, 60, 65);
+        internal static readonly Color GridBackgroundColor = Color.LightGray;
 
         protected SolverGraph Graph;
 

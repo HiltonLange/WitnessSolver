@@ -40,9 +40,11 @@
             this.lblStepsCaption = new System.Windows.Forms.Label();
             this.lblRoutesCaption = new System.Windows.Forms.Label();
             this.lblSolutionsCaption = new System.Windows.Forms.Label();
-            this.btnBrowse = new System.Windows.Forms.Button();
-            this.btnPrev = new System.Windows.Forms.Button();
-            this.btnNext = new System.Windows.Forms.Button();
+            this.rdoWatch = new System.Windows.Forms.RadioButton();
+            this.rdoBrowse = new System.Windows.Forms.RadioButton();
+            this.pnlBrowseControls = new System.Windows.Forms.Panel();
+            this.trkSolution = new System.Windows.Forms.TrackBar();
+            this.nudSolution = new System.Windows.Forms.NumericUpDown();
             this.lblBrowse = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
@@ -149,48 +151,62 @@
             // 
             this.lblStatus.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.lblStatus.ForeColor = System.Drawing.Color.DimGray;
-            this.lblStatus.Location = new System.Drawing.Point(12, 658);
+            this.lblStatus.Location = new System.Drawing.Point(12, 688);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(400, 20);
+            this.lblStatus.Size = new System.Drawing.Size(774, 20);
             this.lblStatus.Text = "Select a puzzle and click Solve.";
             // 
-            // btnBrowse
+            // rdoWatch
             // 
-            this.btnBrowse.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            this.btnBrowse.Enabled = false;
-            this.btnBrowse.Location = new System.Drawing.Point(500, 655);
-            this.btnBrowse.Name = "btnBrowse";
-            this.btnBrowse.Size = new System.Drawing.Size(60, 25);
-            this.btnBrowse.Text = "Browse";
-            this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
+            this.rdoWatch.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            this.rdoWatch.AutoSize = true;
+            this.rdoWatch.Checked = true;
+            this.rdoWatch.Location = new System.Drawing.Point(12, 658);
+            this.rdoWatch.Name = "rdoWatch";
+            this.rdoWatch.Text = "Watch";
+            this.rdoWatch.CheckedChanged += new System.EventHandler(this.rdoWatch_CheckedChanged);
             // 
-            // btnPrev
+            // rdoBrowse
             // 
-            this.btnPrev.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            this.btnPrev.Enabled = false;
-            this.btnPrev.Location = new System.Drawing.Point(565, 655);
-            this.btnPrev.Name = "btnPrev";
-            this.btnPrev.Size = new System.Drawing.Size(30, 25);
-            this.btnPrev.Text = "◄";
-            this.btnPrev.Click += new System.EventHandler(this.btnPrev_Click);
+            this.rdoBrowse.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            this.rdoBrowse.AutoSize = true;
+            this.rdoBrowse.Enabled = false;
+            this.rdoBrowse.Location = new System.Drawing.Point(80, 658);
+            this.rdoBrowse.Name = "rdoBrowse";
+            this.rdoBrowse.Text = "Browse";
+            this.rdoBrowse.CheckedChanged += new System.EventHandler(this.rdoBrowse_CheckedChanged);
             // 
-            // btnNext
+            // pnlBrowseControls
             // 
-            this.btnNext.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            this.btnNext.Enabled = false;
-            this.btnNext.Location = new System.Drawing.Point(600, 655);
-            this.btnNext.Name = "btnNext";
-            this.btnNext.Size = new System.Drawing.Size(30, 25);
-            this.btnNext.Text = "►";
-            this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
+            this.pnlBrowseControls.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            this.pnlBrowseControls.Location = new System.Drawing.Point(160, 655);
+            this.pnlBrowseControls.Size = new System.Drawing.Size(626, 28);
+            this.pnlBrowseControls.Visible = false;
+            this.pnlBrowseControls.Controls.Add(this.trkSolution);
+            this.pnlBrowseControls.Controls.Add(this.nudSolution);
+            this.pnlBrowseControls.Controls.Add(this.lblBrowse);
+            // 
+            // trkSolution
+            // 
+            this.trkSolution.Location = new System.Drawing.Point(0, 0);
+            this.trkSolution.Size = new System.Drawing.Size(300, 28);
+            this.trkSolution.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trkSolution.ValueChanged += new System.EventHandler(this.trkSolution_ValueChanged);
+            // 
+            // nudSolution
+            // 
+            this.nudSolution.Location = new System.Drawing.Point(305, 3);
+            this.nudSolution.Size = new System.Drawing.Size(80, 23);
+            this.nudSolution.Minimum = 1;
+            this.nudSolution.Maximum = 1;
+            this.nudSolution.ValueChanged += new System.EventHandler(this.nudSolution_ValueChanged);
             // 
             // lblBrowse
             // 
-            this.lblBrowse.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            this.lblBrowse.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblBrowse.ForeColor = System.Drawing.Color.DimGray;
-            this.lblBrowse.Location = new System.Drawing.Point(635, 658);
-            this.lblBrowse.Name = "lblBrowse";
-            this.lblBrowse.Size = new System.Drawing.Size(155, 20);
+            this.lblBrowse.Location = new System.Drawing.Point(390, 5);
+            this.lblBrowse.Size = new System.Drawing.Size(230, 18);
             this.lblBrowse.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.lblBrowse.Text = "";
             // 
@@ -198,11 +214,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 685);
-            this.Controls.Add(this.lblBrowse);
-            this.Controls.Add(this.btnNext);
-            this.Controls.Add(this.btnPrev);
-            this.Controls.Add(this.btnBrowse);
+            this.ClientSize = new System.Drawing.Size(800, 715);
+            this.Controls.Add(this.pnlBrowseControls);
+            this.Controls.Add(this.rdoBrowse);
+            this.Controls.Add(this.rdoWatch);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.lblElapsed);
             this.Controls.Add(this.lblSolutionsCaption);
@@ -236,9 +251,11 @@
         private System.Windows.Forms.Label lblSolutionsCaption;
         private System.Windows.Forms.Panel outputPanel;
         private System.Windows.Forms.ComboBox cmbPuzzle;
-        private System.Windows.Forms.Button btnBrowse;
-        private System.Windows.Forms.Button btnPrev;
-        private System.Windows.Forms.Button btnNext;
+        private System.Windows.Forms.RadioButton rdoWatch;
+        private System.Windows.Forms.RadioButton rdoBrowse;
+        private System.Windows.Forms.Panel pnlBrowseControls;
+        private System.Windows.Forms.TrackBar trkSolution;
+        private System.Windows.Forms.NumericUpDown nudSolution;
         private System.Windows.Forms.Label lblBrowse;
     }
 }

@@ -18,10 +18,16 @@ namespace WitnessSolver
         private int _browseIndex;
         private long _expectedSolutions = -1;
 
+        // Watch mode: flash solutions
+        private int _lastSeenSolutionCount;
+        private int[] _flashRoute;
+        private DateTime _flashUntil;
+
         public Form1()
         {
             this.InitializeComponent();
             this.outputPanel.Paint += OutputPanel_Paint;
+            this.outputPanel.DoubleBuffered(true);
         }
 
         private void btnSolve_Click(object sender, EventArgs e)
@@ -36,6 +42,8 @@ namespace WitnessSolver
             this.btnCancel.Enabled = true;
             this._browseMode = false;
             this._browseIndex = 0;
+            this._lastSeenSolutionCount = 0;
+            this._flashRoute = null;
             this._cts = new CancellationTokenSource();
 
             var entry = (PuzzleEntry)this.cmbPuzzle.SelectedItem;
@@ -47,24 +55,20 @@ namespace WitnessSolver
             this._drawer = new RectanglePuzzleDrawer();
             this._drawer.SetGraph(this._graph);
 
-            // Reset shared snapshot
             SolverSnapshot.Publish(null);
 
             this.lblSteps.Text = "0";
             this.lblRoutes.Text = "0";
             this.lblSolutions.Text = ExpectedText(0);
             this.lblStatus.Text = "Solving...";
-            this.btnBrowse.Enabled = false;
-            this.btnBrowse.Text = "Browse";
-            this.btnPrev.Enabled = false;
-            this.btnNext.Enabled = false;
-            this.lblBrowse.Text = "";
+            this.SetMode(false);
+            this.rdoWatch.Checked = true;
+            this.rdoBrowse.Enabled = false;
 
-            // Draw initial static board
             this.outputPanel.Invalidate();
 
             this._stopwatch = Stopwatch.StartNew();
-            this._renderTimer = new System.Windows.Forms.Timer { Interval = 33 }; // ~30fps
+            this._renderTimer = new System.Windows.Forms.Timer { Interval = 33 };
             this._renderTimer.Tick += RenderTick;
             this._renderTimer.Start();
 
@@ -86,9 +90,21 @@ namespace WitnessSolver
             this.lblSolutions.Text = ExpectedText(snapshot.SolutionsFound);
             this.lblElapsed.Text = this._stopwatch.Elapsed.ToString(@"mm\:ss\.f");
 
-            // Enable browse once we have solutions
-            if (snapshot.SolutionsFound > 0 && !this.btnBrowse.Enabled)
-                this.btnBrowse.Enabled = true;
+            // Enable browse once solutions exist
+            if (snapshot.SolutionsFound > 0 && !this.rdoBrowse.Enabled)
+                this.rdoBrowse.Enabled = true;
+
+            // Watch mode: check for new solutions to flash
+            if (!this._browseMode && snapshot.SolutionsFound > this._lastSeenSolutionCount)
+            {
+                var latestRoute = this._graph.Solutions.Get(this._graph.Solutions.StoredCount - 1);
+                if (latestRoute != null)
+                {
+                    this._flashRoute = latestRoute;
+                    this._flashUntil = DateTime.UtcNow.AddMilliseconds(500);
+                }
+                this._lastSeenSolutionCount = snapshot.SolutionsFound;
+            }
 
             if (!this._browseMode)
                 this.outputPanel.Invalidate();
@@ -110,8 +126,14 @@ namespace WitnessSolver
                 route = this._graph.Solutions.Get(this._browseIndex);
                 routeColor = Color.Green;
             }
+            else if (this._flashRoute != null && DateTime.UtcNow < this._flashUntil)
+            {
+                route = this._flashRoute;
+                routeColor = Color.Green;
+            }
             else
             {
+                this._flashRoute = null;
                 var snapshot = SolverSnapshot.Current;
                 if (snapshot != null)
                     route = snapshot.RouteEdgeIndices;
@@ -146,36 +168,74 @@ namespace WitnessSolver
 
                 if (stored > 0)
                 {
-                    this.btnBrowse.Enabled = true;
-                    SwitchToBrowse();
+                    this.rdoBrowse.Enabled = true;
+                    this.rdoBrowse.Checked = true;
+                    SetMode(true);
                 }
             }
 
-            // Final render
             var finalSnapshot = SolverSnapshot.Current;
             if (finalSnapshot != null)
             {
                 this.lblSteps.Text = finalSnapshot.StepCount.ToString("N0");
                 this.lblRoutes.Text = finalSnapshot.RoutesFound.ToString("N0");
             }
-        }
-
-        private void SwitchToBrowse()
-        {
-            this._browseMode = true;
-            this._browseIndex = 0;
-            UpdateBrowseUI();
             this.outputPanel.Invalidate();
         }
 
-        private void UpdateBrowseUI()
+        private void SetMode(bool browse)
+        {
+            this._browseMode = browse;
+            this.pnlBrowseControls.Visible = browse;
+
+            if (browse)
+            {
+                int stored = this._graph?.Solutions?.StoredCount ?? 0;
+                this.trkSolution.Minimum = 0;
+                this.trkSolution.Maximum = Math.Max(0, stored - 1);
+                this.trkSolution.Value = this._browseIndex;
+                this.nudSolution.Minimum = 1;
+                this.nudSolution.Maximum = stored;
+                this.nudSolution.Value = this._browseIndex + 1;
+                UpdateBrowseLabel();
+            }
+
+            this.outputPanel.Invalidate();
+        }
+
+        private void UpdateBrowseLabel()
         {
             int stored = this._graph?.Solutions?.StoredCount ?? 0;
-            this.btnPrev.Enabled = this._browseIndex > 0;
-            this.btnNext.Enabled = this._browseIndex < stored - 1;
+            int total = this._graph?.Solutions?.TotalFound ?? 0;
             this.lblBrowse.Text = stored > 0
-                ? $"Solution {this._browseIndex + 1} of {stored:N0}"
+                ? $"Solution {this._browseIndex + 1} of {stored:N0}" + (total > stored ? $" (sampled from {total:N0})" : "")
                 : "";
+        }
+
+        private void rdoWatch_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.rdoWatch.Checked) SetMode(false);
+        }
+
+        private void rdoBrowse_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.rdoBrowse.Checked) SetMode(true);
+        }
+
+        private void trkSolution_ValueChanged(object sender, EventArgs e)
+        {
+            this._browseIndex = this.trkSolution.Value;
+            this.nudSolution.Value = this._browseIndex + 1;
+            UpdateBrowseLabel();
+            this.outputPanel.Invalidate();
+        }
+
+        private void nudSolution_ValueChanged(object sender, EventArgs e)
+        {
+            this._browseIndex = (int)this.nudSolution.Value - 1;
+            this.trkSolution.Value = this._browseIndex;
+            UpdateBrowseLabel();
+            this.outputPanel.Invalidate();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -183,45 +243,6 @@ namespace WitnessSolver
             this._cts?.Cancel();
             this.btnCancel.Enabled = false;
             this.lblStatus.Text = "Cancelling...";
-        }
-
-        private void btnBrowse_Click(object sender, EventArgs e)
-        {
-            if (this._browseMode)
-            {
-                this._browseMode = false;
-                this.btnBrowse.Text = "Browse";
-                this.btnPrev.Enabled = false;
-                this.btnNext.Enabled = false;
-                this.lblBrowse.Text = "";
-            }
-            else
-            {
-                SwitchToBrowse();
-                this.btnBrowse.Text = "Watch";
-            }
-            this.outputPanel.Invalidate();
-        }
-
-        private void btnPrev_Click(object sender, EventArgs e)
-        {
-            if (this._browseIndex > 0)
-            {
-                this._browseIndex--;
-                UpdateBrowseUI();
-                this.outputPanel.Invalidate();
-            }
-        }
-
-        private void btnNext_Click(object sender, EventArgs e)
-        {
-            int stored = this._graph?.Solutions?.StoredCount ?? 0;
-            if (this._browseIndex < stored - 1)
-            {
-                this._browseIndex++;
-                UpdateBrowseUI();
-                this.outputPanel.Invalidate();
-            }
         }
 
         private string ExpectedText(int found)
@@ -237,6 +258,17 @@ namespace WitnessSolver
                 this.cmbPuzzle.Items.Add(entry);
             if (this.cmbPuzzle.Items.Count > 0)
                 this.cmbPuzzle.SelectedIndex = 0;
+        }
+    }
+
+    // Extension to enable double-buffering on Panel
+    static class PanelExtensions
+    {
+        public static void DoubleBuffered(this Panel panel, bool value)
+        {
+            typeof(Panel).GetProperty("DoubleBuffered",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                ?.SetValue(panel, value);
         }
     }
 }
