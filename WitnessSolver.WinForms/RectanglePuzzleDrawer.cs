@@ -9,9 +9,9 @@ namespace WitnessSolver
         {
         }
 
-        protected override void DrawStart()
+        protected override void DrawStart(Graphics g)
         {
-            this.BufferGraphics.FillEllipse(
+            g.FillEllipse(
                 Brushes.Black,
                 this.Graph.Start.X * ScaleSize + GridOffset - StartSize / 2,
                 this.Graph.Start.Y * ScaleSize + GridOffset - StartSize / 2,
@@ -19,165 +19,107 @@ namespace WitnessSolver
                 StartSize);
         }
 
-        protected override void DrawEdge(SolverEdge edge, Pen edgePen, Pen backgroundPen)
+        protected override void DrawEdge(Graphics g, SolverEdge edge, Pen edgePen, Pen backgroundPen)
         {
             var edgeX1 = edge.Start.X * ScaleSize + GridOffset;
             var edgeX2 = edge.End.X * ScaleSize + GridOffset;
             var edgeY1 = edge.Start.Y * ScaleSize + GridOffset;
             var edgeY2 = edge.End.Y * ScaleSize + GridOffset;
 
-            // Account for wraparound cases
             if (edge.Start.X == 0 && edge.End.X > 1)
-            {
                 edgeX1 = (edge.End.X + 1) * ScaleSize + GridOffset;
-            }
-
             if (edge.End.X == 0 && edge.Start.X > 1)
-            {
                 edgeX2 = (edge.Start.X + 1) * ScaleSize + GridOffset;
-            }
 
-            this.DrawPartialLine(edgePen, edgeX1, edgeY1, edgeX2, edgeY2, EdgeLengthFraction);
+            DrawPartialLine(g, edgePen, edgeX1, edgeY1, edgeX2, edgeY2, EdgeLengthFraction);
 
-            if (!edge.MayTraverse || !edge.Reverse.MayTraverse)
+            if (backgroundPen != null)
             {
-                this.DrawPartialLine(backgroundPen, edgeX1, edgeY1, edgeX2, edgeY2, EdgeBrokenLengthFraction);
-            }
+                if (!edge.MayTraverse || !edge.Reverse.MayTraverse)
+                    DrawPartialLine(g, backgroundPen, edgeX1, edgeY1, edgeX2, edgeY2, EdgeBrokenLengthFraction);
 
-            if (edge.MustTraverse || edge.Reverse.MustTraverse)
-            {
-                this.BufferGraphics.DrawRectangle(
-                    Pens.Red,
-                    (edgeX1 + edgeX2) / 2 - MustTraverseSize / 2,
-                    (edgeY1 + edgeY2) / 2 - MustTraverseSize / 2,
-                    MustTraverseSize,
-                    MustTraverseSize);
+                if (edge.MustTraverse || edge.Reverse.MustTraverse)
+                {
+                    g.DrawRectangle(Pens.Red,
+                        (edgeX1 + edgeX2) / 2 - MustTraverseSize / 2,
+                        (edgeY1 + edgeY2) / 2 - MustTraverseSize / 2,
+                        MustTraverseSize, MustTraverseSize);
+                }
             }
         }
 
-        private void DrawPartialLine(Pen pen, int x1, int y1, int x2, int y2,
-            float lengthFraction)
+        private static void DrawPartialLine(Graphics g, Pen pen, int x1, int y1, int x2, int y2, float lengthFraction)
         {
-            this.BufferGraphics.DrawLine(
-                pen,
+            g.DrawLine(pen,
                 x1 * lengthFraction + x2 * (1 - lengthFraction),
                 y1 * lengthFraction + y2 * (1 - lengthFraction),
                 x2 * lengthFraction + x1 * (1 - lengthFraction),
                 y2 * lengthFraction + y1 * (1 - lengthFraction));
         }
 
-        protected override void DrawCell(SolverCell cell)
+        protected override void DrawCell(Graphics g, SolverCell cell)
         {
-            var cellXCenter = cell.X * ScaleSize + ScaleSize / 2 + GridOffset;
-            var cellYCenter = cell.Y * ScaleSize + ScaleSize / 2 + GridOffset;
+            var cx = cell.X * ScaleSize + ScaleSize / 2 + GridOffset;
+            var cy = cell.Y * ScaleSize + ScaleSize / 2 + GridOffset;
 
-            DrawCellSquare(cell, cellXCenter, cellYCenter);
-            DrawCellStar(cell, cellXCenter, cellYCenter);
-            DrawCellTriangle(cell, cellXCenter, cellYCenter);
-            DrawCellTetris(cell, cellXCenter, cellYCenter);
-        }
-
-        private void DrawCellSquare(SolverCell cell, int cellXCenter, int cellYCenter)
-        {
             if (cell.SquareColor != ' ')
             {
-                this.BufferGraphics.FillRectangle(new SolidBrush(this.LetterColor[cell.SquareColor]),
-                    cellXCenter - CellSquareSize / 2,
-                    cellYCenter - CellSquareSize / 2,
-                    CellSquareSize,
-                    CellSquareSize);
+                g.FillRectangle(new SolidBrush(this.LetterColor[cell.SquareColor]),
+                    cx - CellSquareSize / 2, cy - CellSquareSize / 2, CellSquareSize, CellSquareSize);
             }
-        }
 
-        private void DrawCellStar(SolverCell cell, int cellXCenter, int cellYCenter)
-        {
             if (cell.StarColor != ' ')
             {
-                this.BufferGraphics.FillPolygon(new SolidBrush(this.LetterColor[cell.StarColor]),
-                    new[]
-                    {
-                        new PointF(cellXCenter - CellStarSize1, cellYCenter + CellStarSize1),
-                        new PointF(cellXCenter + CellStarSize1, cellYCenter + CellStarSize1),
-                        new PointF(cellXCenter + CellStarSize1, cellYCenter - CellStarSize1),
-                        new PointF(cellXCenter - CellStarSize1, cellYCenter - CellStarSize1),
-                    });
-
-                this.BufferGraphics.FillPolygon(new SolidBrush(this.LetterColor[cell.StarColor]),
-                    new[]
-                    {
-                        new PointF(cellXCenter, cellYCenter + CellStarSize2),
-                        new PointF(cellXCenter + CellStarSize2, cellYCenter),
-                        new PointF(cellXCenter, cellYCenter - CellStarSize2),
-                        new PointF(cellXCenter - CellStarSize2, cellYCenter),
-                    });
+                var brush = new SolidBrush(this.LetterColor[cell.StarColor]);
+                g.FillPolygon(brush, new[] {
+                    new PointF(cx - CellStarSize1, cy + CellStarSize1),
+                    new PointF(cx + CellStarSize1, cy + CellStarSize1),
+                    new PointF(cx + CellStarSize1, cy - CellStarSize1),
+                    new PointF(cx - CellStarSize1, cy - CellStarSize1) });
+                g.FillPolygon(brush, new[] {
+                    new PointF(cx, cy + CellStarSize2),
+                    new PointF(cx + CellStarSize2, cy),
+                    new PointF(cx, cy - CellStarSize2),
+                    new PointF(cx - CellStarSize2, cy) });
             }
-        }
 
-        private void DrawCellTriangle(SolverCell cell, int cellXCenter, int cellYCenter)
-        {
             if (cell.TriangleCount.HasValue)
             {
-                int trianglesXStart = cellXCenter - ((cell.TriangleCount.Value - 1) * CellTriangleSpacing) / 2;
+                int trianglesXStart = cx - ((cell.TriangleCount.Value - 1) * CellTriangleSpacing) / 2;
                 for (int i = 0; i < cell.TriangleCount.Value; i++)
                 {
-                    int triangleXCenter = trianglesXStart + i * CellTriangleSpacing;
-                    this.BufferGraphics.FillPolygon(new SolidBrush(CellTriangleColor),
-                    new[]
-                    {
-                        new PointF(triangleXCenter, cellYCenter - CellTriangleSize),
-                        new PointF(triangleXCenter - CellTriangleSize, cellYCenter + CellTriangleSize),
-                        new PointF(triangleXCenter + CellTriangleSize, cellYCenter + CellTriangleSize),
-                    });
+                    int tcx = trianglesXStart + i * CellTriangleSpacing;
+                    g.FillPolygon(new SolidBrush(CellTriangleColor), new[] {
+                        new PointF(tcx, cy - CellTriangleSize),
+                        new PointF(tcx - CellTriangleSize, cy + CellTriangleSize),
+                        new PointF(tcx + CellTriangleSize, cy + CellTriangleSize) });
                 }
             }
-        }
 
-        private void DrawCellTetris(SolverCell cell, int cellXCenter, int cellYCenter)
-        {
             if (cell.Tetris != null)
             {
-                foreach (var tetrisCell in cell.Tetris.TetrisCells)
+                foreach (var tc in cell.Tetris.TetrisCells)
                 {
-                    float tetrisCellXCenter = (2 * tetrisCell.X - cell.Tetris.XMax) * CellTetrisSpacing;
-                    float tetrisCellYCenter = (2 * tetrisCell.Y - cell.Tetris.YMax) * CellTetrisSpacing;
-
-                    var tetrisCellXCorners = new float[]
-                    {
-                        -CellTetrisSize, CellTetrisSize, CellTetrisSize, -CellTetrisSize,
-                    };
-                    var tetrisCellYCorners = new float[]
-                    {
-                        CellTetrisSize, CellTetrisSize, -CellTetrisSize, -CellTetrisSize,
-                    };
+                    float tcx = (2 * tc.X - cell.Tetris.XMax) * CellTetrisSpacing;
+                    float tcy = (2 * tc.Y - cell.Tetris.YMax) * CellTetrisSpacing;
+                    var xc = new float[] { -CellTetrisSize, CellTetrisSize, CellTetrisSize, -CellTetrisSize };
+                    var yc = new float[] { CellTetrisSize, CellTetrisSize, -CellTetrisSize, -CellTetrisSize };
 
                     if (cell.Tetris.AnyRotation)
                     {
-                        Rotate30(ref tetrisCellXCenter, ref tetrisCellYCenter);
-                        for (int i = 0; i < 4; i++)
-                        {
-                            Rotate30(ref tetrisCellXCorners[i], ref tetrisCellYCorners[i]);
-                        }
+                        Rotate30(ref tcx, ref tcy);
+                        for (int i = 0; i < 4; i++) Rotate30(ref xc[i], ref yc[i]);
                     }
 
-                    tetrisCellXCenter += cellXCenter;
-                    tetrisCellYCenter += cellYCenter;
+                    tcx += cx; tcy += cy;
+                    var corners = new[] {
+                        new PointF(tcx + xc[0], tcy + yc[0]), new PointF(tcx + xc[1], tcy + yc[1]),
+                        new PointF(tcx + xc[2], tcy + yc[2]), new PointF(tcx + xc[3], tcy + yc[3]) };
 
-                    var tetrisCellCorners = new[]
-                    {
-                        new PointF(tetrisCellXCenter + tetrisCellXCorners[0], tetrisCellYCenter + tetrisCellYCorners[0]),
-                        new PointF(tetrisCellXCenter + tetrisCellXCorners[1], tetrisCellYCenter + tetrisCellYCorners[1]),
-                        new PointF(tetrisCellXCenter + tetrisCellXCorners[2], tetrisCellYCenter + tetrisCellYCorners[2]),
-                        new PointF(tetrisCellXCenter + tetrisCellXCorners[3], tetrisCellYCenter + tetrisCellYCorners[3]),
-                    };
-
-                    if (tetrisCell.Count > 0)
-                    {
-                        this.BufferGraphics.FillPolygon(new SolidBrush(CellTetrisColor), tetrisCellCorners);
-                    }
+                    if (tc.Count > 0)
+                        g.FillPolygon(new SolidBrush(CellTetrisColor), corners);
                     else
-                    {
-                        this.BufferGraphics.DrawPolygon(new Pen(CellTetrisColor), tetrisCellCorners);
-                    }
+                        g.DrawPolygon(new Pen(CellTetrisColor), corners);
                 }
             }
         }
@@ -185,47 +127,28 @@ namespace WitnessSolver
         private static void Rotate30(ref float x, ref float y)
         {
             double angle = -30 * Math.PI / 180;
-            double newX = Math.Cos(angle) * x - Math.Sin(angle) * y;
-            double newY = Math.Sin(angle) * x + Math.Cos(angle) * y;
-            x = (float) newX;
-            y = (float) newY;
+            double nx = Math.Cos(angle) * x - Math.Sin(angle) * y;
+            double ny = Math.Sin(angle) * x + Math.Cos(angle) * y;
+            x = (float)nx; y = (float)ny;
         }
 
-        protected override void DrawNode(SolverNode node)
+        protected override void DrawNode(Graphics g, SolverNode node)
         {
-            if (!node.MustTraverse && !node.IsEnd)
-            {
-                return;
-            }
+            if (!node.MustTraverse && !node.IsEnd) return;
 
-            var pointX = node.X * ScaleSize + GridOffset;
-            var pointY = node.Y * ScaleSize + GridOffset;
+            var px = node.X * ScaleSize + GridOffset;
+            var py = node.Y * ScaleSize + GridOffset;
 
             if (node.MustTraverse)
-            {
-                this.BufferGraphics.DrawRectangle(
-                    Pens.Red,
-                    pointX - MustTraverseSize / 2,
-                    pointY - MustTraverseSize / 2,
-                    MustTraverseSize,
-                    MustTraverseSize);
-            }
+                g.DrawRectangle(Pens.Red, px - MustTraverseSize / 2, py - MustTraverseSize / 2, MustTraverseSize, MustTraverseSize);
 
             if (node.IsEnd)
             {
-                this.BufferGraphics.DrawLine(
-                    new Pen(Color.Black, PathThickness),
-                    pointX - EndSize,
-                    pointY - EndSize,
-                    pointX + EndSize,
-                    pointY + EndSize);
-
-                this.BufferGraphics.DrawLine(
-                    new Pen(Color.Black, PathThickness),
-                    pointX - EndSize,
-                    pointY + EndSize,
-                    pointX + EndSize,
-                    pointY - EndSize);
+                using (var pen = new Pen(Color.Black, PathThickness))
+                {
+                    g.DrawLine(pen, px - EndSize, py - EndSize, px + EndSize, py + EndSize);
+                    g.DrawLine(pen, px - EndSize, py + EndSize, px + EndSize, py - EndSize);
+                }
             }
         }
     }

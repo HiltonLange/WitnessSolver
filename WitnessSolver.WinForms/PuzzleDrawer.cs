@@ -27,14 +27,12 @@ namespace WitnessSolver
         internal Color CellTetrisColor = Color.Red;
         internal Color CellTetrisNegativeColor = Color.Blue;
 
-        public Graphics FormGraphics;
-        protected Graphics BufferGraphics;
+        internal static readonly Color BackgroundColor = Color.FromArgb(40, 40, 45);
+        internal static readonly Color GridBackgroundColor = Color.FromArgb(60, 60, 65);
+
         protected SolverGraph Graph;
 
         public bool DrawAllGoodRoutes = true;
-        public int GoodRouteShowTimeMs = 1000;
-        public bool Decay = true;
-        public double DecayRate = 0.9;
 
         internal readonly Dictionary<char, Color> LetterColor = new Dictionary<char, Color>
         {
@@ -47,80 +45,72 @@ namespace WitnessSolver
             {'P', Color.Purple },
         };
 
-        protected PuzzleDrawer()
-        {
-        }
-
         public void SetGraph(SolverGraph graph)
         {
             this.Graph = graph;
+            this._staticBoard = null;
         }
 
-        public bool IsInitialized => this.FormGraphics != null && this.Graph != null;
+        // --- Cached static board ---
+        private Bitmap _staticBoard;
 
-        public void DrawState(bool isSolved)
+        public Bitmap GetStaticBoard()
         {
-            if (!this.IsInitialized)
+            if (_staticBoard == null)
+                _staticBoard = RenderStaticBoard();
+            return _staticBoard;
+        }
+
+        private Bitmap RenderStaticBoard()
+        {
+            int width = (this.Graph.XSize + (this.Graph.Wrap ? 2 : 1)) * ScaleSize + GridOffset * 2;
+            int height = (this.Graph.YSize + 1) * ScaleSize + GridOffset * 2;
+            var bmp = new Bitmap(width, height);
+            using (var g = Graphics.FromImage(bmp))
             {
-                return;
+                g.Clear(GridBackgroundColor);
+
+                foreach (var edge in this.Graph.Edges)
+                    DrawEdge(g, edge, Pens.Gray, Pens.LightGray);
+
+                DrawStart(g);
+
+                foreach (var cell in this.Graph.Cells)
+                    DrawCell(g, cell);
+
+                foreach (var node in this.Graph.Nodes)
+                    DrawNode(g, node);
             }
+            return bmp;
+        }
 
-            if (isSolved && !this.DrawAllGoodRoutes)
+        // --- Route overlay ---
+        public void DrawRoute(Graphics target, int[] routeEdgeIndices, Color lineColor)
+        {
+            if (this.Graph == null || routeEdgeIndices == null) return;
+
+            // Draw static board
+            var board = GetStaticBoard();
+            target.DrawImage(board, 0, 0);
+
+            // Overlay route
+            using (var pen = new Pen(lineColor, PathThickness))
             {
-                return;
-            }
-
-            var lineColor = isSolved ? Color.Green : Color.DarkRed;
-
-            // Clear entire panel surface before drawing (prevents artifacts from previous puzzle)
-            this.FormGraphics.Clear(Color.FromArgb(40, 40, 45));
-
-            var currentContext = BufferedGraphicsManager.Current;
-            var buffer = currentContext.Allocate(this.FormGraphics,
-                new Rectangle(0, 0, (this.Graph.XSize + (this.Graph.Wrap ? 2 : 1)) * ScaleSize, (this.Graph.YSize + 1) * ScaleSize));
-            this.BufferGraphics = buffer.Graphics;
-            this.BufferGraphics.Clear(Color.LightGray);
-
-            foreach (var edge in this.Graph.Edges)
-            {
-                this.DrawEdge(edge, Pens.Gray, Pens.LightGray);
-            }
-
-            foreach (var edge in this.Graph.Route)
-            {
-                this.DrawEdge(edge, new Pen(lineColor, PathThickness), new Pen(Color.LightGray, PathThickness));
-            }
-
-            this.DrawStart();
-
-            foreach (var cell in this.Graph.Cells)
-            {
-                this.DrawCell(cell);
-            }
-
-            foreach (var node in this.Graph.Nodes)
-            {
-                this.DrawNode(node);
-            }
-
-            buffer.Render();
-
-            if (isSolved)
-            {
-                System.Threading.Thread.Sleep(this.GoodRouteShowTimeMs);
-                if (this.Decay)
+                for (int i = 0; i < routeEdgeIndices.Length; i++)
                 {
-                    this.GoodRouteShowTimeMs = (int)(this.GoodRouteShowTimeMs * this.DecayRate);
+                    var edge = this.Graph.Edges[routeEdgeIndices[i]];
+                    DrawEdge(target, edge, pen, null);
                 }
             }
         }
 
-        protected abstract void DrawNode(SolverNode node);
+        // Legacy IPuzzleDrawer (no-op now — solver doesn't call this)
+        public void DrawState(bool isSolved) { }
 
-        protected abstract void DrawCell(SolverCell cell);
-
-        protected abstract void DrawStart();
-
-        protected abstract void DrawEdge(SolverEdge edge, Pen edgePen, Pen backgroundPen);
+        // --- Abstract drawing primitives ---
+        protected abstract void DrawNode(Graphics g, SolverNode node);
+        protected abstract void DrawCell(Graphics g, SolverCell cell);
+        protected abstract void DrawStart(Graphics g);
+        protected abstract void DrawEdge(Graphics g, SolverEdge edge, Pen edgePen, Pen backgroundPen);
     }
 }

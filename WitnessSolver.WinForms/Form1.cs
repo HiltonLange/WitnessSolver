@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -10,73 +11,158 @@ namespace WitnessSolver
     {
         private CancellationTokenSource _cts;
         private Stopwatch _stopwatch;
-        private System.Windows.Forms.Timer _timer;
+        private System.Windows.Forms.Timer _renderTimer;
+        private RectanglePuzzleDrawer _drawer;
+        private SolverGraph _graph;
+        private bool _solving;
+        private bool _browseMode;
+        private int _browseIndex;
+        private long _expectedSolutions = -1;
 
         public Form1()
         {
             this.InitializeComponent();
+            this.outputPanel.Paint += OutputPanel_Paint;
         }
 
         private void btnSolve_Click(object sender, EventArgs e)
         {
-            if (this.cmbPuzzle.SelectedItem == null)
-            {
-                MessageBox.Show("Select a puzzle first.", "Witness Solver", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
+            if (this.cmbPuzzle.SelectedItem == null) return;
 
             this.btnSolve.Enabled = false;
             this.btnCancel.Enabled = true;
+            this._browseMode = false;
+            this._browseIndex = 0;
             this._cts = new CancellationTokenSource();
 
             var entry = (PuzzleEntry)this.cmbPuzzle.SelectedItem;
+            this._expectedSolutions = entry.HasExpectedSolutions ? entry.ExpectedSolutions : -1;
             var puzzle = entry.Factory();
-            var graph = SolverGraph.Compile(puzzle);
+            this._graph = SolverGraph.Compile(puzzle);
+            this._graph.CancellationToken = this._cts.Token;
 
-            var drawer = new RectanglePuzzleDrawer();
-            drawer.FormGraphics = this.outputPanel.CreateGraphics();
-            drawer.SetGraph(graph);
-            graph.Drawer = drawer;
-            graph.CancellationToken = this._cts.Token;
+            this._drawer = new RectanglePuzzleDrawer();
+            this._drawer.SetGraph(this._graph);
 
-            this.outputPanel.Invalidate();
-            this.outputPanel.Update();
-            drawer.DrawState(false);
-            graph.Update += this.OnSolveUpdate;
-
-            this._stopwatch = Stopwatch.StartNew();
-            this._timer = new System.Windows.Forms.Timer { Interval = 100 };
-            this._timer.Tick += (s, ev) => this.lblElapsed.Text = this._stopwatch.Elapsed.ToString(@"mm\:ss\.f");
-            this._timer.Start();
-
+            this._solving = true;
             this.lblSteps.Text = "0";
             this.lblRoutes.Text = "0";
-            this.lblSolutions.Text = "0";
+            this.lblSolutions.Text = ExpectedText(0);
+            this.lblStatus.Text = "Solving...";
+            this.btnBrowse.Enabled = false;
+            this.btnPrev.Enabled = false;
+            this.btnNext.Enabled = false;
+            this.lblBrowse.Text = "";
 
-            var solver = new PuzzleSolver(graph);
-            var ct = this._cts.Token;
+            // Force initial static board render
+            this.outputPanel.Invalidate();
 
-            Task.Run(() => solver.Solve(), ct).ContinueWith(res =>
+            this._stopwatch = Stopwatch.StartNew();
+            this._renderTimer = new System.Windows.Forms.Timer { Interval = 33 }; // ~30fps
+            this._renderTimer.Tick += RenderTick;
+            this._renderTimer.Start();
+
+            var solver = new PuzzleSolver(this._graph);
+            Task.Run(() => solver.Solve(), this._cts.Token).ContinueWith(res =>
             {
-                this._timer.Stop();
-                this._stopwatch.Stop();
-
                 if (this.IsDisposed || this.Disposing) return;
-
-                this.Invoke(new MethodInvoker(() =>
-                {
-                    this.btnSolve.Enabled = true;
-                    this.btnCancel.Enabled = false;
-                    this.lblElapsed.Text = this._stopwatch.Elapsed.ToString(@"mm\:ss\.fff");
-
-                    if (res.IsFaulted && res.Exception?.InnerException is OperationCanceledException)
-                        this.lblStatus.Text = "Cancelled.";
-                    else if (res.IsFaulted)
-                        this.lblStatus.Text = $"Error: {res.Exception?.InnerException?.Message}";
-                    else
-                        this.lblStatus.Text = $"Done — {res.Result} solutions found.";
-                }));
+                this.Invoke(new MethodInvoker(() => OnSolveComplete(res)));
             });
+        }
+
+        private void RenderTick(object sender, EventArgs e)
+        {
+            var snapshot = SolverSnapshot.Current;
+            if (snapshot == null || this._drawer == null) return;
+
+            this.lblSteps.Text = snapshot.StepCount.ToString("N0");
+            this.lblRoutes.Text = snapshot.RoutesFound.ToString("N0");
+            this.lblSolutions.Text = ExpectedText(snapshot.SolutionsFound);
+            this.lblElapsed.Text = this._stopwatch.Elapsed.ToString(@"mm\:ss\.f");
+
+            if (!this._browseMode)
+                this.outputPanel.Invalidate();
+        }
+
+        private void OutputPanel_Paint(object sender, PaintEventArgs e)
+        {
+            if (this._drawer == null || this._graph == null) return;
+
+            int[] route = null;
+            Color routeColor = Color.DarkRed;
+
+            if (this._browseMode)
+            {
+                route = this._graph.Solutions.Get(this._browseIndex);
+                routeColor = Color.Green;
+            }
+            else
+            {
+                var snapshot = SolverSnapshot.Current;
+                if (snapshot != null)
+                    route = snapshot.RouteEdgeIndices;
+            }
+
+            this._drawer.DrawRoute(e.Graphics, route ?? new int[0], routeColor);
+        }
+
+        private void OnSolveComplete(Task<int> res)
+        {
+            this._renderTimer.Stop();
+            this._stopwatch.Stop();
+            this._solving = false;
+
+            this.btnSolve.Enabled = true;
+            this.btnCancel.Enabled = false;
+            this.lblElapsed.Text = this._stopwatch.Elapsed.ToString(@"mm\:ss\.fff");
+
+            if (res.IsFaulted && res.Exception?.InnerException is OperationCanceledException)
+            {
+                this.lblStatus.Text = "Cancelled.";
+            }
+            else if (res.IsFaulted)
+            {
+                this.lblStatus.Text = $"Error: {res.Exception?.InnerException?.Message}";
+            }
+            else
+            {
+                int total = res.Result;
+                int stored = this._graph.Solutions.StoredCount;
+                this.lblSolutions.Text = ExpectedText(total);
+                this.lblStatus.Text = $"Done — {total:N0} solutions ({stored:N0} stored).";
+
+                if (stored > 0)
+                {
+                    this.btnBrowse.Enabled = true;
+                    SwitchToBrowse();
+                }
+            }
+
+            // Final render
+            var finalSnapshot = SolverSnapshot.Current;
+            if (finalSnapshot != null)
+            {
+                this.lblSteps.Text = finalSnapshot.StepCount.ToString("N0");
+                this.lblRoutes.Text = finalSnapshot.RoutesFound.ToString("N0");
+            }
+        }
+
+        private void SwitchToBrowse()
+        {
+            this._browseMode = true;
+            this._browseIndex = 0;
+            UpdateBrowseUI();
+            this.outputPanel.Invalidate();
+        }
+
+        private void UpdateBrowseUI()
+        {
+            int stored = this._graph?.Solutions?.StoredCount ?? 0;
+            this.btnPrev.Enabled = this._browseIndex > 0;
+            this.btnNext.Enabled = this._browseIndex < stored - 1;
+            this.lblBrowse.Text = stored > 0
+                ? $"Solution {this._browseIndex + 1} of {stored:N0}"
+                : "";
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -86,35 +172,56 @@ namespace WitnessSolver
             this.lblStatus.Text = "Cancelling...";
         }
 
-        private void OnSolveUpdate(object sender, SolverGraph.SolveEventArgs e)
+        private void btnBrowse_Click(object sender, EventArgs e)
         {
-            if (this.Disposing || this.IsDisposed) return;
-
-            if (this.InvokeRequired)
+            if (this._browseMode)
             {
-                try { this.Invoke(new MethodInvoker(() => OnSolveUpdate(sender, e))); }
-                catch (ObjectDisposedException) { }
-                return;
+                this._browseMode = false;
+                this.btnBrowse.Text = "Browse";
+                this.btnPrev.Enabled = false;
+                this.btnNext.Enabled = false;
+                this.lblBrowse.Text = "";
             }
-
-            this.lblSteps.Text = e.EdgesAdded.ToString("N0");
-            this.lblRoutes.Text = e.RoutesFound.ToString("N0");
-            this.lblSolutions.Text = e.SolutionsFound.ToString("N0");
-
-            if (e.IsDone)
+            else
             {
-                this.btnSolve.Enabled = true;
-                this.btnCancel.Enabled = false;
+                SwitchToBrowse();
+                this.btnBrowse.Text = "Watch";
             }
+            this.outputPanel.Invalidate();
+        }
+
+        private void btnPrev_Click(object sender, EventArgs e)
+        {
+            if (this._browseIndex > 0)
+            {
+                this._browseIndex--;
+                UpdateBrowseUI();
+                this.outputPanel.Invalidate();
+            }
+        }
+
+        private void btnNext_Click(object sender, EventArgs e)
+        {
+            int stored = this._graph?.Solutions?.StoredCount ?? 0;
+            if (this._browseIndex < stored - 1)
+            {
+                this._browseIndex++;
+                UpdateBrowseUI();
+                this.outputPanel.Invalidate();
+            }
+        }
+
+        private string ExpectedText(int found)
+        {
+            if (this._expectedSolutions >= 0)
+                return $"{found:N0} / {this._expectedSolutions:N0}";
+            return found.ToString("N0");
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             foreach (var entry in PuzzleCatalog.All)
-            {
                 this.cmbPuzzle.Items.Add(entry);
-            }
-
             if (this.cmbPuzzle.Items.Count > 0)
                 this.cmbPuzzle.SelectedIndex = 0;
         }
