@@ -1,6 +1,6 @@
-﻿namespace WitnessSolver
+namespace WitnessSolver
 {
-    partial class Form1
+    partial class SolverForm
     {
         /// <summary>
         /// Required designer variable.
@@ -210,7 +210,7 @@
             this.lblBrowse.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.lblBrowse.Text = "";
             // 
-            // Form1
+            // SolverForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -230,9 +230,10 @@
             this.Controls.Add(this.lblSteps);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSolve);
-            this.Name = "Form1";
+            this.Name = "SolverForm";
             this.Text = "Witness Solver";
-            this.Load += new System.EventHandler(this.Form1_Load);
+            this.Icon = new System.Drawing.Icon("witness.ico");
+            this.Load += new System.EventHandler(this.SolverForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
         }
@@ -259,4 +260,5 @@
         private System.Windows.Forms.Label lblBrowse;
     }
 }
+
 

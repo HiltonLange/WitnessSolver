@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace WitnessSolver
 {
-    public partial class Form1 : Form
+    public partial class SolverForm : Form
     {
         private CancellationTokenSource _cts;
         private Stopwatch _stopwatch;
@@ -23,7 +23,7 @@ namespace WitnessSolver
         private int[] _flashRoute;
         private DateTime _flashUntil;
 
-        public Form1()
+        public SolverForm()
         {
             this.InitializeComponent();
             this.outputPanel.Paint += OutputPanel_Paint;
@@ -263,7 +263,7 @@ namespace WitnessSolver
             return found.ToString("N0");
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void SolverForm_Load(object sender, EventArgs e)
         {
             foreach (var entry in PuzzleCatalog.All)
                 this.cmbPuzzle.Items.Add(entry);
@@ -283,3 +283,4 @@ namespace WitnessSolver
         }
     }
 }
+
