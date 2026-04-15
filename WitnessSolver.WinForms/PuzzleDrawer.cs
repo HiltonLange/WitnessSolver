@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace WitnessSolver
 {
-    abstract class PuzzleDrawer : IPuzzleDrawer
+    abstract class PuzzleDrawer
     {
         internal const int ScaleSize = 75;
         internal const float EdgeLengthFraction = 0.95F;
@@ -103,9 +103,6 @@ namespace WitnessSolver
                 }
             }
         }
-
-        // Legacy IPuzzleDrawer (no-op now — solver doesn't call this)
-        public void DrawState(bool isSolved) { }
 
         // --- Abstract drawing primitives ---
         protected abstract void DrawNode(Graphics g, SolverNode node);

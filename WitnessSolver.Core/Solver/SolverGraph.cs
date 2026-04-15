@@ -22,7 +22,6 @@ namespace WitnessSolver
         public SolverNode Location;
         public readonly ISolutionStore Solutions;
 
-        public IPuzzleDrawer Drawer;
         public CancellationToken CancellationToken;
         public event EventHandler<SolveEventArgs> Update;
 

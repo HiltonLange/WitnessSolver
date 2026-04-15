@@ -12,9 +12,6 @@ namespace WitnessSolver
             this.Name = name;
             this.XSize = xSize;
             this.YSize = ySize;
-
-            this.AllRouteCount = 0;
-            this.GoodRouteCount = 0;
             this.Route = new List<Edge>();
 
             // Create points
@@ -73,7 +70,6 @@ namespace WitnessSolver
 
             this.Start = this.Points[start.X, start.Y];
             this.Points[end.X, end.Y].End = true;
-            this.Location = this.Start;
         }
 
         public void AddWrap()
