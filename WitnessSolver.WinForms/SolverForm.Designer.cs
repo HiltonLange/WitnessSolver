@@ -1,6 +1,6 @@
-﻿namespace WitnessSolver
+namespace WitnessSolver
 {
-    partial class Form1
+    partial class SolverForm
     {
         /// <summary>
         /// Required designer variable.
@@ -40,6 +40,12 @@
             this.lblStepsCaption = new System.Windows.Forms.Label();
             this.lblRoutesCaption = new System.Windows.Forms.Label();
             this.lblSolutionsCaption = new System.Windows.Forms.Label();
+            this.rdoWatch = new System.Windows.Forms.RadioButton();
+            this.rdoBrowse = new System.Windows.Forms.RadioButton();
+            this.pnlBrowseControls = new System.Windows.Forms.Panel();
+            this.trkSolution = new System.Windows.Forms.TrackBar();
+            this.nudSolution = new System.Windows.Forms.NumericUpDown();
+            this.lblBrowse = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // cmbPuzzle
@@ -143,18 +149,75 @@
             // 
             // lblStatus
             // 
-            this.lblStatus.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            this.lblStatus.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.lblStatus.ForeColor = System.Drawing.Color.DimGray;
-            this.lblStatus.Location = new System.Drawing.Point(12, 658);
+            this.lblStatus.Location = new System.Drawing.Point(12, 688);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(774, 20);
             this.lblStatus.Text = "Select a puzzle and click Solve.";
             // 
-            // Form1
+            // rdoWatch
+            // 
+            this.rdoWatch.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            this.rdoWatch.AutoSize = true;
+            this.rdoWatch.Checked = true;
+            this.rdoWatch.Location = new System.Drawing.Point(12, 658);
+            this.rdoWatch.Name = "rdoWatch";
+            this.rdoWatch.Text = "Watch";
+            this.rdoWatch.CheckedChanged += new System.EventHandler(this.rdoWatch_CheckedChanged);
+            // 
+            // rdoBrowse
+            // 
+            this.rdoBrowse.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            this.rdoBrowse.AutoSize = true;
+            this.rdoBrowse.Enabled = false;
+            this.rdoBrowse.Location = new System.Drawing.Point(80, 658);
+            this.rdoBrowse.Name = "rdoBrowse";
+            this.rdoBrowse.Text = "Browse";
+            this.rdoBrowse.CheckedChanged += new System.EventHandler(this.rdoBrowse_CheckedChanged);
+            // 
+            // pnlBrowseControls
+            // 
+            this.pnlBrowseControls.Location = new System.Drawing.Point(160, 655);
+            this.pnlBrowseControls.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            this.pnlBrowseControls.Size = new System.Drawing.Size(626, 28);
+            this.pnlBrowseControls.Visible = false;
+            this.pnlBrowseControls.Controls.Add(this.trkSolution);
+            this.pnlBrowseControls.Controls.Add(this.nudSolution);
+            this.pnlBrowseControls.Controls.Add(this.lblBrowse);
+            // 
+            // trkSolution
+            // 
+            this.trkSolution.Location = new System.Drawing.Point(0, 0);
+            this.trkSolution.Size = new System.Drawing.Size(250, 28);
+            this.trkSolution.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trkSolution.ValueChanged += new System.EventHandler(this.trkSolution_ValueChanged);
+            // 
+            // nudSolution
+            // 
+            this.nudSolution.Location = new System.Drawing.Point(255, 3);
+            this.nudSolution.Size = new System.Drawing.Size(80, 23);
+            this.nudSolution.Minimum = 1;
+            this.nudSolution.Maximum = 1;
+            this.nudSolution.ValueChanged += new System.EventHandler(this.nudSolution_ValueChanged);
+            // 
+            // lblBrowse
+            // 
+            this.lblBrowse.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            this.lblBrowse.ForeColor = System.Drawing.Color.DimGray;
+            this.lblBrowse.Location = new System.Drawing.Point(340, 5);
+            this.lblBrowse.Size = new System.Drawing.Size(286, 18);
+            this.lblBrowse.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblBrowse.Text = "";
+            // 
+            // SolverForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 685);
+            this.ClientSize = new System.Drawing.Size(800, 715);
+            this.Controls.Add(this.pnlBrowseControls);
+            this.Controls.Add(this.rdoBrowse);
+            this.Controls.Add(this.rdoWatch);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.lblElapsed);
             this.Controls.Add(this.lblSolutionsCaption);
@@ -167,9 +230,10 @@
             this.Controls.Add(this.lblSteps);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSolve);
-            this.Name = "Form1";
+            this.Name = "SolverForm";
             this.Text = "Witness Solver";
-            this.Load += new System.EventHandler(this.Form1_Load);
+            this.Icon = new System.Drawing.Icon("witness.ico");
+            this.Load += new System.EventHandler(this.SolverForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
         }
@@ -188,6 +252,13 @@
         private System.Windows.Forms.Label lblSolutionsCaption;
         private System.Windows.Forms.Panel outputPanel;
         private System.Windows.Forms.ComboBox cmbPuzzle;
+        private System.Windows.Forms.RadioButton rdoWatch;
+        private System.Windows.Forms.RadioButton rdoBrowse;
+        private System.Windows.Forms.Panel pnlBrowseControls;
+        private System.Windows.Forms.TrackBar trkSolution;
+        private System.Windows.Forms.NumericUpDown nudSolution;
+        private System.Windows.Forms.Label lblBrowse;
     }
 }
+
 

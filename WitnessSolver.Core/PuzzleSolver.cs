@@ -13,7 +13,7 @@ namespace WitnessSolver
         {
             this.Search();
             this._graph.SendUpdate(true);
-            return this._graph.Solutions.Count;
+            return this._graph.Solutions.TotalFound;
         }
 
         private void Search()

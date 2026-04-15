@@ -8,11 +8,18 @@
     <AssemblyName>WitnessSolver</AssemblyName>
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
+    <ApplicationIcon>witness.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\WitnessSolver.Core\WitnessSolver.Core.csproj" />
     <ProjectReference Include="..\WitnessSolver.Puzzles\WitnessSolver.Puzzles.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="witness.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
